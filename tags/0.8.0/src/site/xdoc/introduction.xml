@@ -1,0 +1,102 @@
+<document>
+	<properties>
+		<author email="florian.loeffler@rrze.uni-erlangen.de">
+			IDMone Team
+		</author>
+		<title>Introduction</title>
+	</properties>
+	<body>
+
+		<section name="Introduction">
+			<p>
+				<em>jidgen</em>
+				is a Java-based id generator that can be used as either
+				a command line program or a library. The idea is to make
+				automated generation of user ids as easy as possible by
+				introducing a simple, straightforward
+				<a href="template.html">template language</a>
+				to describe the structure of the desired ids.
+			</p>
+			<p>
+				<em>jidgen</em>
+				uses 100% Java and is thus platform independent.
+			</p>
+			<p>
+				<em>jidgen</em>
+				supports collision
+				<a href="filters.html">filters</a>
+				to ensure the generated id is unique in your
+				environment. Additionally,
+				<a href="filters.html#Blacklist_filter">blacklists</a>
+				are available to make sure all ids are socially
+				acceptable.
+			</p>
+			<p>
+				As a <a href="cli.html">command line</a> program it can easily be accessed by
+				scripts or directly by the user.
+				<br />
+				As an embedded library it can easily be employed in the
+				process of automated id generation and suggestion.
+			</p>
+		</section>
+
+		<section name="Description">
+			<p>
+				<em>jidgen</em>
+				provides four different element types (actually there
+				are more, but these are the most important ones :-) that
+				can be freely combined to form an id template that
+				exactly matches your needs.
+			</p>
+
+			<p>
+				<em>statics</em>
+				-
+				<a href="template.html#Statics">Static elements</a>
+				are inserted 1 to 1 at the position you specified for
+				them. This is useful for adding a static prefix or
+				delimiter to your id.
+			</p>
+
+			<p>
+				<em>substrings</em>
+				-
+				<a href="template.html#Substrings">
+					Substring elements
+				</a>
+				allow you to select any part of a given data string. For
+				example the first or last x characters or a character
+				range (from/to).
+			</p>
+
+			<p>
+				<em>counters</em>
+				-
+				<a href="template.html#Counters">Counter elements</a>
+				can be used to automatically resolve collisions with
+				already existing ids in a deterministic way.
+			</p>
+
+			<p>
+				<em>randoms</em>
+				-
+				<a href="template.html#Randoms">Random elements</a>
+				can also be used to resolve collisions but are
+				non-deterministic. This is useful if you don't want
+				anybody to know that a user is the 2nd John Doe because
+				his id turned out to be 'johndoe2'.
+			</p>
+
+			<p>
+				See the
+				<a href="examples.html">examples page</a>
+				for some real life applications of
+				<em>jidgen</em>
+				. Please refer to the
+				<a href="apidocs/index.html">Javadoc</a>
+				pages for a detailed description.
+			</p>
+		</section>
+
+	</body>
+</document>

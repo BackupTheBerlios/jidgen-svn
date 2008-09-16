@@ -1,0 +1,157 @@
+<document>
+	<properties>
+		<author email="florian.loeffler@rrze.uni-erlangen.de">
+			IDMone Team
+		</author>
+		<title>jidgen CLI options</title>
+	</properties>
+	<body>
+		<section name="Introduction">
+			<p>
+				<em>jidgen</em> has a variety of command line options to configure and modify its behavior. 
+			</p>
+			<p>
+				A very good starting point is the following example. <br />It uses two variables <b>f</b> and <b>l</b>
+				to reference the externally specified first and last name of a user.<br />
+				The template string utilizes the given data through their variable names as <a href="template.html#Substrings">substrings</a>
+				 and also adds a <a href="template.html#Counters">counter</a> element.
+				<br />
+				<br />
+				<code>
+					java -jar jidgen.jar -Tf John -Tl Doe -T 2f:2l:N4+
+				</code>
+			</p>
+			<p>
+				This is a copy-and-paste example for a quick understanding of <em>jidgen</em>.
+				For a detailed list of <em>jidgen's</em> options see <a href="#jidgen_command_line_options">below</a>.
+			</p>
+		</section>
+		
+		<section name="jidgen command line options">
+			<table border="1px">
+				<caption>jidgen cli options</caption>
+				<tbody>
+					<tr>
+						<th>short</th>
+						<th>long</th>
+						<th>description</th>
+					</tr>
+
+					<tr>
+						<td>-T &lt;template&gt;</td>
+						<td>--template &lt;template&gt;</td>
+						<td>
+							Template string that describes the
+							composition of the generated id(s).
+						</td>
+					</tr>
+
+					<tr>
+						<td>-T[a-z] &lt;data&gt;</td>
+						<td>--template-variable-[a-z] &lt;data&gt;</td>
+						<td>
+							Data to associate with the chosen lower case
+							letter variable [a-z] for later use in the
+							template definition.
+						</td>
+					</tr>
+
+					<tr>
+						<td>-N &lt;number&gt;</td>
+						<td>--number-ids &lt;number&gt;</td>
+						<td>The number of id proposals to return.</td>
+					</tr>
+
+					<tr>
+						<td>-P</td>
+						<td>--enable-passwd-filter</td>
+						<td>
+							Enable the passwd filter with the default
+							passwd file (Default: /etc/passwd).
+						</td>
+					</tr>
+
+					<tr>
+						<td>-Pf &lt;file&gt;</td>
+						<td>--passwd-file &lt;file&gt;</td>
+						<td>
+							Sets an alternate passwd file location for
+							the passwd filter.
+						</td>
+					</tr>
+
+					<tr>
+						<td>-B</td>
+						<td>--enable-blacklist-filter</td>
+						<td>
+							Enable the blacklist filter with the default
+							blacklist file (Default: blacklist).
+						</td>
+					</tr>
+
+					<tr>
+						<td>-Bf &lt;file&gt;</td>
+						<td>--blacklist-file &lt;file&gt;</td>
+						<td>
+							Sets an alternate file location for the
+							blacklist filter.
+						</td>
+					</tr>
+
+					<tr>
+						<td>-S</td>
+						<td>--enable-shellcmd-filter</td>
+						<td>
+							Enable the shellcmd filter with the default
+							command to run with each id. (Default:
+							./filter.sh %s).
+						</td>
+					</tr>
+
+					<tr>
+						<td>-Sf &lt;command&gt;</td>
+						<td>--shellcmd-command &lt;command&gt;</td>
+						<td>
+							The command to be executed for filtering
+							ids. The id is inserted at %s. An exit code
+							of 0 will filter the given id.
+						</td>
+					</tr>
+
+					<tr>
+						<td>-C</td>
+						<td>--print-in-columns</td>
+						<td>Output in columns.</td>
+					</tr>
+
+					<tr>
+						<td>-W &lt;width&gt;</td>
+						<td>--terminal-width &lt;width&gt;</td>
+						<td>
+							Set the terminal width for column output
+							(Default: 80).
+						</td>
+					</tr>
+
+					<tr>
+						<td>-h</td>
+						<td>--help</td>
+						<td>Displays the usual help screen.</td>
+					</tr>
+
+					<tr>
+						<td>-hh</td>
+						<td>--help-page</td>
+						<td>
+							Displays a
+							<u>very</u>
+							verbose help page with more detailed
+							explanations.
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+
+	</body>
+</document>

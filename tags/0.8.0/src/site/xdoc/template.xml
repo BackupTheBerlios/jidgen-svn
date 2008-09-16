@@ -1,0 +1,506 @@
+<document>
+	<properties>
+		<author email="florian.loeffler@rrze.uni-erlangen.de">
+			IDMone Team
+		</author>
+		<title>Template language</title>
+	</properties>
+	<body>
+		<section name="Introduction">
+			<p>
+				<em>jidgen's</em>
+				template language is a very flexible way to specify what
+				your generated ids should look like.
+				<br />
+				A template consists of one or more elements separated by
+				a colon ':'. All element types can be freely combined if
+				not stated otherwise in the element type's detailed
+				description.
+			</p>
+
+			<p>
+				In an
+				<em>EBNF</em>
+				- like description the template language would look
+				something like this:
+				<br />
+				<br />
+				<code>
+					template := (element|resolver)(:(element|resolver))*
+					<br />
+					resolver := \[element\]
+					<br />
+					element := static|basic|substring|counter|random
+					<br />
+				</code>
+			</p>
+			<p>
+				In text form this would be explained as followed:
+				<br />
+				Each template consists of at least one
+				<em>regular</em>
+				element and optional
+				<em>resolver</em>
+				elements.
+				<br />
+				<br />
+				<a name="element_list">
+
+				</a>
+				Elements may be of the types
+				<ul>
+					<li>
+						<a href="#Statics">static</a>
+						,
+					</li>
+					<li>
+						<a href="#Basics">basic</a>
+						,
+					</li>
+					<li>
+						<a href="#Substrings">substring</a>
+						,
+					</li>
+					<li>
+						<a href="#Counters">counter</a>
+					</li>
+					<li>
+						<a href="#Randoms">random</a>
+						or
+					</li>
+					<li>
+						<a href="#Resolvers">resolver</a>
+						.
+					</li>
+				</ul>
+			</p>
+		</section>
+
+		<section name="Statics">
+			<a href="#element_list">
+				<img src="images/arrow_up.gif" />
+			</a>
+
+			<ul>
+				<li>
+					<b>Syntax</b>
+					<br />
+					<br />
+					<code>static := \=[a-zA-Z_0-9]*</code>
+					<br />
+					<br />
+				</li>
+				<li>
+					<b>Example</b>
+					<br />
+					<br />
+					<code>=pre</code>
+					<br />
+					<br />
+				</li>
+				<li>
+					<b>Explanation</b>
+					<br />
+					<p>
+						A
+						<em>Static</em>
+						element is a (nearly) arbitrary string prefixed
+						with a '='.
+					</p>
+					<p>
+						They are useful for inserting a static text
+						string anywhere in the template exactly as it
+						was specified after the '='.
+						<br />
+						E.g. a prefix or suffix to be added to the id
+						that will never be changed.
+					</p>
+				</li>
+			</ul>
+
+			<a href="#element_list">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Basics">
+			<a href="#element_list">
+				<img src="images/arrow_up.gif" />
+			</a>
+
+			<ul>
+				<li>
+					<b>Syntax</b>
+					<br />
+					<br />
+					<code>
+						static := (variable)
+						<br />
+						variable := [a-z]
+					</code>
+					<br />
+					<br />
+				</li>
+				<li>
+					<b>Example</b>
+					<br />
+					<br />
+					<code>a</code>
+					<br />
+					<br />
+				</li>
+				<li>
+					<b>Explanation</b>
+					<br />
+					<p>
+						<em>Basic</em>
+						elements just consist of a single letter
+						specifying the variable to use.
+					</p>
+					<p>
+						The data associated with the chosen variable is
+						inserted unmodified at its location within the
+						template string.
+					</p>
+					<p>
+						This is useful to cleanly insert a variable
+						element anywhere in the template without
+						applying any changes to it.
+					</p>
+				</li>
+			</ul>
+
+			<a href="#element_list">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Substrings">
+			<a href="#element_list">
+				<img src="images/arrow_up.gif" />
+			</a>
+
+			<ul>
+				<li>
+					<b>Syntax</b>
+					<br />
+					<br />
+					<code>
+						substring := ((num_chars)(variable))
+						<br />
+						| ((variable)(start),(end))
+						<br />
+						| ((variable)(num_chars))
+						<br />
+						| ((variable)(start),)
+						<br />
+					</code>
+					<br />
+					<br />
+				</li>
+				<li>
+					<b>Example</b>
+					<br />
+					<br />
+					<code>
+						3a
+						<br />
+						or a2,5
+						<br />
+						or a2
+						<br />
+						or a2,
+					</code>
+					<br />
+					<br />
+				</li>
+				<li>
+					<b>Explanation</b>
+					<br />
+					<p>
+						<em>Substring</em>
+						elements allow you to cut out any part of a
+						string associated with a variable letter. To be
+						able to do this most flexibly there are several
+						ways to specify which part of the string you
+						want.
+					</p>
+					<p>
+						If you specify
+						<em>num_chars</em>
+						directly in front of the variable letter, the
+						first
+						<em>num_chars</em>
+						characters of the string contained in the
+						variable are returned.
+					</p>
+					<p>
+						If you specify a
+						<em>start</em>
+						and
+						<em>end</em>
+						character position separated by a comma directly
+						after the variable letter, the string between
+						the character positions
+						<em>start</em>
+						and
+						<em>end</em>
+						of the string contained in the variable is
+						returned (counting starts at 1,
+						<b>not</b>
+						at 0).
+					</p>
+					<p>
+						If you specify
+						<em>num_chars</em>
+						directly after the variable letter, the last
+						<em>num_chars</em>
+						characters of the string contained in the
+						variable are returned.
+					</p>
+					<p>
+						If you specify a
+						<em>start</em>
+						character position followed by a comma directly
+						after the variable letter but
+						<b>omitting</b>
+						the
+						<em>end</em>
+						position, the string starting at the
+						<em>start</em>
+						position up until the end of the string
+						contained in the variable is returned.
+					</p>
+					<p>
+						<em>
+							If your specified start and/or end index is
+							out of bounds, a fatal error will be issued
+							and the generation process is aborted.
+						</em>
+					</p>
+				</li>
+			</ul>
+
+			<a href="#element_list">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Counters">
+			<a href="#element_list">
+				<img src="images/arrow_up.gif" />
+			</a>
+
+			<ul>
+				<li>
+					<b>Syntax</b>
+					<br />
+					<br />
+					<code>
+						counter :=
+						((variable|character_class)(num_digits|(variable|character_class)*)?\+\+
+					</code>
+					<br />
+					<br />
+				</li>
+				<li>
+					<b>Example</b>
+					<br />
+					<br />
+					<code>N++ equals N1++ or N4++ equals NNNN++</code>
+					<br />
+					<br />
+				</li>
+				<li>
+					<b>Explanation</b>
+					<br />
+					<p>
+						The simplest
+						<em>counter</em>
+						element consists of a variable or character
+						class letter directly followed by '++'. If you
+						would like to specify the length/number of
+						digits the counter should have you can do that
+						by repeating the variable or character class
+						letter
+						<em>num_digits</em>
+						times or just inserting a number
+						<em>num_digits</em>
+						directly after the letter.
+					</p>
+					<p>
+						<em>Counter</em>
+						elements are incremented for each newly
+						generated id within the same run.
+						<br />
+						They therefore provide a way to automatically
+						resolve collisions with existing ids.
+					</p>
+					<p>
+						The number of digits also limits the maximal
+						counter value that can be reached.
+						<br />
+						If the maximum value is reached, the counter
+						will start from the beginning but announce to
+						jidgen that all alternatives were returned.
+						<br />
+						<em>
+
+							This allows jidgen to abort when there are
+							no values left for any of the modules.
+						</em>
+					</p>
+				</li>
+			</ul>
+
+			<a href="#element_list">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Randoms">
+			<a href="#element_list">
+				<img src="images/arrow_up.gif" />
+			</a>
+
+			<ul>
+				<li>
+					<b>Syntax</b>
+					<br />
+					<br />
+					<code>
+						random :=
+						((variable|character_class)(num_digits|(variable|character_class)*)?\+
+					</code>
+					<br />
+					<br />
+				</li>
+				<li>
+					<b>Example</b>
+					<br />
+					<br />
+					<code>N+ equals N1+ or N4+ equals NNNN+</code>
+					<br />
+					<br />
+				</li>
+				<li>
+					<b>Explanation</b>
+					<br />
+					<p>
+						The simplest
+						<em>random</em>
+						element consists of a variable or character
+						class letter directly followed by '+'. If you
+						would like to specify the length/number of
+						digits the random element should have, you can
+						do that by repeating the variable or character
+						class letter
+						<em>num_digits</em>
+						times or just inserting a number
+						<em>num_digits</em>
+						directly after the letter.
+					</p>
+					<p>
+						<em>Random</em>
+						elements are recreated for each newly generated
+						id by choosing
+						<em>num_digits</em>
+						random characters out of all characters within
+						the given variable string/character class.
+						<br />
+						They therefore provide a way to automatically
+						resolve collisions with existing ids.
+					</p>
+					<p>
+						The number of possible combinations is limited
+						by the number of digits and the number of
+						variations per digit.
+						<br />
+
+						On initialization the number of possible
+						combinations is calculated. After having
+						returned 5 times this number of random strings
+						it is assumed that all possible combinations
+						were returned and the element will announce to
+						jidgen that all alternatives were returned.
+						<br />
+						<em>
+							Be aware that this is just a heuristic
+							solution to avoid tracking all returned
+							values.
+							<br />
+							This allows jidgen to abort when there are
+							no new values left for any of the modules.
+						</em>
+					</p>
+				</li>
+			</ul>
+
+			<a href="#element_list">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Resolvers">
+			<a href="#element_list">
+				<img src="images/arrow_up.gif" />
+			</a>
+
+			<ul>
+				<li>
+					<b>Syntax</b>
+					<br />
+					<br />
+					<code>resolver := \[element\]</code>
+					<br />
+					<br />
+				</li>
+				<li>
+					<b>Example</b>
+					<br />
+					<br />
+					<code>
+						[=foo] or [a] or [a2,4] or [N++] or [N+]
+					</code>
+					<br />
+					<br />
+				</li>
+				<li>
+					<b>Explanation</b>
+					<br />
+					<p>
+						<em>Resolver</em>
+						elements are
+						<em>regular</em>
+						elements enclosed in '[]'.
+					</p>
+					<p>
+						<em>Resolver</em>
+						elements can be optionally inserted anywhere in
+						the template and are ignored by default. They
+						will only become
+						<em>active</em>
+						when there are no alternatives left and the
+						target number of requested ids (usually one) has
+						not been reached. This may happen because of the
+						filter chain (e.g. collision or blacklist
+						filtering).
+					</p>
+					<p>
+						When this happens the resolver elements in order
+						from left to right are activated one by one
+						until there are no more left or the target
+						number of requested ids is reached.
+						<br />
+						They therefore provide a way to automatically
+						resolve collisions with existing ids.
+					</p>
+				</li>
+			</ul>
+
+			<a href="#element_list">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+	</body>
+</document>

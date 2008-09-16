@@ -1,0 +1,276 @@
+<document>
+	<properties>
+		<author email="florian.loeffler@rrze.uni-erlangen.de">
+			IDMone Team
+		</author>
+		<title>Filters</title>
+	</properties>
+	<body>
+
+		<section name="Introduction">
+			<p>
+				<em>jidgen</em>
+				provides a number of different filter types to avoid
+				undesired ids.
+			</p>
+			<p>
+				All active filters are internally organized within a
+				filter chain. Therefore multiple filters can be
+				activated simultaneously.
+				<br />
+				Each id candidate that passes the chain is valid. If an
+				id candidate is filtered on its way through the chain
+				the template system checks whether there are any
+				alternative values left for any of the elements. If so,
+				the next id candidate is generated and passed on to the
+				filter chain. If no more alternatives are left the
+				genreation processes is aborted and a warning is issued.
+			</p>
+			<p>
+				<a name="filter_overview">
+
+				</a>
+				The following filter types are currently available:
+				<ul>
+					<li>
+						<a href="#Blacklist_filter">Blacklist filter</a>
+					</li>
+					<li>
+						<a href="#Passwd_filter">Passwd filter</a>
+					</li>
+					<li>
+						<a href="#Shell_command_filter">
+							Shell command filter
+						</a>
+					</li>
+				</ul>
+			</p>
+		</section>
+
+		<section name="Blacklist filter">
+			<a href="#filter_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<ul>
+				<li>
+					<b>Explanation</b>
+					<br />
+					<p>
+						The
+						<em>blacklist filter</em>
+						checks each generated id against a list of
+						forbidden blackwords.
+						<br />
+						If one of the blackwords appears anywhere within
+						the id candidate, it is filtered and an
+						alternative id is generated.
+					</p>
+					<p>
+						The blackword list is read from an external file
+						with one word per line.
+						<br />
+						<em>
+							This list is only read once on init! So it
+							will not be updated until you call the
+							IdGenerators
+							<a
+								href="apidocs/de/rrze/idmone/utils/jidgen/IdGenerator.html#update()">
+								update()
+							</a>
+							method.
+						</em>
+					</p>
+				</li>
+				<li>
+					<b>Usage</b>
+					<br />
+					<p>
+						See jidgen's
+						<a href="cli.html">CLI options</a>
+						for more information.
+					</p>
+				</li>
+			</ul>
+			<a href="#filter_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Passwd filter">
+			<a href="#filter_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<ul>
+				<li>
+					<b>Explanation</b>
+					<br />
+					<p>
+						The
+						<em>passwd filter</em>
+						checks each generated id against all login
+						names/user ids within the systems passwd file.
+						<br />
+						If one of the login names/user ids is identical
+						with the id candidate, it is filtered and an
+						alternative id is generated.
+					</p>
+					<p>
+						The
+						<em>passwd filter</em>
+						parses the passwd file syntax and may therefore
+						be directly applied to the system's passwd file.
+						<br />
+						<em>
+							The specified passwd file is re-read for
+							every id that is checked. Changes to the
+							passwd file are therefore applied
+							immediately to the filter.
+						</em>
+					</p>
+				</li>
+				<li>
+					<b>Usage</b>
+					<br />
+					<p>
+						See jidgen's
+						<a href="cli.html">CLI options</a>
+						for more information.
+					</p>
+				</li>
+			</ul>
+			<a href="#filter_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Shell command filter">
+			<a href="#filter_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<ul>
+				<li>
+					<b>Explanation</b>
+					<br />
+					<p>
+						The
+						<em>shell command filter</em>
+						calls an external shell command and appends the
+						current id candidate as a parameter.
+						<br />
+						Through the specified shell command (e.g. a
+						shell script) it is possible to apply all kinds
+						of filter combinations most flexibly.
+						<br />
+						The command's exit value indicates whether the
+						current id candidate should be filtered (exit
+						value = 0) or not (exit value = 1).
+					</p>
+					<p>
+						The command's stdout is logged with 'debug'
+						log-level and therefore usually not displayed.
+						<br />
+						The command's stderr is logged with 'error'
+						log-level and therefore usually visible.
+						<br />
+					</p>
+					<p>
+						If you use your own shell script, make sure it
+						is executable (
+						<em>chmod +x yourscript.sh</em>
+						).
+						<br />
+						<em>
+							Internally no timeout or max. execution time
+							is specified. It is up to you to make sure
+							your external command ever returns.
+						</em>
+					</p>
+				</li>
+				<li>
+					<b>Usage</b>
+					<br />
+					<p>
+						The following
+						<em>filter.sh</em>
+						script is an example how a filter script could
+						be structured.
+						<br />
+						It is a good starting point if you plan to use
+						this filter together with your own filter
+						script.
+					</p>
+					<p>
+						filter.sh
+						<br />
+						<code>
+							#!/bin/bash
+							<br />
+							<br />
+							# This is an example filter shell script
+							which you
+							<br />
+							# may freely modify to match your needs.
+							<br />
+							# All output to stdout is passed on to the
+							debug logger.
+							<br />
+							# All output to stderr is passed on to the
+							error logger and
+							<br />
+							# is therefore visible with the standard
+							logging level.
+							<br />
+							# For more help on this see the jidgen
+							documentation at
+							<br />
+							# http://jidgen.berlios.de
+							<br />
+							<br />
+							# get the ID to check from the command line
+							<br />
+							ID=$1
+							<br />
+							<br />
+							# Example: Output some debug info to stdout
+							(logged to debug level)
+							<br />
+							echo "Got ID to check for collisions:
+							\"$ID\"" &gt;&amp;1
+							<br />
+							<br />
+							# Example: Output error messages to stderr
+							(logged to error level)
+							<br />
+							#echo "Oh oh!" &gt;&amp;2
+							<br />
+							<br />
+							# do your collision tests here
+							<br />
+							# ...
+							<br />
+							<br />
+							<br />
+							<br />
+							# exit with code 0 to filter the given ID
+							<br />
+							#exit 0
+							<br />
+							<br />
+							# exit with code 1 to keep the given ID
+							<br />
+							exit 1
+						</code>
+					</p>
+					<p>
+						See jidgen's
+						<a href="cli.html">CLI options</a>
+						for more information.
+					</p>
+				</li>
+			</ul>
+			<a href="#filter_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+	</body>
+</document>
