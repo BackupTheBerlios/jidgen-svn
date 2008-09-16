@@ -1,0 +1,115 @@
+<document>
+	<properties>
+		<author email="florian.loeffler@rrze.uni-erlangen.de">
+			IDMone Team
+		</author>
+		<title>FAQ</title>
+	</properties>
+	<body>
+		<section name="Where can I find 'jidgen'?">
+			<p>
+				Instructions for obtaining
+				<em>jidgen</em>
+				and its dependencies are available at the
+				<a href="./download.html">download</a>
+				page.
+			</p>
+		</section>
+
+		<section name="How can I start 'jidgen'?">
+			<p>
+				There are two possibilities for using the program:
+				<ul>
+					<li>
+						<strong>From the command line</strong>
+					</li>
+					In order to use the program from the command line
+					you have to download the jar file and its
+					dependencies. The program and its dependencies have
+					to be located in the same directory. Then you should
+					navigate to the directory containing the files and
+					enter something like this:
+					<br />
+					<br />
+					<code>
+						java -jar jidgen.jar -Td IT -Tf John -Tl Doe -T
+						2d:2f:3l:NNN++
+					</code>
+					<br />
+					<br />
+					For more information about the CLI options start the
+					program with the
+					<em>--help</em>
+					option or refer to the
+					<em>jidgen</em>
+					<a href="./cli.html">cli options</a>
+					page.
+					<br />
+					<br />
+					<li>
+						<strong>
+							Embedded in a different application
+						</strong>
+					</li>
+					To use the program as a library you should place it
+					in the classpath of your application together with
+					its dependencies. Then you can do something like
+					this:
+					<br />
+					<br />
+					<code>
+						// get an instance of the id generator
+						<br />
+						// and pass the CLI options right along to the
+						constructor
+						<br />
+						IdGenerator idGen = new IdGenerator("-Ta Test -T
+						a:[N++]");
+						<br />
+						// get a list of 5 generated ids
+						<br />
+						List &lt;String&gt; ids = idGen.generateIDs(5);
+						<br />
+						// to have something to look at - output them
+						<br />
+						idGen.printColumns(ids);
+					</code>
+					<br />
+					<br />
+					Or for a more java-like approach you can also do
+					this:
+					<br />
+					<br />
+					<code>
+						// get an instance of the id generator
+						<br />
+						IdGenerator idGen = new IdGenerator();
+						<br />
+						// set some options
+						<br />
+						idGen.setOption("Ta", "Test");
+						<br />
+						idGen.setOption("T", "a:[N++]");
+						<br />
+						// get a list of generated ids
+						<br />
+						List &lt;String&gt; ids = idGen.generateIDs(5);
+						<br />
+						// to have something to look at - output them
+						<br />
+						idGen.printColumns(ids);
+						<br />
+					</code>
+					<br />
+					<br />
+					<em>
+						Please note that some CLI options such as -N for
+						specifying the number of generated ids have no
+						effect because this parameter is passed directly
+						to the generateIDs(int) method.
+					</em>
+				</ul>
+			</p>
+		</section>
+	</body>
+</document>

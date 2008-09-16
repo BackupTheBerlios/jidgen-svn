@@ -1,0 +1,2828 @@
+<document>
+	<properties>
+		<author email="florian.loeffler@rrze.uni-erlangen.de">
+			IDMone Team
+		</author>
+		<title>Examples</title>
+	</properties>
+	<body>
+		<section name="UniqueID building examples">
+			<p>
+				This is a collection of template examples for realizing
+				unique id building and is meant to provide a fast and
+				simple way to get in touch with the
+				<a href="./template.html">template language</a>
+				and help you produce productive results in your
+				environment as soon as possible.
+			</p>
+
+			<p>
+				<h3>
+					<a name="variant_overview">Variant overview</a>
+				</h3>
+				<a href="#Variant_1_-_structuralyearname">
+					Variant 1 - structural/year/name
+				</a>
+				<br />
+				<a href="#Variant_2_-_structuralname">
+					Variant 2 - structural/name
+				</a>
+				<br />
+				<a href="#Variant_3_-_namerandoms">
+					Variant 3 - name/randoms
+				</a>
+				<br />
+				<a href="#Variant_4a_-_name_e.g._for_employees">
+					Variant 4a - name (e.g. for employees)
+				</a>
+				<br />
+				<a
+					href="#Variant_4b_-_staticmatriculation_number_e.g._for_students">
+					Variant 4b - static/matriculation number (e.g. for
+					students)
+				</a>
+				<br />
+				<a
+					href="#Variant_5_-_random_charactersrandom_numberstrailing_random_character">
+					Variant 5 - random characters/random
+					numbers/trailing random character
+				</a>
+				<br />
+				<a href="#Variant_6_-_namerandom_numberstructural">
+					Variant 6 - name/random number/structural
+				</a>
+				<br />
+				<a href="#Variant_7_-_yearname">
+					Variant 7 - year/name
+				</a>
+				<br />
+				<a href="#Variant_8_-_yearname">
+					Variant 8 - year/name
+				</a>
+				<br />
+				<a href="#Variant_9_-_yearname">
+					Variant 9 - year/name
+				</a>
+				<br />
+				<a href="#Variant_10_-_yearname">
+					Variant 10 - year/name
+				</a>
+				<br />
+				<a
+					href="#Variant_11_-_random_charactersrandom_numbers">
+					Variant 11 - random characters/random numbers
+				</a>
+				<br />
+				<a
+					href="#Variant_12_-_nameoptional_first-nameoptional_number_counter">
+					Variant 12 - name/optional first-name/optional
+					number counter
+				</a>
+				<br />
+				<a href="#Variant_13_-_namerandom_number">
+					Variant 13 - name/random number
+				</a>
+				<br />
+				<a
+					href="#Variant_14_-_random_charactersrandom_numbersname">
+					Variant 14 - random characters/random numbers/name
+				</a>
+				<br />
+				<a href="#Variant_15_-_randompronounceableblacklist">
+					Variant 15 - random/pronounceable/blacklist
+				</a>
+				<br />
+
+			</p>
+		</section>
+
+		<section name="Variant 1 - structural/year/name">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should contain a
+						<em>structural identifier</em>
+						, the current
+						<em>year</em>
+						and the user's first and last
+						<em>name</em>
+						.
+						<br />
+						This data is provided externally and assigned to
+						some arbitrary lower case variable letters for
+						later reference.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						<br />
+						<code>syllff</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+
+								<tr>
+									<td>s</td>
+									<td>static strutural character</td>
+									<td>
+										"i" (e.g. for information
+										technology)
+									</td>
+									<td>
+										<a
+											href="./template.html#Basics">
+											Basic Element
+										</a>
+									</td>
+									<td>s</td>
+									<td>
+										just insert variable content
+										contained in
+										<strong>s</strong>
+									</td>
+									<td>"i"</td>
+								</tr>
+
+								<tr>
+									<td>y</td>
+									<td>last character of the year</td>
+									<td>"2008"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>y1</td>
+									<td>
+										take one character from the
+										right end of the string
+										contained in
+										<strong>y</strong>
+									</td>
+									<td>"8"</td>
+								</tr>
+
+								<tr>
+									<td>ll</td>
+									<td>
+										first 2 characters of the last
+										name
+									</td>
+									<td>"Doe"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>2l</td>
+									<td>
+										take two characters from the
+										left end of the string contained
+										in
+										<strong>l</strong>
+									</td>
+									<td>"do"</td>
+								</tr>
+
+								<tr>
+									<td>ff</td>
+									<td>
+										first 2 characters of the first
+										name
+									</td>
+									<td>"John"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>2f</td>
+									<td>
+										take two characters from the
+										left end of the string contained
+										in
+										<strong>f</strong>
+									</td>
+									<td>"jo"</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>s:y1:2l:2f</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>
+							java -jar jidgen.jar -Ts i -Ty 2008 -Tl Doe
+							-Tf John -T s:y1:2l:2f
+						</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>i8dojo</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Variant 2 - structural/name">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should contain a
+						<em>structural identifier</em>
+						and the user's first and last
+						<em>name</em>
+						.
+						<br />
+						This data is provided externally and assigned to
+						some arbitrary lower case variable letters for
+						later reference.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						<br />
+						<code>ssffllll</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+								<tr>
+									<td>ss</td>
+									<td>static strutural characters</td>
+									<td>
+										"it" (e.g. for information
+										technology)
+									</td>
+									<td>
+										<a
+											href="./template.html#Basics">
+											Basic Element
+										</a>
+									</td>
+									<td>s</td>
+									<td>
+										just insert variable content
+										contained in
+										<strong>s</strong>
+									</td>
+									<td>"it"</td>
+								</tr>
+								<tr>
+									<td>ff</td>
+									<td>
+										first 2 characters of the first
+										name
+									</td>
+									<td>"John"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>2f</td>
+									<td>
+										take two characters from the
+										left end of the string contained
+										in
+										<strong>f</strong>
+									</td>
+									<td>"jo"</td>
+								</tr>
+								<tr>
+									<td>llll</td>
+									<td>
+										first 4 characters of the last
+										name
+									</td>
+									<td>"Doeman"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>4l</td>
+									<td>
+										take four characters from the
+										left end of the string contained
+										in
+										<strong>l</strong>
+									</td>
+									<td>"doem"</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>ss:2f:4l</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>
+							java -jar jidgen.jar -Ts it -Tl Doeman -Tf
+							John -T s:2f:4l
+						</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>itjodoem</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Variant 3 - name/randoms">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should contain a
+						<em>random</em>
+						character string and the user's first
+						<em>name</em>
+						.
+						<br />
+						This data is provided externally and assigned to
+						some arbitrary lower case variable letters for
+						later reference.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						<br />
+						<code>ffabcde</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+								<tr>
+									<td>ff</td>
+									<td>
+										first 2 characters of the first
+										name
+									</td>
+									<td>"John"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>2f</td>
+									<td>
+										take two characters from the
+										left end of the string contained
+										in
+										<strong>f</strong>
+									</td>
+									<td>"jo"</td>
+								</tr>
+								<tr>
+									<td>abcde</td>
+									<td>
+										5 random characters
+										<br />
+										(
+										<strong>L</strong>
+										etters -> [a-z])
+									</td>
+									<td>
+										predefined character class -
+										letters [a-z]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randoms">
+											Random Element
+										</a>
+									</td>
+									<td>L5+</td>
+									<td>
+										take the predefined letter
+										character class with variable
+										<strong>L</strong>
+										and generate a random string
+										with length five out of it
+									</td>
+									<td>e.g. "xshcd"</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>2f:L5+</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>
+							java -jar jidgen.jar -Tf John -T 2f:L5+
+						</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>joxshcd</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Variant 4a - name (e.g. for employees)">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should contain the user's first
+						and last
+						<em>name</em>
+						.
+						<br />
+						This data is provided externally and assigned to
+						some arbitrary lower case variable letters for
+						later reference.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						<br />
+						<code>ffffllll</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+								<tr>
+									<td>ffff</td>
+									<td>
+										first 4 characters of the first
+										name
+									</td>
+									<td>"John"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>4f</td>
+									<td>
+										take four characters from the
+										left end of the string contained
+										in
+										<strong>f</strong>
+									</td>
+									<td>"john"</td>
+								</tr>
+								<tr>
+									<td>llll</td>
+									<td>
+										first 4 characters of the last
+										name
+									</td>
+									<td>"Doeman"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>4l</td>
+									<td>
+										take four characters from the
+										left end of the string contained
+										in
+										<strong>l</strong>
+									</td>
+									<td>e.g. "doem"</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>4f:4l</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>
+							java -jar jidgen.jar -Tf John -Tl Doeman -T
+							2f:4l
+						</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>johndoem</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section
+			name="Variant 4b - static/matriculation number (e.g. for students)">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should contain a
+						<em>static</em>
+						prefix and the user's
+						<em>registration/matriculation number</em>
+						.
+						<br />
+						This data is provided externally and assigned to
+						some arbitrary lower case variable letters for
+						later reference.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						<br />
+						<code>qnnnnnnn</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+								<tr>
+									<td>q</td>
+									<td>static prefix string</td>
+									<td>
+										none (data is inserted directly
+										into the template, e.g. 's' for
+										'student')
+									</td>
+									<td>
+										<a
+											href="./template.html#Statics">
+											Static Element
+										</a>
+									</td>
+									<td>=s</td>
+									<td>
+										just insert the string following
+										the '=' unmodified
+									</td>
+									<td>"s"</td>
+								</tr>
+								<tr>
+									<td>nnnnnnn</td>
+									<td>
+										just insert the value of a
+										specified variable unmodified
+									</td>
+									<td>"1230815"</td>
+									<td>
+										<a
+											href="./template.html#Basics">
+											Basic Element
+										</a>
+									</td>
+									<td>n</td>
+									<td>
+										just insert the value contained
+										within the variable with the
+										letter
+										<strong>n</strong>
+									</td>
+									<td>"1230815"</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>=s:n</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>
+							java -jar jidgen.jar -Tn 1230815 -T =s:n
+						</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>s1230815</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section
+			name="Variant 5 - random characters/random numbers/trailing random character">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should be
+						<em>random</em>
+						and contain
+						<em>characters</em>
+						and
+						<em>numbers</em>
+						and one
+						<em>single trailing random character</em>
+						.
+						<br />
+						This example does not need any external data.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						<br />
+						<code>abc123c</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+								<tr>
+									<td>abc</td>
+									<td>
+										3 random characters
+										<br />
+										(
+										<strong>L</strong>
+										etters -> [a-z])
+									</td>
+									<td>
+										predefined character class -
+										letters [a-z]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randoms">
+											Random Element
+										</a>
+									</td>
+									<td>L3+</td>
+									<td>
+										take the predefined letter
+										character class with variable L
+										and generate a random string
+										with length three out of it
+									</td>
+									<td>"jrs"</td>
+								</tr>
+								<tr>
+									<td>123</td>
+									<td>
+										3 random numbers
+										<br />
+										(
+										<strong>N</strong>
+										umbers -> [0-9])
+									</td>
+									<td>
+										predefined character class -
+										numbers [0-9]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randsoms">
+											Random Element
+										</a>
+									</td>
+									<td>N3+</td>
+									<td>
+										take the predefined number
+										character class with variable N
+										and generate a random string
+										with length three out of it
+									</td>
+									<td>"036"</td>
+								</tr>
+								<tr>
+									<td>c</td>
+									<td>
+										1 random character
+										<br />
+										(
+										<strong>L</strong>
+										etters -> [a-z])
+									</td>
+									<td>
+										predefined character class -
+										letters [a-z]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randoms">
+											Random Element
+										</a>
+									</td>
+									<td>L+</td>
+									<td>
+										take the predefined letter
+										character class with variable L
+										and generate a random string
+										with length one out of it
+									</td>
+									<td>"h"</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>L3+:N3+:L+</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>java -jar jidgen.jar -T L3+:N3+:L+</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>jrs036h</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Variant 6 - name/random number/structural">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should contain the
+						<em>first</em>
+						and
+						<em>last name</em>
+						of the user, a
+						<em>random number</em>
+						and some
+						<em>trailing structural string</em>
+						.
+						<br />
+						This data is provided externally and assigned to
+						some arbitrary lower case variable letters for
+						later reference.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						<br />
+						<code>ffll0ss</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+								<tr>
+									<td>ff</td>
+									<td>
+										first 2 characters of the first
+										name
+									</td>
+									<td>"John"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>2f</td>
+									<td>
+										take two characters from the
+										left end of the string contained
+										in
+										<strong>f</strong>
+									</td>
+									<td>"jo"</td>
+								</tr>
+								<tr>
+									<td>ll</td>
+									<td>
+										first 2 characters of the last
+										name
+									</td>
+									<td>"Doeman"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>2l</td>
+									<td>
+										take two characters from the
+										left end of the string contained
+										in
+										<strong>l</strong>
+									</td>
+									<td>"do"</td>
+								</tr>
+								<tr>
+									<td>0</td>
+									<td>
+										1 random number (
+										<strong>N</strong>
+										umbers -> [0-9])
+									</td>
+									<td>
+										predefined character class -
+										numbers [0-9]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randoms">
+											Random Element
+										</a>
+									</td>
+									<td>N+</td>
+									<td>
+										take the predefined number
+										character class with variable N
+										and generate a random string
+										with length one out of it
+									</td>
+									<td>"3"</td>
+								</tr>
+								<tr>
+									<td>ss</td>
+									<td>static strutural characters</td>
+									<td>
+										"it" (e.g. for information
+										technology)
+									</td>
+									<td>
+										<a
+											href="./template.html#Basics">
+											Basic Element
+										</a>
+									</td>
+									<td>s</td>
+									<td>
+										just insert variable content
+										contained in
+										<strong>s</strong>
+									</td>
+									<td>"it"</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>2f:2l:N+:s</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>
+							java -jar jidgen.jar -Tf John -Tl Doeman -Ts
+							it -T 2f:2l:N+:s
+						</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>jodo3it</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Variant 7 - year/name">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should contain the last two
+						digits of the
+						<em>year</em>
+						and the
+						<em>first</em>
+						and
+						<em>last name</em>
+						of the user.
+						<br />
+						This data is provided externally and assigned to
+						some arbitrary lower case variable letters for
+						later reference.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						<br />
+						<code>yyffll</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+								<tr>
+									<td>yy</td>
+									<td>
+										last two characters of the year
+									</td>
+									<td>"2008"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>y2</td>
+									<td>
+										take two characters from the
+										right end of the string
+										contained in
+										<strong>y</strong>
+									</td>
+									<td>"08"</td>
+								</tr>
+								<tr>
+									<td>ff</td>
+									<td>
+										first 2 characters of the first
+										name
+									</td>
+									<td>"John"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>2f</td>
+									<td>
+										take two characters from the
+										left end of the string contained
+										in
+										<strong>f</strong>
+									</td>
+									<td>"jo"</td>
+								</tr>
+								<tr>
+									<td>ll</td>
+									<td>
+										first 2 characters of the last
+										name
+									</td>
+									<td>"Doeman"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>2l</td>
+									<td>
+										take two characters from the
+										left end of the string contained
+										in
+										<strong>l</strong>
+									</td>
+									<td>"do"</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>y2:2f:2l</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>
+							java -jar jidgen.jar -Ty 2008 -Tf John -Tl
+							Doeman -T y2:2f:2l
+						</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>08jodo</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Variant 8 - year/name">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should contain the last two
+						digits of the
+						<em>year</em>
+						and the
+						<em>first</em>
+						and
+						<em>last name</em>
+						of the user.
+						<br />
+						This data is provided externally and assigned to
+						some arbitrary lower case variable letters for
+						later reference.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						<br />
+						<code>yyflll</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+								<tr>
+									<td>yy</td>
+									<td>
+										last two characters of the year
+									</td>
+									<td>"2008"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>y2</td>
+									<td>
+										take two characters from the
+										right end of the string
+										contained in
+										<strong>y</strong>
+									</td>
+									<td>"08"</td>
+								</tr>
+								<tr>
+									<td>f</td>
+									<td>
+										first character of the first
+										name
+									</td>
+									<td>"John"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>1f</td>
+									<td>
+										take one characters from the
+										left end of the string contained
+										in
+										<strong>f</strong>
+									</td>
+									<td>"jo"</td>
+								</tr>
+								<tr>
+									<td>lll</td>
+									<td>
+										first 3 characters of the last
+										name
+									</td>
+									<td>"Doeman"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>3l</td>
+									<td>
+										take three characters from the
+										left end of the string contained
+										in
+										<strong>l</strong>
+									</td>
+									<td>"doe"</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>y2:1f:3l</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>
+							java -jar jidgen.jar -Ty 2008 -Tf John -Tl
+							Doeman -T y2:1f:3l
+						</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>08jdoe</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Variant 9 - year/name">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should contain the last two
+						digits of the
+						<em>year</em>
+						and the
+						<em>first</em>
+						and
+						<em>last name</em>
+						of the user.
+						<br />
+						This data is provided externally and assigned to
+						some arbitrary lower case variable letters for
+						later reference.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						<br />
+						<code>yyfllll</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+								<tr>
+									<td>yy</td>
+									<td>
+										last two characters of the year
+									</td>
+									<td>"2008"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>y2</td>
+									<td>
+										take two characters from the
+										right end of the string
+										contained in
+										<strong>y</strong>
+									</td>
+									<td>"08"</td>
+								</tr>
+								<tr>
+									<td>f</td>
+									<td>
+										first character of the first
+										name
+									</td>
+									<td>"John"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>1f</td>
+									<td>
+										take one characters from the
+										left end of the string contained
+										in
+										<strong>f</strong>
+									</td>
+									<td>"jo"</td>
+								</tr>
+								<tr>
+									<td>llll</td>
+									<td>
+										first 4 characters of the last
+										name
+									</td>
+									<td>"Doeman"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>4l</td>
+									<td>
+										take four characters from the
+										left end of the string contained
+										in
+										<strong>l</strong>
+									</td>
+									<td>"doem"</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>y2:1f:4l</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>
+							java -jar jidgen.jar -Ty 2008 -Tf John -Tl
+							Doeman -T y2:1f:4l
+						</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>08jdoem</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Variant 10 - year/name">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should contain the last two
+						digits of the
+						<em>year</em>
+						and the
+						<em>first</em>
+						and
+						<em>last name</em>
+						of the user.
+						<br />
+						This data is provided externally and assigned to
+						some arbitrary lower case variable letters for
+						later reference.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						<br />
+						<code>fllllyy</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+								<tr>
+									<td>f</td>
+									<td>
+										first character of the first
+										name
+									</td>
+									<td>"John"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>1f</td>
+									<td>
+										take one characters from the
+										left end of the string contained
+										in
+										<strong>f</strong>
+									</td>
+									<td>"jo"</td>
+								</tr>
+								<tr>
+									<td>llll</td>
+									<td>
+										first 4 characters of the last
+										name
+									</td>
+									<td>"Doeman"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>4l</td>
+									<td>
+										take four characters from the
+										left end of the string contained
+										in
+										<strong>l</strong>
+									</td>
+									<td>"doem"</td>
+								</tr>
+								<tr>
+									<td>yy</td>
+									<td>
+										last two characters of the year
+									</td>
+									<td>"2008"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>y2</td>
+									<td>
+										take two characters from the
+										right end of the string
+										contained in
+										<strong>y</strong>
+									</td>
+									<td>"08"</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>1f:4l:y2</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>
+							java -jar jidgen.jar -Ty 2008 -Tf John -Tl
+							Doeman -T 1f:4l:y2
+						</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>jdoem08</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Variant 11 - random characters/random numbers">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should contain a
+						<em>random character string</em>
+						and a
+						<em>random number</em>
+						.
+						<br />
+						This example does not need any external data.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						<br />
+						<code>abcd1234</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+								<tr>
+									<td>abcd</td>
+									<td>
+										4 random characters (
+										<strong>L</strong>
+										etters -> [a-z])
+									</td>
+									<td>
+										predefined character class -
+										letters [a-z]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randoms">
+											Random Element
+										</a>
+									</td>
+									<td>L4+</td>
+									<td>
+										take the predefined letter
+										character class with variable L
+										and generate a random string
+										with length four out of it
+									</td>
+									<td>"ksdb"</td>
+								</tr>
+								<tr>
+									<td>1234</td>
+									<td>
+										4 random numbers (
+										<strong>N</strong>
+										umbers -> [0-9])
+									</td>
+									<td>
+										predefined character class -
+										numbers [0-9]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randoms">
+											Random Element
+										</a>
+									</td>
+									<td>N4+</td>
+									<td>
+										take the predefined number
+										character class with variable N
+										and generate a random string
+										with length four out of it
+									</td>
+									<td>"3463"</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>L4+:N4+</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>java -jar jidgen.jar -T L4+:N4+</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>ksdb3463</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section
+			name="Variant 12 - name/optional first-name/optional number counter">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should be the
+						<em>last name</em>
+						only if possible.
+						<br />
+						If that is not sufficient, the first characters
+						of the
+						<em>first name</em>
+						should be added until the id is unambiguous. But
+						at most 2 characters.
+						<br />
+						If that is still not enough a numeric
+						<em>counter</em>
+						with one digit should be added and incremented
+						until the id is unambiguous.
+						<br />
+						This data is provided externally and assigned to
+						some arbitrary lower case variable letters for
+						later reference.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						<br />
+						<code>lastname[f][n]</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+								<tr>
+									<td>lastname</td>
+									<td>
+										static string containing the
+										users's last name
+									</td>
+									<td>"Doeman"</td>
+									<td>
+										<a
+											href="./template.html#Basics">
+											Basic Element
+										</a>
+									</td>
+									<td>l</td>
+									<td>
+										just insert variable content
+										contained in
+										<strong>l</strong>
+									</td>
+									<td>"doeman"</td>
+								</tr>
+								<tr>
+									<td>[f]</td>
+									<td>
+										optionally append the
+										<strong>first</strong>
+										character of the first name
+									</td>
+									<td>"John"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+										<br />
+										<a
+											href="./template.html#Resolvers">
+											Resolver Element
+										</a>
+									</td>
+									<td>[1f]</td>
+									<td>
+										if no other alternatives are
+										left while generating an
+										unambiguous id, activate this
+										element and take one character
+										from the left end of the string
+										contained in
+										<strong>f</strong>
+									</td>
+									<td>"j"</td>
+								</tr>
+								<tr>
+									<td>[f]</td>
+									<td>
+										optionally append the
+										<strong>second</strong>
+										character of the first name
+									</td>
+									<td>"John"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+										<br />
+										<a
+											href="./template.html#Resolvers">
+											Resolver Element
+										</a>
+									</td>
+									<td>[f2,2]</td>
+									<td>
+										if no other alternatives are
+										left while generating an
+										unambiguous id, activate this
+										element and take the second
+										character of the string
+										contained in
+										<strong>f</strong>
+									</td>
+									<td>"o"</td>
+								</tr>
+								<tr>
+									<td>[n]</td>
+									<td>
+										optionally append a counter with
+										a one digit number ( N umbers ->
+										[0-9])
+									</td>
+									<td>
+										predefined character class -
+										numbers [0-9]
+									</td>
+									<td>
+										<a
+											href="./template.html#Counters">
+											Counter Element
+										</a>
+										<br />
+										<a
+											href="./template.html#Resolvers">
+											Resolver Element
+										</a>
+									</td>
+									<td>[N++]</td>
+									<td>
+										if no other alternatives are
+										left while generating an
+										unambiguous id, activate this
+										element and count up a one digit
+										number starting at 0.
+									</td>
+									<td>"0", "1", "2", ...</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>l:[1f]:[f2,2]:[N++]</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>
+							java -jar jidgen.jar -Tf John -Tn Doeman -T
+							l:[1f]:[f2,2]:[N++]
+						</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>
+							doeman
+							<br />
+							or doemanj
+							<br />
+							or doemanjo
+							<br />
+							or doemanjo0 ...
+						</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Variant 13 - name/random number">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should contain the user's
+						<em>name</em>
+						and a
+						<em>random number</em>
+						.
+						<br />
+						This data is provided externally and assigned to
+						some arbitrary lower case variable letters for
+						later reference.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						<br />
+						<code>ffll1234</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+								<tr>
+									<td>ff</td>
+									<td>
+										first 2 characters of the first
+										name
+									</td>
+									<td>"John"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>2f</td>
+									<td>
+										take two characters from the
+										left end of the string contained
+										in
+										<strong>f</strong>
+									</td>
+									<td>"jo"</td>
+								</tr>
+								<tr>
+									<td>ll</td>
+									<td>
+										first 2 characters of the last
+										name
+									</td>
+									<td>"John"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>2l</td>
+									<td>
+										take two characters from the
+										left end of the string contained
+										in
+										<strong>l</strong>
+									</td>
+									<td>"do"</td>
+								</tr>
+
+								<tr>
+									<td>1234</td>
+									<td>
+										4 random numbers (
+										<strong>N</strong>
+										umbers -> [0-9])
+									</td>
+									<td>
+										predefined character class -
+										numbers [0-9]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randoms">
+											Random Element
+										</a>
+									</td>
+									<td>N4+</td>
+									<td>
+										take the predefined number
+										character class with variable N
+										and generate a random string
+										with length four out of it
+									</td>
+									<td>"3463"</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>2f:2l:N4+</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>
+							java -jar jidgen.jar -Tf John -Tl Doeman -T
+							2f:2l:N4+
+						</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>jodo3463</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section
+			name="Variant 14 - random characters/random numbers/name">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should contain the user's
+						<em>name</em>
+						, a
+						<em>random number</em>
+						and a
+						<em>random string</em>
+						.
+						<br />
+						This data is provided externally and assigned to
+						some arbitrary lower case variable letters for
+						later reference.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						<br />
+						<code>ab12llff</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+								<tr>
+									<td>ab</td>
+									<td>
+										2 random characters (
+										<strong>L</strong>
+										etters -> [a-z])
+									</td>
+									<td>
+										predefined character class -
+										letters [a-z]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randoms">
+											Random Element
+										</a>
+									</td>
+									<td>L2+</td>
+									<td>
+										take the predefined letter
+										character class with variable
+										<strong>L</strong>
+										and generate a random string
+										with length two out of it
+									</td>
+									<td>"du"</td>
+								</tr>
+								<tr>
+									<td>12</td>
+									<td>
+										2 random numbers (
+										<strong>N</strong>
+										umbers -> [0-9])
+									</td>
+									<td>
+										predefined character class -
+										numbers [0-9]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randoms">
+											Random Element
+										</a>
+									</td>
+									<td>N2+</td>
+									<td>
+										take the predefined number
+										character class with variable N
+										and generate a random string
+										with length four out of it
+									</td>
+									<td>"46"</td>
+								</tr>
+								<tr>
+									<td>ll</td>
+									<td>
+										first 2 characters of the last
+										name
+									</td>
+									<td>"John"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>2l</td>
+									<td>
+										take two characters from the
+										left end of the string contained
+										in
+										<strong>l</strong>
+									</td>
+									<td>"do"</td>
+								</tr>
+								<tr>
+									<td>ff</td>
+									<td>
+										first 2 characters of the first
+										name
+									</td>
+									<td>"John"</td>
+									<td>
+										<a
+											href="./template.html#Substrings">
+											Substring Element
+										</a>
+									</td>
+									<td>2f</td>
+									<td>
+										take two characters from the
+										left end of the string contained
+										in
+										<strong>f</strong>
+									</td>
+									<td>"jo"</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>L2+:N2+:2l:2f</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>
+							java -jar jidgen.jar -Tf John -Tl Doeman -T
+							L2+:N2+:2l:2f
+						</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>du46dojo</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+		<section name="Variant 15 - random/pronounceable/blacklist">
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<p>
+				<ul>
+					<li>
+						<strong>Goal</strong>
+						<br />
+						The generated id should be
+						<em>entirely random</em>
+						but
+						<em>pronounceable</em>
+						.
+						<br />
+						Ids should be filtered if they contain a word
+						from an external
+						<em>blacklist</em>
+						.
+						<br />
+						This example does not need any external data.
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Formalization</strong>
+						<br />
+						In this step we transform the rather fuzzy goal
+						definition from above into a more detailed id
+						definition.
+						<br />
+
+						A more specific - but still ambiguous - id
+						description which uses a natural, symbolic
+						syntax might look like this:
+						<br />
+						In this fuzzy definition
+						<br />
+						<ul>
+							<li>every c represents a consonant,</li>
+							<li>every v a vocal</li>
+							<li>and every n a number.</li>
+						</ul>
+						<br />
+						<br />
+						<code>cvnnkvk</code>
+						<br />
+						<br />
+						It can easily be transformed into jidgen's
+						template language as shown in this table below:
+						<br />
+						<br />
+						<table>
+							<tbody>
+								<tr>
+									<th>variable</th>
+									<th>intention</th>
+									<th>value/external data</th>
+									<th>element type</th>
+									<th>template</th>
+									<th>explanation</th>
+									<th>result</th>
+								</tr>
+								<tr>
+									<td>c</td>
+									<td>
+										1 random character (
+										<strong>C</strong>
+										onsonants ->
+										[bcdfghjklmnpqrstvwxyz])
+									</td>
+									<td>
+										predefined character class -
+										consonants
+										[bcdfghjklmnpqrstvwxyz]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randoms">
+											Random Element
+										</a>
+									</td>
+									<td>C+</td>
+									<td>
+										take the predefined letter
+										character class with variable
+										<strong>C</strong>
+										and generate a random string
+										with length one out of it
+									</td>
+									<td>"n"</td>
+								</tr>
+								<tr>
+									<td>v</td>
+									<td>
+										1 random character (
+										<strong>V</strong>
+										ocals -> [aeiou])
+									</td>
+									<td>
+										predefined character class -
+										vocals [aeiou]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randoms">
+											Random Element
+										</a>
+									</td>
+									<td>V+</td>
+									<td>
+										take the predefined letter
+										character class with variable
+										<strong>V</strong>
+										and generate a random string
+										with length one out of it
+									</td>
+									<td>"o"</td>
+								</tr>
+								<tr>
+									<td>nn</td>
+									<td>
+										2 random numbers (
+										<strong>N</strong>
+										umbers -> [0-9])
+									</td>
+									<td>
+										predefined character class -
+										numbers [0-9]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randoms">
+											Random Element
+										</a>
+									</td>
+									<td>N2+</td>
+									<td>
+										take the predefined number
+										character class with variable N
+										and generate a random string
+										with length four out of it
+									</td>
+									<td>"35"</td>
+								</tr>
+								<tr>
+									<td>c</td>
+									<td>
+										1 random character (
+										<strong>C</strong>
+										onsonants ->
+										[bcdfghjklmnpqrstvwxyz])
+									</td>
+									<td>
+										predefined character class -
+										consonants
+										[bcdfghjklmnpqrstvwxyz]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randoms">
+											Random Element
+										</a>
+									</td>
+									<td>C+</td>
+									<td>
+										take the predefined letter
+										character class with variable
+										<strong>C</strong>
+										and generate a random string
+										with length one out of it
+									</td>
+									<td>"d"</td>
+								</tr>
+								<tr>
+									<td>v</td>
+									<td>
+										1 random character (
+										<strong>V</strong>
+										ocals -> [aeiou])
+									</td>
+									<td>
+										predefined character class -
+										vocals [aeiou]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randoms">
+											Random Element
+										</a>
+									</td>
+									<td>V+</td>
+									<td>
+										take the predefined letter
+										character class with variable
+										<strong>V</strong>
+										and generate a random string
+										with length one out of it
+									</td>
+									<td>"a"</td>
+								</tr>
+								<tr>
+									<td>c</td>
+									<td>
+										1 random character (
+										<strong>C</strong>
+										onsonants ->
+										[bcdfghjklmnpqrstvwxyz])
+									</td>
+									<td>
+										predefined character class -
+										consonants
+										[bcdfghjklmnpqrstvwxyz]
+									</td>
+									<td>
+										<a
+											href="./template.html#Randoms">
+											Random Element
+										</a>
+									</td>
+									<td>C+</td>
+									<td>
+										take the predefined letter
+										character class with variable
+										<strong>C</strong>
+										and generate a random string
+										with length one out of it
+									</td>
+									<td>"x"</td>
+								</tr>
+							</tbody>
+						</table>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Template string</strong>
+						<br />
+						<br />
+						<code>C+:V+:N2+:C+:V+:C+</code>
+						<br />
+						<br />
+
+					</li>
+					<li>
+						<strong>CLI command</strong>
+						<br />
+						<br />
+						<code>
+							java -jar jidgen.jar -B -Bf blacklist_file
+							-T C+:V+:N2+:C+:V+:C+
+						</code>
+						<br />
+						<br />
+					</li>
+					<li>
+						<strong>Generated ID</strong>
+						<br />
+						<br />
+						<code>no35dax</code>
+						<br />
+						<br />
+					</li>
+				</ul>
+			</p>
+			<a href="#variant_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+
+	</body>
+</document>
