@@ -43,7 +43,7 @@
 			<item name="BerliOS" href="http://www.berlios.de/" />
 		</links>
 
-		<menu name="jidgen">
+		<menu name="jidgen" collapse="false">
 			<item name="Introduction" href="/introduction.html" />
 			<item name="Download" href="/download.html" />
 			<item name="FAQ" href="/faq.html" />
@@ -52,8 +52,11 @@
 			<item name="Filters" href="/filters.html" />
 			<item name="Examples" href="/examples.html" />
 		</menu>
-
+		
 		${reports}
 
+		<menu name="Links" collapse="false">
+			<item name="Development Page" href="https://developer.berlios.de/projects/jidgen/" />
+		</menu>
 	</body>
 </project>

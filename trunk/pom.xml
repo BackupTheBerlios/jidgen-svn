@@ -16,7 +16,7 @@
 		It uses templates for automated id generation and optional
 		collision detection to avoid duplicate ids.
 	</description>
-	<url>http://jpwgen.berlios.de</url>
+	<url>http://jidgen.berlios.de</url>
 
 	<!-- Properties -->
 	<properties>
@@ -93,7 +93,32 @@
 				<role>Developer</role>
 			</roles>
 		</contributor>
+
+		<contributor>
+			<name>Klaus Rosifka</name>
+			<email>klaus.rosifka::at::uni-jena.de</email>
+			<organization>RZ Uni Jena</organization>
+			<organizationUrl>
+				http://www.uni-jena.de/urz
+			</organizationUrl>
+			<roles>
+				<role>Spin doctor</role>
+			</roles>
+		</contributor>
+
+		<contributor>
+			<name>Bastian Melsheimer</name>
+			<email>Bastian.Melsheimer::at::rrze.uni-erlangen.de</email>
+			<organization>RRZE</organization>
+			<organizationUrl>
+				http://www.rrze.uni-erlangen.de
+			</organizationUrl>
+			<roles>
+				<role>Translator</role>
+			</roles>
+		</contributor>
 	</contributors>
+
 
 	<!-- Issue Management -->
 	<issueManagement>
@@ -122,8 +147,10 @@
 	<distributionManagement>
 		<!-- Site -->
 		<site>
-			<id>berlios.de</id>
-			<url>shell.berlios.de:/home/groups/jidgen/htdocs/</url>
+			<id>jidgen::at::berlios.de</id>
+			<url>
+				scpexe://shell.berlios.de/home/groups/jidgen/htdocs/
+			</url>
 		</site>
 	</distributionManagement>
 
