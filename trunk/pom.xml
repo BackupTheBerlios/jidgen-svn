@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -108,13 +109,25 @@
 
 		<contributor>
 			<name>Bastian Melsheimer</name>
-			<email>Bastian.Melsheimer::at::rrze.uni-erlangen.de</email>
+			<email>bastian.melsheimer::at::rrze.uni-erlangen.de</email>
 			<organization>RRZE</organization>
 			<organizationUrl>
 				http://www.rrze.uni-erlangen.de
 			</organizationUrl>
 			<roles>
 				<role>Translator</role>
+			</roles>
+		</contributor>
+		
+		<contributor>
+			<name>Beate Kaspar</name>
+			<email>beate.kaspar::at::rrze.uni-erlangen.de</email>
+			<organization>RRZE</organization>
+			<organizationUrl>
+				http://www.rrze.uni-erlangen.de
+			</organizationUrl>
+			<roles>
+				<role>Logo Design</role>
 			</roles>
 		</contributor>
 	</contributors>

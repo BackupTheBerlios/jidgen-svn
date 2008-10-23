@@ -134,7 +134,7 @@
 					<br />
 					<br />
 					<code>
-						static := (variable)
+						basic := (variable)
 						<br />
 						variable := [a-z]
 					</code>

@@ -18,8 +18,9 @@
 				<br />
 				<br />
 				<code>
-					java -jar jidgen.jar -Tf John -Tl Doe -T 2f:2l:N4+
+					java -jar jidgen.jar -Tf John -Tl Doe -T 2f:2l:N4++
 				</code>
+				Generated output: <i>jodo0000</i>
 			</p>
 			<p>
 				This is a copy-and-paste example for a quick understanding of <em>jidgen</em>.

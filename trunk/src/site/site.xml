@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <project>
 	<publishDate format="dd.MM.yyyy" />
 
 	<bannerLeft>
-		<name>Jidgen</name>
-		<src>images/jidgen.gif</src>
+		<name>jidgen</name>
+		<src>images/jidgen-logo.png</src>
 		<href>http://www.rrze.uni-erlangen.de/</href>
 	</bannerLeft>
 
@@ -36,6 +36,7 @@
 				piwik_idsite = 8;
 			</script>
 		</head>
+		
 		<links>
 			<item name="RRZE" href="http://www.rrze.uni-erlangen.de/" />
 			<item name="IDMone"
