@@ -8,26 +8,46 @@
 	<body>
 		<section name="Introduction">
 			<p>
-				<em>jidgen</em> has a variety of command line options to configure and modify its behavior. 
+				<em>jidgen</em>
+				has a variety of command line options to configure and
+				modify its behavior.
 			</p>
 			<p>
-				A very good starting point is the following example. <br />It uses two variables <b>f</b> and <b>l</b>
-				to reference the externally specified first and last name of a user.<br />
-				The template string utilizes the given data through their variable names as <a href="template.html#Substrings">substrings</a>
-				 and also adds a <a href="template.html#Counters">counter</a> element.
+				A very good starting point is the following example.
+				<br />
+				It uses two variables
+				<b>f</b>
+				and
+				<b>l</b>
+				to reference the externally specified first and last
+				name of a user.
+				<br />
+				The template string utilizes the given data through
+				their variable names as
+				<a href="template.html#Substrings">substrings</a>
+				and also adds a
+				<a href="template.html#Counters">counter</a>
+				element.
 				<br />
 				<br />
 				<code>
 					java -jar jidgen.jar -Tf John -Tl Doe -T 2f:2l:N4++
 				</code>
-				Generated output: <i>jodo0000</i>
+				Generated output:
+				<i>jodo0000</i>
 			</p>
 			<p>
-				This is a copy-and-paste example for a quick understanding of <em>jidgen</em>.
-				For a detailed list of <em>jidgen's</em> options see <a href="#jidgen_command_line_options">below</a>.
+				This is a copy-and-paste example for a quick
+				understanding of
+				<em>jidgen</em>
+				. For a detailed list of
+				<em>jidgen's</em>
+				options see
+				<a href="#jidgen_command_line_options">below</a>
+				.
 			</p>
 		</section>
-		
+
 		<section name="jidgen command line options">
 			<table border="1px">
 				<caption>jidgen cli options</caption>

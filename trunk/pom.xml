@@ -118,7 +118,7 @@
 				<role>Translator</role>
 			</roles>
 		</contributor>
-		
+
 		<contributor>
 			<name>Beate Kaspar</name>
 			<email>beate.kaspar::at::rrze.uni-erlangen.de</email>
@@ -128,6 +128,18 @@
 			</organizationUrl>
 			<roles>
 				<role>Logo Design</role>
+			</roles>
+		</contributor>
+
+		<contributor>
+			<name>Pavlina Pavlova</name>
+			<email>pavlina.pavlova::at::rrze.uni-erlangen.de</email>
+			<organization>RRZE</organization>
+			<organizationUrl>
+				http://www.rrze.uni-erlangen.de/
+			</organizationUrl>
+			<roles>
+				<role>Web-Design</role>
 			</roles>
 		</contributor>
 	</contributors>

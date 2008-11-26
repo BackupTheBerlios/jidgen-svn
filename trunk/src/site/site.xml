@@ -25,7 +25,7 @@
 	<skin>
 		<groupId>de.rrze</groupId>
 		<artifactId>rrzemavenskin</artifactId>
-		<version>0.0.1</version>
+		<!-- version>0.0.2</version-->
 	</skin>
 
 
@@ -36,7 +36,14 @@
 				piwik_idsite = 8;
 			</script>
 		</head>
-		
+
+		<breadcrumbs>
+			<item name="Berlios Page"
+				href="https://developer.berlios.de/projects/jidgen/" />
+			<item name="jidgen" href="index.html"/>
+		</breadcrumbs>
+
+
 		<links>
 			<item name="RRZE" href="http://www.rrze.uni-erlangen.de/" />
 			<item name="IDMone"
@@ -53,11 +60,12 @@
 			<item name="Filters" href="/filters.html" />
 			<item name="Examples" href="/examples.html" />
 		</menu>
-		
+
 		${reports}
 
-		<menu name="Links" collapse="false">
-			<item name="Development Page" href="https://developer.berlios.de/projects/jidgen/" />
+		<menu name="Technical" collapse="false">
+			<item name="Development Page"
+				href="https://developer.berlios.de/projects/jidgen/" />
 		</menu>
 	</body>
 </project>
