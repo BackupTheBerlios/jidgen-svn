@@ -1,5 +1,5 @@
 /*
- * jidgen, developed as a part of the IDMOne project at RRZE.
+ * jidgen, developed as a part of the IDMone project at RRZE.
  * Copyright 2008, RRZE, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors. This
@@ -60,75 +60,75 @@ public abstract class AbstractFilter
 	
 	
 	/**
-	 * Default contructor
+	 * Default constructor
 	 */
 	public AbstractFilter() {
-		//logger.info(Messages.getString("Filter.INIT_MESSAGE") + this.description);
+		//logger.info(Messages.getString(this.getClass().getSimpleName() + ".INIT_MESSAGE"));
 	}
 	
+	/**
+	 * @param id
+	 */
 	public AbstractFilter(String id) {
 		this.setID(id);
 	}
 	
+	/**
+	 * @param id
+	 * @param description
+	 */
 	public AbstractFilter(String id, String description) {
 		this(id);
 		this.setDescription(description);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.rrze.idmone.utils.pwgen.IFilter#getDescription()
+
+	/* (non-Javadoc)
+	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#getDescription()
 	 */
 	public String getDescription()
 	{
 		return this.description;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.rrze.idmone.utils.pwgen.IFilter#getID()
+
+	/* (non-Javadoc)
+	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#getID()
 	 */
 	public String getID()
 	{
 		return this.id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.rrze.idmone.utils.pwgen.IFilter#setDescription(java.lang.String)
+
+	/* (non-Javadoc)
+	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#setDescription(java.lang.String)
 	 */
 	public void setDescription(String new_description)
 	{
 		this.description = new_description;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.rrze.idmone.utils.pwgen.IFilter#setID(java.lang.String)
+
+	/* (non-Javadoc)
+	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#setID(java.lang.String)
 	 */
 	public void setID(String new_id)
 	{
 		this.id = new_id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.rrze.idmone.utils.pwgen.IFilter#getType()
+
+	/* (non-Javadoc)
+	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#getType()
 	 */
 	public String getType() {
 		return this.getClass().getSimpleName();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.rrze.idmone.utils.pwgen.IFilter#filter(int,
-	 *      java.util.List)
+
+	/* (non-Javadoc)
+	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#apply(java.util.List)
 	 */
 	public List<String> apply(List<String> id) {
 		List<String> suitable = new ArrayList<String>();

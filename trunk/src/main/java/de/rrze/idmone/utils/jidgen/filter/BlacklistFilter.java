@@ -1,5 +1,5 @@
 /*
- * jidgen, developed as a part of the IDMOne project at RRZE.
+ * jidgen, developed as a part of the IDMone project at RRZE.
  * Copyright 2008, RRZE, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors. This
@@ -35,7 +35,7 @@ import de.rrze.idmone.utils.jidgen.Messages;
 
 
 /**
- * This class is used for filtering ids from a blacklist. If the proposed
+ * This class is used for filtering IDs from a blacklist. If the proposed
  * id is contained within the blacklist, <em>null</em> is returned to
  * indicate the password is not suitable. Otherwise the password itself is
  * returned.
@@ -64,28 +64,41 @@ public class BlacklistFilter
 	public BlacklistFilter() {
 	}
 
+	/**
+	 * @param id
+	 */
 	public BlacklistFilter(String id) {
 		super(id);
 	}
 	
+	/**
+	 * @param id
+	 * @param description
+	 */
 	public BlacklistFilter(String id, String description) {
 		super(id, description);
 	}	
 	
+	/**
+	 * @param id
+	 * @param description
+	 * @param blacklist
+	 */
 	public BlacklistFilter(String id, String description, List<String> blacklist) {
 		super(id, description);
 		this.setBlacklist(blacklist);
 	}
 	
+	/**
+	 * @param blacklist
+	 */
 	public BlacklistFilter(List<String> blacklist) {
 		this.setBlacklist(blacklist);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.rrze.idmone.utils.pwgen.IPassowrdFilter#filter(int,
-	 *      java.lang.String)
+
+	/* (non-Javadoc)
+	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#apply(java.lang.String)
 	 */
 	public String apply(String id) {
 		// Iterate over the list and check whether it contains the word

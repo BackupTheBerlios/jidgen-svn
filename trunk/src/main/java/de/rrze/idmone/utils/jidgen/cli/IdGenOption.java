@@ -1,5 +1,5 @@
 /*
- * jidgen, developed as a part of the IDMOne project at RRZE.
+ * jidgen, developed as a part of the IDMone project at RRZE.
  * Copyright 2008, RRZE, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors. This
@@ -87,22 +87,37 @@ public class IdGenOption
 		this.setRequired(required);
 	}
 	
+	/**
+	 * @param dummy
+	 */
 	public void setDummy(boolean dummy) {
 		this.dummy = dummy;
 	}
 	
+	/**
+	 * @return
+	 */
 	public boolean isDummy() {
 		return this.dummy;
 	}
 	
+	/**
+	 * @param visible
+	 */
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
 	
+	/**
+	 * @return
+	 */
 	public boolean isVisible() {
 		return this.visible;
 	}
 	
+	/**
+	 * @param shortOpt
+	 */
 	public void setShortOpt(String shortOpt) {
 		if (this.isDummy()) {
 			this.shortOpt = shortOpt;
@@ -112,6 +127,9 @@ public class IdGenOption
 		}
 	}
 	
+	/**
+	 * @return
+	 */
 	public String getShortOpt() {
 		if (this.isDummy()) {
 			return this.shortOpt;
@@ -121,18 +139,30 @@ public class IdGenOption
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.apache.commons.cli.Option#getOpt()
+	 */
 	public String getOpt() {
 		return this.getShortOpt();
 	}
 
+	/**
+	 * @return
+	 */
 	public boolean hasDefaultValue() {
 		return (this.defaultValue != null);
 	}
 	
+	/**
+	 * @param defaultValue
+	 */
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
 	}
 	
+	/**
+	 * @return
+	 */
 	public String getDefaultValue() {
 		if (this.hasDefaultValue()) {
 			return this.defaultValue;

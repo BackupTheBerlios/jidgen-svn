@@ -1,5 +1,5 @@
 /*
- * jidgen, developed as a part of the IDMOne project at RRZE.
+ * jidgen, developed as a part of the IDMone project at RRZE.
  * Copyright 2008, RRZE, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors. This
@@ -36,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
 import de.rrze.idmone.utils.jidgen.cli.IdGenOptions;
 import de.rrze.idmone.utils.jidgen.filter.BlacklistFilter;
 import de.rrze.idmone.utils.jidgen.filter.FilterChain;
+import de.rrze.idmone.utils.jidgen.filter.LdapFilter;
 import de.rrze.idmone.utils.jidgen.filter.PasswdFilter;
 import de.rrze.idmone.utils.jidgen.filter.ShellCmdFilter;
 import de.rrze.idmone.utils.jidgen.template.Template;
@@ -122,6 +123,9 @@ public class IdGenerator
 	}
 
 
+	/**
+	 * @param args
+	 */
 	public IdGenerator(String[] args) {
 		this();
 		this.setCLIArgs(args);
@@ -129,6 +133,9 @@ public class IdGenerator
 	}
 
 
+	/**
+	 * @param args
+	 */
 	public IdGenerator(String args) {
 		this();
 		this.setCLIArgs(args);
@@ -269,6 +276,22 @@ public class IdGenerator
 			this.filterChain.addFilter(bl);
 		}
 
+		// ldap filter
+		if (this.options.hasOptionValue("L")) {
+			logger.trace("Enable LDAP filter...");
+			LdapFilter ldap = new LdapFilter();
+
+/*			if (this.options.hasOptionValue("Bf")) {
+				Globals.BLACKLIST_FILE = this.options.getOptionValue("Bf");
+				logger.trace("Using ALTERNATE blacklist file (" + Globals.BLACKLIST_FILE + ").");
+			}
+			else {
+				logger.trace("Using DEFAULT blacklist file (" + Globals.BLACKLIST_FILE + ").");
+			}
+*/
+			this.filterChain.addFilter(ldap);
+		}
+		
 		// passwd filter
 		if (this.options.hasOptionValue("P")) {
 			logger.trace("Enable passwd filter...");
@@ -532,7 +555,17 @@ public class IdGenerator
 
 		logger.trace("Building CLI options...");
 
-		// number of ids
+		// id template string
+		opts.add(
+				"T",
+				"template", 
+				Messages.getString("IIdGenCommandLineOptions.CL_TEMPLATE_DESC"), 
+				1,
+				"template",
+				' '
+		);
+		
+		// terminal width
 		opts.add(
 				"W",
 				"terminal-width",
@@ -569,7 +602,7 @@ public class IdGenerator
 				' '
 		);
 
-		// shellcmd filter
+		// shellcmd filter enable
 		opts.add(
 				"S",
 				"enable-shellcmd-filter",
@@ -586,7 +619,7 @@ public class IdGenerator
 				' '
 		);
 
-		// passwd filter
+		// passwd filter enable
 		opts.add(
 				"P",
 				"enable-passwd-filter",
@@ -603,13 +636,22 @@ public class IdGenerator
 				' '
 		);
 
-		// blacklist filter
+		// blacklist filter enable
 		opts.add(
 				"B",
 				"enable-blacklist-filter",
 				Messages.getString("IIdGenCommandLineOptions.CL_BLACKLIST_DESC") + " (Default: " + Globals.DEFAULT_BLACKLIST_FILE + ")"
 		);
 
+		
+		// ldap filter enable
+		opts.add(
+				"L",
+				"enable-ldap-filter",
+				Messages.getString("IIdGenCommandLineOptions.CL_LDAP_DESC")
+		);
+		
+		
 		// create all "T[a-z]" options as invisible and a dummy option for them
 		for (char currentChar = 'a'; currentChar < 'z'; currentChar++) {
 			opts.addInvisible(
@@ -628,15 +670,6 @@ public class IdGenerator
 				"data"
 		);
 
-		// id template string
-		opts.add(
-				"T",
-				"template", 
-				Messages.getString("IIdGenCommandLineOptions.CL_TEMPLATE_DESC"), 
-				1,
-				"template",
-				' '
-		);
 
 		// display usage (short help)
 		opts.add(

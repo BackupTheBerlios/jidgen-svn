@@ -1,5 +1,5 @@
 /*
- * jidgen, developed as a part of the IDMOne project at RRZE.
+ * jidgen, developed as a part of the IDMone project at RRZE.
  * Copyright 2008, RRZE, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors. This
@@ -61,19 +61,24 @@ implements 	IFilter
 	public ShellCmdFilter() {
 	}
 
+	/**
+	 * @param id
+	 */
 	public ShellCmdFilter(String id) {
 		super(id);
 	}
 
+	/**
+	 * @param id
+	 * @param description
+	 */
 	public ShellCmdFilter(String id, String description) {
 		super(id, description);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.rrze.idmone.utils.pwgen.IFilter#filter(int,
-	 *      java.lang.String)
+
+	/* (non-Javadoc)
+	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#apply(java.lang.String)
 	 */
 	public String apply(String id)	{
 		String cmd = this.cmdTemplate.replace("%s", id);

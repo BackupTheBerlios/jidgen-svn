@@ -1,5 +1,5 @@
 /*
- * jidgen, developed as a part of the IDMOne project at RRZE.
+ * jidgen, developed as a part of the IDMone project at RRZE.
  * Copyright 2008, RRZE, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors. This
@@ -48,8 +48,9 @@ public class Globals
 	 */
 	public static final int MAX_ATTEMPTS = 10000;
 	
+	
 	/**
-	 * Number of id proposals to be outputted after one invokation of jidgen. 
+	 * Number of id proposals to be outputted after one invocation of jidgen. 
 	 */
 	public static final int DEFAULT_NUM_IDs = 1;
 	public static int NUM_IDs = DEFAULT_NUM_IDs; 
@@ -61,12 +62,14 @@ public class Globals
 	public static final int DEFAULT_TERM_WIDTH = 80;
 	public static int TERM_WIDTH = DEFAULT_TERM_WIDTH;
 	
+	
 	/**
 	 * Default blacklist file
 	 */
 	//public static final String DEFAULT_BLACKLIST_FILE = "src/main/config/blacklist";
 	public static final String DEFAULT_BLACKLIST_FILE = "blacklist";
 	public static String BLACKLIST_FILE = DEFAULT_BLACKLIST_FILE;
+	
 	
 	/**
 	 * Default passwd file
@@ -81,6 +84,7 @@ public class Globals
 	public static final String DEFAULT_SHELLCMD = "./filter.sh %s";
 	public static String SHELLCMD = DEFAULT_SHELLCMD;
 	
+	
 	/**
 	 * Default shell
 	 */
@@ -91,6 +95,7 @@ public class Globals
 	 */
 	public static final boolean DEFAULT_ENABLE_COLUMN_OUTPUT = false;
 	public static boolean ENABLE_COLUMN_OUTPUT = DEFAULT_ENABLE_COLUMN_OUTPUT;
+	
 	
 	/**
 	 * Special characters that can be included.

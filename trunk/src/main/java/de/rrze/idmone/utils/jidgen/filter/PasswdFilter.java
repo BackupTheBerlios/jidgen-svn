@@ -1,5 +1,5 @@
 /*
- * jidgen, developed as a part of the IDMOne project at RRZE.
+ * jidgen, developed as a part of the IDMone project at RRZE.
  * Copyright 2008, RRZE, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors. This
@@ -30,29 +30,22 @@ import org.apache.commons.logging.LogFactory;
 import de.rrze.idmone.utils.jidgen.File;
 import de.rrze.idmone.utils.jidgen.Messages;
 
-
 /**
- * A filter for ids that are already in use 
- * within the system's passwd file. 
+ * A filter for IDs that are already in use within the system's passwd file.
  * 
  * @author unrza249
  */
-public class PasswdFilter 
-extends AbstractFilter
-implements 	IFilter
-{
+public class PasswdFilter extends AbstractFilter implements IFilter {
 	/**
-	 *  The class logger
+	 * The class logger
 	 */
 	private static final Log logger = LogFactory.getLog(PasswdFilter.class);
 
 	/**
-	 * The location of the passwd file.
-	 * This should usually be /etc/passwd, at least for
-	 * the local system
+	 * The location of the passwd file. This should usually be /etc/passwd, at
+	 * least for the local system
 	 */
 	private String fileLocation = "/etc/passwd";
-
 
 	/**
 	 * Default constructor
@@ -60,35 +53,35 @@ implements 	IFilter
 	public PasswdFilter() {
 	}
 
+	/**
+	 * @param id
+	 */
 	public PasswdFilter(String id) {
 		super(id);
 	}
 
+	/**
+	 * @param id
+	 * @param description
+	 */
 	public PasswdFilter(String id, String description) {
 		super(id, description);
 	}
 
-
-
 	/**
-	 * Sets the location of the passwd file.
-	 * Defaults to /etc/passwd
+	 * Sets the location of the passwd file. Defaults to /etc/passwd
 	 * 
 	 * @param fileLocation
-	 * 			location of the passwd file
+	 *            location of the passwd file
 	 */
 	public void setFile(String fileLocation) {
 		this.fileLocation = fileLocation;
 	}
 
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.rrze.idmone.utils.pwgen.IFilter#filter(int,
-	 *      java.lang.String)
+	/* (non-Javadoc)
+	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#apply(java.lang.String)
 	 */
-	public String apply(String id)	{
+	public String apply(String id) {
 		// get a reader for the passwd file
 		File file = new File(this.fileLocation);
 
@@ -97,15 +90,17 @@ implements 	IFilter
 			String userID = line.substring(0, line.indexOf(':'));
 
 			if (id.equals(userID)) {
-				logger.trace(Messages.getString("PasswdFilter.TRACE_ID") 
-						+ " \"" + this.getID() + "\" "
-						+ Messages.getString("PasswdFilter.TRACE_SKIPPED_ENTRY") 
-						+ " \"" + userID 
-						+ "\"");
+				logger.trace(Messages.getString("PasswdFilter.TRACE_ID")
+						+ " \""
+						+ this.getID()
+						+ "\" "
+						+ Messages
+								.getString("PasswdFilter.TRACE_SKIPPED_ENTRY")
+						+ " \"" + userID + "\"");
 
 				return null;
 			}
-		}	
+		}
 		file.close();
 
 		return id;

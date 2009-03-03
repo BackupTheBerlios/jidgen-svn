@@ -1,5 +1,5 @@
 /*
- * jidgen, developed as a part of the IDMOne project at RRZE.
+ * jidgen, developed as a part of the IDMone project at RRZE.
  * Copyright 2008, RRZE, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors. This
@@ -42,6 +42,8 @@ import de.rrze.idmone.utils.jidgen.Messages;
 /**
  * A singleton that provides various
  * possibilities to get a random number generator.
+ * 
+ * @author unrz205
  */
 public class RandomFactory 
 	implements 	IRandomFactory
