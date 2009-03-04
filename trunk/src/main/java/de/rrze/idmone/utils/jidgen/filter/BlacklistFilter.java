@@ -31,6 +31,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.rrze.idmone.utils.jidgen.File;
 import de.rrze.idmone.utils.jidgen.Messages;
 
 
@@ -44,14 +45,20 @@ import de.rrze.idmone.utils.jidgen.Messages;
  * @author unrz205
  */
 public class BlacklistFilter 
-	extends AbstractFilter
-	implements IFilter
+extends AbstractFilter
+implements IFilter
 {
 	/**
 	 *  The class logger
 	 */
 	private static final Log logger = LogFactory.getLog(BlacklistFilter.class);
 
+	/**
+	 * The file containing the forbidden words 
+	 */
+	private File blacklistFile;
+	
+	
 	/**
 	 *  A list that stores the forbidden words
 	 */
@@ -62,6 +69,7 @@ public class BlacklistFilter
 	 * Default constructor.
 	 */
 	public BlacklistFilter() {
+		logger.info(Messages.getString(this.getClass().getSimpleName() + ".INIT_MESSAGE"));
 	}
 
 	/**
@@ -79,28 +87,13 @@ public class BlacklistFilter
 		super(id, description);
 	}	
 	
-	/**
-	 * @param id
-	 * @param description
-	 * @param blacklist
-	 */
-	public BlacklistFilter(String id, String description, List<String> blacklist) {
-		super(id, description);
-		this.setBlacklist(blacklist);
-	}
-	
-	/**
-	 * @param blacklist
-	 */
-	public BlacklistFilter(List<String> blacklist) {
-		this.setBlacklist(blacklist);
-	}
-	
 
 	/* (non-Javadoc)
 	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#apply(java.lang.String)
 	 */
 	public String apply(String id) {
+		logger.trace("Checking ID '" + id + "'");
+		
 		// Iterate over the list and check whether it contains the word
 		for (Iterator<String> iter = blacklist.iterator(); iter.hasNext();)	{
 			String blackword = iter.next();
@@ -146,17 +139,10 @@ public class BlacklistFilter
 	 * 
 	 * @param blackWord
 	 *            the forbidden word
-	 * @return <em>true</em> on successful inclusion, <em>false</me>
-	 *         otherwise
 	 */
-	public boolean addToBlacklist(String blackWord) {
-		if (blackWord == null || blackWord.isEmpty()) {
-			return false;
-		}
-		else {
+	public void add(String blackWord) {
 			logger.trace("Added blackword: \"" + blackWord + "\"");
-			return this.blacklist.add(blackWord);
-		}
+			this.blacklist.add(blackWord);
 	}
 
 	/**
@@ -164,11 +150,54 @@ public class BlacklistFilter
 	 * 
 	 * @param blackWord
 	 *            the word to be removed from the blacklist
-	 * @return <em>true</em> on successful removal, <em>false</em>
-	 *         otherwise
 	 */
-	public boolean removeFromBlacklist(String blackWord) {
-		return this.blacklist.remove(blackWord);
+	public void remove(String blackWord) {
+		this.blacklist.remove(blackWord);
+	}
+
+	/**
+	 * Removes all words from the blacklist leaving it empty.
+	 */
+	public void clear() {
+		this.blacklist.clear();
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#update()
+	 */
+	public boolean update() {
+		logger.trace("Update called.");
+		
+		// reset the blacklist file
+		this.blacklistFile.reset();
+		
+		// clear the stored blacklist
+		this.clear();
+		
+		// re-fill the blacklist from file
+		String word;
+		while((word = this.blacklistFile.getLine()) != null) {
+			this.add(word);
+		}
+		
+		return true;
+	}
+	
+	
+	/**
+	 * @return
+	 */
+	public File getBlacklistFile() {
+		return blacklistFile;
+	}
+
+	/**
+	 * @param blacklistFile
+	 */
+	public void setFile(File blacklistFile) {
+		logger.debug("blacklistFile = " + blacklistFile);
+		this.blacklistFile = blacklistFile;
 	}
 
 }

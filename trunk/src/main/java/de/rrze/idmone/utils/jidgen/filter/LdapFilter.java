@@ -24,19 +24,10 @@
 
 package de.rrze.idmone.utils.jidgen.filter;
 
-import java.util.Hashtable;
-
-import javax.naming.Context;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.rrze.idmone.utils.jidgen.Ldap;
 import de.rrze.idmone.utils.jidgen.Messages;
 
 /**
@@ -55,96 +46,97 @@ extends AbstractFilter
 	 */
 	private static final Log logger = LogFactory.getLog(LdapFilter.class);
 
+	/**
+	 * LDAP search -- the ldap search filter to use<br>
+	 * The string <b>{ID}</b> will be replaced by the ID which is currently being checked.
+	 */
+	private String searchFilter = "(sn={ID})";
+	
+	/**
+	 * The LDAP connection object for this filter
+	 */
+	private Ldap ldap;
+	
 
+	
+	
+	
 	/**
 	 * Default constructor
 	 */
 	public LdapFilter() {
 		logger.info(Messages.getString(this.getClass().getSimpleName() + ".INIT_MESSAGE"));
 	}
-
+	
 	/**
+	 * Constructor with filter ID
+	 * 
 	 * @param id
+	 * 		A unique ID to identify this filter object within the filter chain
 	 */
 	public LdapFilter(String id) {
-		this.setID(id);
+		super(id);
 	}
 
 	/**
+	 * Constructor with filter ID and description
+	 * 
 	 * @param id
+	 * 		A unique ID to identify this filter object within the filter chain
 	 * @param description
+	 * 		A textual description for this filter object to be printed on usage
 	 */
 	public LdapFilter(String id, String description) {
-		this(id);
-		this.setDescription(description);
+		super(id, description);
 	}
 
 
-
-
+	
+	
+	
 	/* (non-Javadoc)
 	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#apply(java.lang.String)
 	 */
 	public String apply(String id)	{
+		logger.trace("Checking ID '" + id + "'");
 		
-		// CONFIG
-		String 	ldapHost = "acer";
-		String 	ldapNamingContext = "dc=example,dc=com";
-		int 	ldapPort = 389;
-		String 	ldapUser = "cn=jidgen,ou=people,dc=example,dc=com";
-		String 	ldapPassword = "jidgen";
-//		String 	ldapUser = "cn=Manager,dc=example,dc=com";
-//		String 	ldapPassword = "acer";
-		String 	ldapSearchFilter = "(sn={ID})";
-		int 	ldapSearchScope = SearchControls.SUBTREE_SCOPE;
-		String 	ldapSearchBase = "ou=people";
-		
-		// START
-		logger.trace("Connecting to LDAP server...");		
-		Hashtable<String,String> env = new Hashtable<String,String>();
-		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");	
-		env.put(Context.PROVIDER_URL, "ldap://" + ldapHost + ":" + ldapPort + "/" + ldapNamingContext);
-		env.put(Context.SECURITY_PRINCIPAL, ldapUser);
-		env.put(Context.SECURITY_CREDENTIALS, ldapPassword);
+		// Specify the search filter to match
+		this.ldap.setSearchFilter(this.searchFilter.replace("{ID}", id));
 
-		try {
-			// Create initial context
-			DirContext ctx = new InitialDirContext(env);
-
-			// Specify the ids of the attributes to return
-			String[] attrIDs = {};
-
-			// Set search controls
-			SearchControls ctls = new SearchControls();
-			ctls.setReturningAttributes(attrIDs);
-			ctls.setSearchScope(ldapSearchScope);
-
-			// Specify the search filter to match
-			String filter = ldapSearchFilter.replace("{ID}", id);
-			logger.trace("Using search filter: " + filter);
-			
-			// Search for objects that have those matching attributes
-			NamingEnumeration<SearchResult> answer = ctx.search(ldapSearchBase, filter, ctls);
-
-			// Close the context when we're done
-			ctx.close();
-
-			if (answer.hasMore()) {
-				logger.trace("Found entries:");
-				while(answer.hasMore()) {
-					logger.trace(answer.next());
-				}
-				return null;
-			}
-			else {
-				return id;
-			}
+		// execute the search request
+		if (this.ldap.doSearch()) {
+			return null;
 		}
-		catch (NamingException e) {
-			logger.fatal("Exception", e);
-			System.exit(150);
+		else {
+			return id;
 		}
+	}
 
-		return null;
+	/**
+	 * @return
+	 */
+	public String getSearchFilter() {
+		return searchFilter;
+	}
+
+	/**
+	 * @param searchFilter
+	 */
+	public void setSearchFilter(String searchFilter) {
+		this.searchFilter = searchFilter;
+	}
+
+	/**
+	 * @return
+	 */
+	public Ldap getLdap() {
+		return ldap;
+	}
+
+	/**
+	 * @param ldap
+	 */
+	public void setLdap(Ldap ldap) {
+		this.ldap = ldap;
 	}
 }

@@ -31,6 +31,8 @@ import java.io.InputStreamReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.rrze.idmone.utils.jidgen.Messages;
+
 
 /**
  * A filter that calls the given shell command
@@ -59,6 +61,7 @@ implements 	IFilter
 	 * Default construct.
 	 */
 	public ShellCmdFilter() {
+		logger.info(Messages.getString(this.getClass().getSimpleName() + ".INIT_MESSAGE"));
 	}
 
 	/**
@@ -81,6 +84,8 @@ implements 	IFilter
 	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#apply(java.lang.String)
 	 */
 	public String apply(String id)	{
+		logger.trace("Checking ID '" + id + "'");
+		
 		String cmd = this.cmdTemplate.replace("%s", id);
 
 		logger.trace("Executing command: " + cmd);
@@ -89,12 +94,6 @@ implements 	IFilter
 		try {
 			Process proc = run.exec(cmd);
 			
-	/*		BufferedWriter commandLine = new BufferedWriter(
-					new OutputStreamWriter(proc.getOutputStream())
-			);
-			commandLine.write(cmd);
-			commandLine.flush();
-*/
 			// read stdout and log it to the debug level
 			BufferedReader stdOut = new BufferedReader(
 					new InputStreamReader(proc.getInputStream())

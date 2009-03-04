@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Loads the ResourceBundle associated with the IdGenerator. This ResourceBundle
- * contains the localized(externalized) strings used by the classes.
+ * contains the localized (external) strings used by the classes.
  * 
  * @author unrz205
  * 

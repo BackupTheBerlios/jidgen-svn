@@ -95,8 +95,9 @@ public class FilterChain {
 	 * Removes a filter from the chain by identifier search
 	 * 
 	 * @param id
-	 *            the identifier of the filter
-	 * @return the removed instance
+	 *      the identifier of the filter
+	 * @return 
+	 * 		the removed instance
 	 */
 	public IFilter removeFilter(String id) {
 		return chain.remove(id);
@@ -108,9 +109,10 @@ public class FilterChain {
 	 * the filter.
 	 * 
 	 * @param id
-	 *            the id to be checked
-	 * @return <em>null</em> if the id should be filtered and the
-	 *         id if it satisfies the rules.
+	 *      the id to be checked
+	 * @return 
+	 * 		<em>null</em> if the id should be filtered and the
+	 *      id if it satisfies the rules.
 	 */
 	public String apply(String id) {
 		Set<String> filterKeys = chain.keySet();
@@ -148,10 +150,28 @@ public class FilterChain {
 	}
 	
 	/**
+	 * Calls the update functions of every filter in the chain
+	 */
+	public void update() {
+		Set<String> filterKeys = chain.keySet();
+		
+		// iterate over all filters in the chain
+		for (Iterator<String> iter = filterKeys.iterator(); iter.hasNext();) {
+			IFilter filter = chain.get(iter.next());
+			
+			// call the filter's update method
+			logger.trace("Updating filter '" + filter.getID() + "'...");
+			filter.update();
+		}
+	}
+	
+	
+	/**
 	 * Clears the filter chain
 	 */
 	public void clear() {
 		this.chain.clear();
 	}
+	
 	
 }

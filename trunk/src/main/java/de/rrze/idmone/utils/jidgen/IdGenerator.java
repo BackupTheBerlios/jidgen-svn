@@ -43,10 +43,6 @@ import de.rrze.idmone.utils.jidgen.template.Template;
 
 /**
  * class IdGenerator
- * 
- * 
- * 
- * 
  * <p>
  * 		<b>Used external packages</b>
  * 		<br />
@@ -78,48 +74,35 @@ public class IdGenerator
 	 */
 	private String[] cliArgs;
 
-	/**
-	 * Flag that indicates whether or not an update of the
-	 * options object is needed.
-	 * <b>Only used internally!</b>
-	 */
-	private boolean updateOptions = true;
 
 	/**
 	 * A filter chain for the IdGenerator<br />
 	 * This chain contains all filters that should be applied to
 	 * the generated ids.
 	 */
-	private FilterChain filterChain; 
+	private FilterChain filterChain = new FilterChain();; 
 
+	
+	/**
+	 * Flag that indicates whether or not an update of the
+	 * options object is needed.
+	 * <b>Only used internally!</b>
+	 */
+	private boolean updateOptions = true;
+	
+	
+	
+	
+	
+	
 	/**
 	 * Default constructor of the IdGenerator
 	 */
 	public IdGenerator() {
 		logger.trace("Invoked default constructor.");
-		/*		
- 		// uncomment this for using an internally pre-defined configuration
- 		// together with the log4j logging system 
- 		try {
-			// configure the log4j logging system from a external configuration file
-			PropertyConfigurator.configure(this.getClass().getResource("/log4j.properties"));
-		}
-		catch (Exception e) {
-			// if that doesn't work use this default configuration
-			Properties props = new Properties();
-			props.put("log4j.rootLogger", "WARN, A1");
-			props.put("log4j.appender.A1", "org.apache.log4j.ConsoleAppender");
-			props.put("log4j.appender.A1.layout", "org.apache.log4j.PatternLayout");
-			props.put("log4j.appender.A1.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
-			PropertyConfigurator.configure(props);
-		}
-		 */	
 
 		// create options definition for CLI/external library usage
 		this.options = buildOptions();
-
-		// create an empty filter chain
-		this.filterChain = new FilterChain();
 	}
 
 
@@ -241,94 +224,80 @@ public class IdGenerator
 		logger.trace("Processing CLI arguments...");
 
 		/*
-		 * FLAGS
-		 */
-
-
-		/*
-		 * DATA
-		 */
-
-
-		/*
 		 * FILTERS
 		 */
 		// blacklist filter
 		if (this.options.hasOptionValue("B")) {
-			logger.trace("Enable blacklist filter...");
-			BlacklistFilter bl = new BlacklistFilter();
+			logger.trace("Enabling blacklist filter.");
+			BlacklistFilter blacklistFilter = new BlacklistFilter();
 
+			// source file
 			if (this.options.hasOptionValue("Bf")) {
-				Globals.BLACKLIST_FILE = this.options.getOptionValue("Bf");
-				logger.trace("Using ALTERNATE blacklist file (" + Globals.BLACKLIST_FILE + ").");
+				blacklistFilter.setFile(new File(this.options.getOptionValue("Bf")));
 			}
 			else {
-				logger.trace("Using DEFAULT blacklist file (" + Globals.BLACKLIST_FILE + ").");
+				blacklistFilter.setFile(new File(Globals.DEFAULT_BLACKLIST_FILE));
 			}
-
-			// read blacklist from file
-			File file = new File(Globals.BLACKLIST_FILE);
-			while(bl.addToBlacklist(file.getLine())) {
-				// just loop
-			}
-			file.close();
-
-			this.filterChain.addFilter(bl);
+			
+			// set a unique ID for this filter
+			blacklistFilter.setID(blacklistFilter.getClass().getSimpleName() + "-" + blacklistFilter.getBlacklistFile());
+			
+			this.filterChain.addFilter(blacklistFilter);
 		}
 
-		// ldap filter
-		if (this.options.hasOptionValue("L")) {
-			logger.trace("Enable LDAP filter...");
-			LdapFilter ldap = new LdapFilter();
-
-/*			if (this.options.hasOptionValue("Bf")) {
-				Globals.BLACKLIST_FILE = this.options.getOptionValue("Bf");
-				logger.trace("Using ALTERNATE blacklist file (" + Globals.BLACKLIST_FILE + ").");
-			}
-			else {
-				logger.trace("Using DEFAULT blacklist file (" + Globals.BLACKLIST_FILE + ").");
-			}
-*/
-			this.filterChain.addFilter(ldap);
-		}
-		
 		// passwd filter
 		if (this.options.hasOptionValue("P")) {
-			logger.trace("Enable passwd filter...");
-			PasswdFilter passwd = new PasswdFilter();
+			logger.trace("Enabling passwd filter.");
+			PasswdFilter passwdFilter = new PasswdFilter();
 
+			// source file
 			if (this.options.hasOptionValue("Pf")) {
-				Globals.PASSWD_FILE = this.options.getOptionValue("Pf");
-				logger.trace("Using ALTERNATE passwd file (" + Globals.PASSWD_FILE + ").");
+				passwdFilter.setFile(new File(this.options.getOptionValue("Pf")));
 			}
 			else {
-				logger.trace("Using DEFAULT passwd file (" + Globals.PASSWD_FILE + ").");
+				passwdFilter.setFile(new File(Globals.DEFAULT_PASSWD_FILE));
 			}
 
-			passwd.setFile(Globals.PASSWD_FILE);
+			// set a unique ID for this filter
+			passwdFilter.setID(passwdFilter.getClass().getSimpleName() + "-" + passwdFilter.getPasswdFile());
 
-			this.filterChain.addFilter(passwd);
+			this.filterChain.addFilter(passwdFilter);
 		}
 
 		// shellcmd filter
 		if (this.options.hasOptionValue("S")) {
-			logger.trace("Enable shellcmd filter...");
-			ShellCmdFilter shellCmd = new ShellCmdFilter();
+			logger.trace("Enabling shellcmd filter.");
+			ShellCmdFilter shellCmdFilter = new ShellCmdFilter();
 			
+			// file to execute
+			// TODO introduce Shell class similar to File/Ldap classes
 			if (this.options.hasOptionValue("Sf")) {
-				Globals.SHELLCMD = this.options.getOptionValue("Sf");
-				logger.trace("Using shell command (" + Globals.SHELLCMD + ").");
+				shellCmdFilter.setCmd(this.options.getOptionValue("Sf"));
 			}
 			else {
-				logger.trace("Using DEFAULT shell command (" + Globals.SHELLCMD + ").");
+				shellCmdFilter.setCmd(Globals.DEFAULT_SHELLCMD);
 			}
 			
-			shellCmd.setCmd(Globals.SHELLCMD);
+			// set a unique ID for this filter
+			shellCmdFilter.setID(shellCmdFilter.getClass().getSimpleName() + "-" + shellCmdFilter.getCmd());
 			
-			this.filterChain.addFilter(shellCmd);	
+			this.filterChain.addFilter(shellCmdFilter);	
 		}
 		
-		
+		// LDAP filter
+		if (this.options.hasOptionValue("L")) {
+			logger.trace("Enabling LDAP filter.");
+			LdapFilter ldapFilter = new LdapFilter();
+
+			// LDAP connection to use
+			ldapFilter.setLdap(new Ldap());
+			
+			// set a unique ID for this filter
+			ldapFilter.setID(ldapFilter.getClass().getSimpleName() + "-" + ldapFilter.getLdap());
+			
+			
+			this.filterChain.addFilter(ldapFilter);
+		}
 		
 		return true;
 	}
@@ -432,14 +401,26 @@ public class IdGenerator
 			this.update();
 		}
 
-		ArrayList<String> ids = new ArrayList<String>();
+		/*
+		 * Update the filter chain
+		 * 
+		 * It is VERY important to update all filters inside the chain before every
+		 * generation run. After this all data from external files is re- read and 
+		 * buffered in memory for fast access.
+		 * 
+		 * !!! If you forget this your IDs are not guaranteed to be valid !!!
+		 */
+		this.filterChain.update();
+		
+		
+		ArrayList<String> validIDs = new ArrayList<String>();
 
 		logger.info(Messages.getString("IdGenerator.START_GENERATION") + num);
 
 		Template template = new Template(this.options.getData());
 
 		int i = 0;
-		while (template.hasAlternatives() && (ids.size() < num)) {
+		while (template.hasAlternatives() && (validIDs.size() < num)) {
 			if (i++ == Globals.MAX_ATTEMPTS) {
 				logger.fatal(Messages.getString("IdGenerator.MAX_ATTEMPTS_REACHED") + " (" + Globals.MAX_ATTEMPTS + ")");
 				System.exit(152);
@@ -451,9 +432,9 @@ public class IdGenerator
 			// apply the filter chain to the generated id
 			// add to list if we got a valid, unique id 
 			if (	(this.filterChain.apply(idCandidate) != null)
-					&& (!ids.contains(idCandidate)))
+					&& (!validIDs.contains(idCandidate)))
 			{
-				ids.add(idCandidate);
+				validIDs.add(idCandidate);
 			}
 			else { 
 				// log some info about the failed attempt 
@@ -463,15 +444,15 @@ public class IdGenerator
 
 		logger.debug(Messages.getString("IdGenerator.NUMBER_OF_ITERATIONS") + i);
 
-		if (ids.size() < num) {
-			logger.warn(Messages.getString("IdGenerator.FAILED_TO_REACH_TARGET_NUM") + ids.size());
+		if (validIDs.size() < num) {
+			logger.warn(Messages.getString("IdGenerator.FAILED_TO_REACH_TARGET_NUM") + validIDs.size());
 		}
 
-		if (ids.size() == 0) {
+		if (validIDs.size() == 0) {
 			logger.fatal(Messages.getString("IdGenerator.NO_ALTERNATIVES_LEFT"));
 		}
 
-		return ids;
+		return validIDs;
 	}
 
 	/**

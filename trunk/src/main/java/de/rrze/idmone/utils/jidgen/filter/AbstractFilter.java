@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import de.rrze.idmone.utils.jidgen.Messages;
 
 /**
@@ -44,7 +47,7 @@ public abstract class AbstractFilter
 	/**
 	 * A static logger instance
 	 */
-	//private static final Log logger = LogFactory.getLog(AbstractFilter.class);
+	private static final Log logger = LogFactory.getLog(AbstractFilter.class);
 	
 	/**
 	 * The filter id defaults to the class name 
@@ -142,4 +145,17 @@ public abstract class AbstractFilter
 		}
 		return suitable;
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#update()
+	 */
+	public boolean update() {
+		/* This is just a convenience stub and should be overridden by all
+		 * subclasses that actually have something that is worth updating.
+		 */
+		logger.trace("Nothing to update.");
+		return true;
+	}
+	
 }

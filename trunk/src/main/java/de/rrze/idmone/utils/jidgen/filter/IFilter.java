@@ -96,4 +96,13 @@ public interface IFilter {
 	 * @return filter type
 	 */
 	public abstract String getType();
+	
+	
+	/**
+	 * Re-reads data needed for the filter process, e.g. an
+	 * externally stored blacklist
+	 * 
+	 * @return true on success, false on failure
+	 */
+	public abstract boolean update();
 }

@@ -24,6 +24,11 @@
 
 package de.rrze.idmone.utils.jidgen.filter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import de.rrze.idmone.utils.jidgen.Messages;
+
 
 /**
  * A filter that uses regular expressions to filter commonly
@@ -47,12 +52,13 @@ public class RegExFilter
 	/**
 	 *  The class logger
 	 */
-	//private static final Log logger = LogFactory.getLog(RegExFilter.class);
+	private static final Log logger = LogFactory.getLog(RegExFilter.class);
 
 	/**
 	 * Default construct.
 	 */
 	public RegExFilter() {
+		logger.info(Messages.getString(this.getClass().getSimpleName() + ".INIT_MESSAGE"));
 	}
 	
 	/**

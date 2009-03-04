@@ -24,6 +24,9 @@
 
 package de.rrze.idmone.utils.jidgen.filter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,7 +38,10 @@ import de.rrze.idmone.utils.jidgen.Messages;
  * 
  * @author unrza249
  */
-public class PasswdFilter extends AbstractFilter implements IFilter {
+public class PasswdFilter 
+extends AbstractFilter
+implements IFilter 
+{
 	/**
 	 * The class logger
 	 */
@@ -45,12 +51,24 @@ public class PasswdFilter extends AbstractFilter implements IFilter {
 	 * The location of the passwd file. This should usually be /etc/passwd, at
 	 * least for the local system
 	 */
-	private String fileLocation = "/etc/passwd";
+	private File passwdFile;
 
+	
+	/**
+	 *  A list that stores the forbidden logins
+	 */
+	private List<String> loginList = new ArrayList<String>();
+	
+	
+	
+	
+	
+	
 	/**
 	 * Default constructor
 	 */
 	public PasswdFilter() {
+		logger.info(Messages.getString(this.getClass().getSimpleName() + ".INIT_MESSAGE"));
 	}
 
 	/**
@@ -68,41 +86,69 @@ public class PasswdFilter extends AbstractFilter implements IFilter {
 		super(id, description);
 	}
 
-	/**
-	 * Sets the location of the passwd file. Defaults to /etc/passwd
-	 * 
-	 * @param fileLocation
-	 *            location of the passwd file
-	 */
-	public void setFile(String fileLocation) {
-		this.fileLocation = fileLocation;
-	}
+	
+	
 
 	/* (non-Javadoc)
 	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#apply(java.lang.String)
 	 */
 	public String apply(String id) {
-		// get a reader for the passwd file
-		File file = new File(this.fileLocation);
-
-		String line;
-		while ((line = file.getLine()) != null) {
-			String userID = line.substring(0, line.indexOf(':'));
-
-			if (id.equals(userID)) {
-				logger.trace(Messages.getString("PasswdFilter.TRACE_ID")
-						+ " \""
-						+ this.getID()
-						+ "\" "
-						+ Messages
-								.getString("PasswdFilter.TRACE_SKIPPED_ENTRY")
-						+ " \"" + userID + "\"");
-
-				return null;
-			}
+		logger.trace("Checking ID '" + id + "'");
+	
+		if (this.loginList.contains(id)) {
+			logger.trace(Messages.getString("PasswdFilter.TRACE_ID")
+					+ " \""
+					+ this.getID()
+					+ "\" "
+					+ Messages
+							.getString("PasswdFilter.TRACE_SKIPPED_ENTRY")
+					+ " \"" + id + "\"");
+			return null;
 		}
-		file.close();
-
-		return id;
+		else {
+			return id;
+		}
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see de.rrze.idmone.utils.jidgen.filter.AbstractFilter#update()
+	 */
+	public boolean update() {
+		logger.trace("Update called.");
+		
+		// reset the blacklist file
+		this.passwdFile.reset();
+		
+		// clear buffered login list
+		this.loginList.clear();
+		
+		// re-read passwd file and fill list
+		String line;
+		while ((line = this.passwdFile.getLine()) != null) {
+			String userID = line.substring(0, line.indexOf(':'));
+			this.loginList.add(userID);
+			logger.trace("Added user: \"" + userID + "\"");
+		}
+		
+		
+		return true;
+	}
+	
+	/**
+	 * @param passwdFile
+	 */
+	public void setFile(File passwdFile) {
+		logger.debug("passwdFile = " + passwdFile);
+		this.passwdFile = passwdFile;
+	}
+
+	/**
+	 * @return
+	 */
+	public File getPasswdFile() {
+		return passwdFile;
+	}
+
+
 }

@@ -50,14 +50,14 @@ public class Globals
 	
 	
 	/**
-	 * Number of id proposals to be outputted after one invocation of jidgen. 
+	 * Default number of id proposals to be generated after one invocation of jidgen. 
 	 */
 	public static final int DEFAULT_NUM_IDs = 1;
 	public static int NUM_IDs = DEFAULT_NUM_IDs; 
 	
 	
 	/**
-	 * Terminal width in characters
+	 * Default terminal width in characters
 	 */
 	public static final int DEFAULT_TERM_WIDTH = 80;
 	public static int TERM_WIDTH = DEFAULT_TERM_WIDTH;
@@ -68,30 +68,22 @@ public class Globals
 	 */
 	//public static final String DEFAULT_BLACKLIST_FILE = "src/main/config/blacklist";
 	public static final String DEFAULT_BLACKLIST_FILE = "blacklist";
-	public static String BLACKLIST_FILE = DEFAULT_BLACKLIST_FILE;
 	
 	
 	/**
 	 * Default passwd file
 	 */
 	public static final String DEFAULT_PASSWD_FILE = "/etc/passwd";
-	public static String PASSWD_FILE = DEFAULT_PASSWD_FILE;
 	
 	
 	/**
 	 * Default shell command
 	 */
 	public static final String DEFAULT_SHELLCMD = "./filter.sh %s";
-	public static String SHELLCMD = DEFAULT_SHELLCMD;
 	
 	
 	/**
-	 * Default shell
-	 */
-	
-	
-	/**
-	 * Enables output in columns
+	 * Default for output in columns
 	 */
 	public static final boolean DEFAULT_ENABLE_COLUMN_OUTPUT = false;
 	public static boolean ENABLE_COLUMN_OUTPUT = DEFAULT_ENABLE_COLUMN_OUTPUT;
