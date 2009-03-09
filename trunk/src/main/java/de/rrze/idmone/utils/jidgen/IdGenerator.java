@@ -28,6 +28,7 @@ package de.rrze.idmone.utils.jidgen;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.logging.Log;
@@ -290,7 +291,7 @@ public class IdGenerator
 			LdapFilter ldapFilter = new LdapFilter();
 
 			// LDAP connection to use
-			ldapFilter.setLdap(new Ldap());
+			ldapFilter.setLdap(new Ldap(new File("ldapFilter.properties")));
 			
 			// set a unique ID for this filter
 			ldapFilter.setID(ldapFilter.getClass().getSimpleName() + "-" + ldapFilter.getLdap());

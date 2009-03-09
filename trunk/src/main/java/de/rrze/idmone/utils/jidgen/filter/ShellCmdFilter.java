@@ -139,6 +139,15 @@ implements 	IFilter
 			System.exit(121);			
 		}
 
+		
+		
+		logger.debug(Messages.getString("IFilter.TRACE_FILTER_NAME") 
+				+ " \"" + this.getID() + "\" "
+				+ Messages.getString("IFilter.TRACE_SKIPPED_ID") 
+				+ " \"" + id
+				+ "\"");		
+
+		
 		return null;
 	}
 
@@ -158,6 +167,7 @@ implements 	IFilter
 	 * 			the command to be executed
 	 */
 	public void setCmd(String cmd) {
+		logger.debug("shellCommand = " + cmd);
 		this.cmdTemplate = cmd;
 	}
 }

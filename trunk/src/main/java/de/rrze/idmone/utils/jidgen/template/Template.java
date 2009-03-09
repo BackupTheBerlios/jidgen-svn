@@ -355,7 +355,7 @@ public class Template {
 	 */
 	public void setTemplate(String templateString) {
 		this.template = templateString;
-		logger.info(Messages.getString("Template.GOT_TEMPLATE_STRING") + templateString);
+		logger.debug(Messages.getString("Template.GOT_TEMPLATE_STRING") + templateString);
 		this.updateElements = true;
 	}
 	

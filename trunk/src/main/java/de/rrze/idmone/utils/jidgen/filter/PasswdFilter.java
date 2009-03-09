@@ -96,13 +96,12 @@ implements IFilter
 		logger.trace("Checking ID '" + id + "'");
 	
 		if (this.loginList.contains(id)) {
-			logger.trace(Messages.getString("PasswdFilter.TRACE_ID")
-					+ " \""
-					+ this.getID()
-					+ "\" "
-					+ Messages
-							.getString("PasswdFilter.TRACE_SKIPPED_ENTRY")
-					+ " \"" + id + "\"");
+			logger.trace(Messages.getString("IFilter.TRACE_FILTER_NAME") 
+					+ " \"" + this.getID() + "\" "
+					+ Messages.getString("IFilter.TRACE_SKIPPED_ID") 
+					+ " \"" + id
+					+ "\"");		
+
 			return null;
 		}
 		else {

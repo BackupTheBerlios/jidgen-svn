@@ -51,23 +51,23 @@ extends AbstractFilter
 	 * The string <b>{ID}</b> will be replaced by the ID which is currently being checked.
 	 */
 	private String searchFilter = "(sn={ID})";
-	
+
 	/**
 	 * The LDAP connection object for this filter
 	 */
 	private Ldap ldap;
-	
 
-	
-	
-	
+
+
+
+
 	/**
 	 * Default constructor
 	 */
 	public LdapFilter() {
 		logger.info(Messages.getString(this.getClass().getSimpleName() + ".INIT_MESSAGE"));
 	}
-	
+
 	/**
 	 * Constructor with filter ID
 	 * 
@@ -91,20 +91,26 @@ extends AbstractFilter
 	}
 
 
-	
-	
-	
+
+
+
 	/* (non-Javadoc)
 	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#apply(java.lang.String)
 	 */
 	public String apply(String id)	{
 		logger.trace("Checking ID '" + id + "'");
-		
+
 		// Specify the search filter to match
 		this.ldap.setSearchFilter(this.searchFilter.replace("{ID}", id));
 
 		// execute the search request
 		if (this.ldap.doSearch()) {
+			logger.debug(Messages.getString("IFilter.TRACE_FILTER_NAME") 
+					+ " \"" + this.getID() + "\" "
+					+ Messages.getString("IFilter.TRACE_SKIPPED_ID") 
+					+ " \"" + id
+					+ "\"");		
+
 			return null;
 		}
 		else {
@@ -137,6 +143,7 @@ extends AbstractFilter
 	 * @param ldap
 	 */
 	public void setLdap(Ldap ldap) {
+		logger.debug("ldapConnection = " + ldap.getHost() + ":" + ldap.getPort() + "/" + ldap.getNamingContext());
 		this.ldap = ldap;
 	}
 }

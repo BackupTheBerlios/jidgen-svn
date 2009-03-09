@@ -287,7 +287,7 @@ public class IdGenOptions
 				if (value != null) {
 					// option has a specified value
 					this.data.put(currentOption.getShortOpt(), value);
-					logger.info(currentOption.getShortOpt() + " = " + value);
+					logger.debug(currentOption.getShortOpt() + " = " + value);
 				}
 				else if (currentOption.hasArg()){
 					// option does NOT have a specified value

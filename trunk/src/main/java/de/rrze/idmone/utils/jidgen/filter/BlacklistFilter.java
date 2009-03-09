@@ -100,12 +100,12 @@ implements IFilter
 
 			// filter on match
 			if (id.contains(blackword)) {
-				logger.trace(Messages.getString("BlacklistFilter.TRACE_ID") 
+				logger.debug(Messages.getString("IFilter.TRACE_FILTER_NAME") 
 						+ " \"" + this.getID() + "\" "
-						+ Messages.getString("BlacklistFilter.TRACE_BLACKLIST_ENTRY") 
-						+ " \"" + blackword
+						+ Messages.getString("IFilter.TRACE_SKIPPED_ID") 
+						+ " \"" + id
 						+ "\"");
-		
+				
 				return null;
 			}
 		}

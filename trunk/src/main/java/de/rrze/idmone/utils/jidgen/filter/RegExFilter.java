@@ -32,18 +32,10 @@ import de.rrze.idmone.utils.jidgen.Messages;
 
 /**
  * A filter that uses regular expressions to filter commonly
- * forbidden patterns in ids.
+ * forbidden patterns in IDs.
  * 
  * @author unrza249
  * @author unrz205
- */
-/**
- * @author flo
- *
- */
-/**
- * @author flo
- *
  */
 public class RegExFilter
 	extends AbstractFilter
@@ -90,11 +82,12 @@ public class RegExFilter
 			Matcher matcher = REGEX_STARTS_NO_SMALL_LETTER_P.matcher(id);
 			if (matcher.find())
 			{
-				logger
-						.debug(Messages
-								.getString("RegExFilter.TRACE_ID") + id //$NON-NLS-1$
-								+ Messages
-										.getString("DefaultRegExFilter.TRACE_STARTS_SMALL")); //$NON-NLS-1$
+				logger.debug(Messages.getString("IFilter.TRACE_FILTER_NAME") 
+						+ " \"" + this.getID() + "\" "
+						+ Messages.getString("IFilter.TRACE_SKIPPED_ID") 
+						+ " \"" + id
+						+ "\"");		
+
 				return null;
 			}
 		}

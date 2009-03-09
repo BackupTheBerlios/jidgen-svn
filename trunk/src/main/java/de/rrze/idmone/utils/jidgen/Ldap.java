@@ -24,7 +24,9 @@
 
 package de.rrze.idmone.utils.jidgen;
 
+import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -54,90 +56,93 @@ public class Ldap {
 	private static final Log logger = LogFactory.getLog(Ldap.class);
 
 	/**
-	 * LDAP connection -- the hostname to connect to
+	 * Default properties to fall back on when no appropriate 
+	 * property is available elsewhere
 	 */
-	private String 	ldapHost = "acer";
-	
+	private Properties defaultProperties = new Properties();
+
 	/**
-	 * LDAP connection -- the port to connect to<br>
-	 * Defaults to <b>389</b>
+	 * User-set properties with the default properties 
+	 * to fall back on.
 	 */
-	private int 	ldapPort = 389;
-	
-	/**
-	 * LDAP connection -- the naming context to use
-	 */
-	private String 	ldapNamingContext = "dc=example,dc=com";
-	
-	/**
-	 * LDAP authentication -- the DN to bind to
-	 */
-	private String 	ldapUser = "cn=jidgen,ou=people,dc=example,dc=com";
-	/**
-	 * LDAP authentication -- the password to use for the binding user
-	 */
-	private String 	ldapPassword = "jidgen";
-	
-	/**
-	 * LDAP search -- the ldap search filter to use<br>
-	 * The string <b>{ID}</b> will be replaced by the ID which is currently being checked.
-	 */
-	private String 	ldapSearchFilter = null;
-	
-	/**
-	 * LDAP search -- attributes to return for the search results
-	 */
-	private String[] ldapSearchAttributes = {};
-	
-	/**
-	 * LDAP search -- the search scope<br/>
-	 * Defaults to <b>SUBTREE</b> 
-	 */
-	private int 	ldapSearchScope = SearchControls.SUBTREE_SCOPE;
-	
-	/**
-	 * LDAP search -- the search base to use<br />
-	 * Defaults to <b>ou=people</b>
-	 */
-	private String 	ldapSearchBase = "ou=people";
-	
+	private Properties props = new Properties(defaultProperties);
+
 	/**
 	 * LDAP search controls
 	 */
 	private SearchControls ctls;
-	
+
 	/**
 	 * LDAP connection context
 	 */
 	private DirContext ctx;
-	
+
 	/**
 	 * True if there is a valid connection context, false otherwise
 	 */
 	private boolean connected = false;
-	
+
 	/**
 	 * The raw search result of the last search operation
 	 */
 	private NamingEnumeration<SearchResult> lastResult = null;
-	
+
 	/**
 	 * Number of entries in the last search result
 	 */
 	private int lastResultSize = 0;
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	/**
 	 * Default constructor
 	 */
 	public Ldap() {	
+		this.setDefaultProperties();
+	}
+
+	
+	/**
+	 * Constructor with external properties
+	 * 
+	 * @param props
+	 * 		The external properties to use for initialization
+	 */
+	public Ldap(Properties props) {
+		this();
+		this.setProperties(props);
 	}
 	
 	
+	public Ldap(File f) { 
+		this();
+		try {
+			this.props.load(f.getReader());
+		}
+		catch (IOException e) {
+			logger.fatal("Exception", e);
+		}
+	}
+	
+	
+	/**
+	 * Initializes the defaultProperties member
+	 * with the internal presets
+	 */
+	private void setDefaultProperties() {
+		this.defaultProperties.setProperty("host", "localhost");
+		this.defaultProperties.setProperty("port", "389");
+		this.defaultProperties.setProperty("namingContext", "dc=example,dc=com");
+		this.defaultProperties.setProperty("user", "cn=jidgen,ou=people,dc=example,dc=com");
+		this.defaultProperties.setProperty("password", "jidgen");
+		this.defaultProperties.setProperty("searchFilter", "");
+		this.defaultProperties.setProperty("searchBase", "ou=people");
+	}
+	
+
 	/**
 	 * Connect to the LDAP server<br/>
 	 * This initializes the connection context object and opens the connection
@@ -148,13 +153,13 @@ public class Ldap {
 			logger.debug("Already connected to LDAP!");
 			return;
 		}
-		
+
 		logger.trace("Connecting to LDAP server...");
 		Hashtable<String,String> env = new Hashtable<String,String>();
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");	
-		env.put(Context.PROVIDER_URL, "ldap://" + ldapHost + ":" + ldapPort + "/" + ldapNamingContext);
-		env.put(Context.SECURITY_PRINCIPAL, ldapUser);
-		env.put(Context.SECURITY_CREDENTIALS, ldapPassword);
+		env.put(Context.PROVIDER_URL, "ldap://" + this.getHost() + ":" + this.getPort() + "/" + this.getNamingContext());
+		env.put(Context.SECURITY_PRINCIPAL, this.getUser());
+		env.put(Context.SECURITY_CREDENTIALS, this.getPassword());
 
 		try {
 			// Create initial context
@@ -166,14 +171,14 @@ public class Ldap {
 			System.exit(150);
 		}
 	}
-	
-	
+
+
 	public void disconnect() {
 		if (!this.connected) {
 			logger.debug("Not connected to LDAP!");
 			return;
 		}
-		
+
 		logger.trace("Disconnecting from LDAP server...");
 		try {
 			// Close the context when we're done
@@ -185,24 +190,21 @@ public class Ldap {
 			System.exit(150);
 		}	
 	}
-	
-	
-	
+
+
+
 	private void updateSearchControls() {
 		logger.trace("Updating search controls...");
-		
+
 		// Set search controls
 		this.ctls = new SearchControls();
-		
-		if (this.ldapSearchAttributes != null) {
-			this.ctls.setReturningAttributes(this.ldapSearchAttributes);
-		}
-		
-		if (this.ldapSearchFilter != null) {
-			this.ctls.setSearchScope(this.ldapSearchScope);
-		}
+
+		String[] attributes = {};
+		this.ctls.setReturningAttributes(attributes);
+
+		this.ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 	}
-	
+
 	/**
 	 * Executes the search with the stored parameters and returns the results.
 	 * 
@@ -213,16 +215,16 @@ public class Ldap {
 		if (!this.connected) {
 			this.connect();
 		}
-		
+
 		// init the search controls
 		this.updateSearchControls();
-		
+
 		// do the search
 		logger.trace("Executing search...");
 		this.lastResult = null;
 		try {
 			// Search for objects that have those matching attributes
-			this.lastResult = this.ctx.search(this.ldapSearchBase, this.ldapSearchFilter, ctls);
+			this.lastResult = this.ctx.search(this.getSearchBase(), this.getSearchFilter(), ctls);
 			this.countLastSearchResult();
 		}
 		catch (NamingException e) {
@@ -248,7 +250,7 @@ public class Ldap {
 			System.exit(150);
 		}		
 	}
-	
+
 	/**
 	 * Executes the search with the stored parameters and
 	 * return true if the search got at least one result, false
@@ -260,7 +262,7 @@ public class Ldap {
 	 */
 	public boolean doSearch() {
 		this.executeSearch();
-		
+
 		if (this.lastResultSize > 0) {
 			return true;
 		}
@@ -268,9 +270,9 @@ public class Ldap {
 			return false;
 		}
 	}
-	
 
-	
+
+
 	/**
 	 * Returns hostname, port and naming context of the LDAP
 	 * connection managed by this object
@@ -278,36 +280,84 @@ public class Ldap {
 	public String toString() {
 		return this.getHost() + ":" + this.getPort() + "/" + this.getNamingContext();
 	}
-	
-	
+
+	/**
+	 * Takes the given properties object and copies the contained values
+	 * to the internal properties object. Values that are not contained (as far as
+	 * the containsKey() method says) are not copied.
+	 * <p>
+	 * At the moment the following properties are recognized:<br />
+	 * <ul>
+	 * <li><b>host</b> -- the hostname to connect to (Default: localhost)</li>
+	 * <li><b>port</b> -- the port to connect to (Default: 389)</li>
+	 * <li><b>namingContext</b> -- the naming context to use (Default: dc=example,dc=com)</li>
+	 * <li><b>user</b> -- the user DN to bind to (Default: cn=jidgen,ou=people,dc=example,dc=com)</li>
+	 * <li><b>password</b> -- the bind-user's password (Default: jidgen)</li>
+	 * <li><b>searchFilter</b> -- the search filter to use (Default: null)</li>
+	 * <li><b>searchBase</b> -- the search base to use (Default: ou=people)</li>
+	 * </ul>
+	 * <p>
+	 * For use with jidgen <i>no attributes</i> are retrieved and the search scope defaults
+	 * to <i>subtree</i>.
+	 * 
+	 * 
+	 * @param p
+	 * 		properties object to copy values from
+	 */
+	public void setProperties(Properties p) {
+		if (p.containsKey("host")) 
+			this.setHost(p.getProperty("host"));
+
+		if (p.containsKey("port")) 
+			this.setPort(p.getProperty("port"));
+
+		if (p.containsKey("namingContext")) 
+			this.setNamingContext(p.getProperty("namingContext"));
+
+		if (p.containsKey("user")) 
+			this.setUser(p.getProperty("user"));
+
+		if (p.containsKey("password")) 
+			this.setPassword(p.getProperty("password"));
+
+		if (p.containsKey("searchFilter")) 
+			this.setSearchFilter(p.getProperty("searchFilter"));
+
+		if (p.containsKey("searchBase")) 
+			this.setSearchBase(p.getProperty("searchBase"));
+	}
+
+
+
+
 	/**
 	 * @return
 	 */
 	public String getHost() {
-		return ldapHost;
+		return this.props.getProperty("host");
 	}
 
 	/**
 	 * @param ldapHost
 	 */
 	public void setHost(String ldapHost) {
-		this.ldapHost = ldapHost;
+		this.props.setProperty("host", ldapHost);
 	}
 
 
 	/**
 	 * @return
 	 */
-	public int getPort() {
-		return ldapPort;
+	public String getPort() {
+		return this.props.getProperty("port");
 	}
 
 
 	/**
 	 * @param ldapPort
 	 */
-	public void setPort(int ldapPort) {
-		this.ldapPort = ldapPort;
+	public void setPort(String ldapPort) {
+		this.props.setProperty("port", ldapPort);
 	}
 
 
@@ -315,7 +365,7 @@ public class Ldap {
 	 * @return
 	 */
 	public String getNamingContext() {
-		return ldapNamingContext;
+		return this.props.getProperty("namingContext");
 	}
 
 
@@ -323,7 +373,7 @@ public class Ldap {
 	 * @param ldapNamingContext
 	 */
 	public void setNamingContext(String ldapNamingContext) {
-		this.ldapNamingContext = ldapNamingContext;
+		this.props.setProperty("namingContext", ldapNamingContext);
 	}
 
 
@@ -331,7 +381,7 @@ public class Ldap {
 	 * @return
 	 */
 	public String getUser() {
-		return ldapUser;
+		return this.props.getProperty("user");
 	}
 
 
@@ -339,7 +389,7 @@ public class Ldap {
 	 * @param ldapUser
 	 */
 	public void setUser(String ldapUser) {
-		this.ldapUser = ldapUser;
+		this.props.setProperty("user", ldapUser);
 	}
 
 
@@ -347,7 +397,7 @@ public class Ldap {
 	 * @return
 	 */
 	public String getPassword() {
-		return ldapPassword;
+		return this.props.getProperty("password");
 	}
 
 
@@ -355,7 +405,7 @@ public class Ldap {
 	 * @param ldapPassword
 	 */
 	public void setPassword(String ldapPassword) {
-		this.ldapPassword = ldapPassword;
+		this.props.setProperty("password", ldapPassword);
 	}
 
 
@@ -363,7 +413,7 @@ public class Ldap {
 	 * @return
 	 */
 	public String getSearchFilter() {
-		return ldapSearchFilter;
+		return this.props.getProperty("searchFilter");
 	}
 
 
@@ -372,23 +422,23 @@ public class Ldap {
 	 */
 	public void setSearchFilter(String ldapSearchFilter) {
 		logger.debug("ldapSearchFilter = " + ldapSearchFilter);
-		this.ldapSearchFilter = ldapSearchFilter;
+		this.props.setProperty("searchFilter", ldapSearchFilter);
 	}
 
 
 	/**
 	 * @return
 	 */
-	public int getSearchScope() {
-		return ldapSearchScope;
+	public String getSearchScope() {
+		return this.props.getProperty("searchScope");
 	}
 
 
 	/**
 	 * @param ldapSearchScope
 	 */
-	public void setSearchScope(int ldapSearchScope) {
-		this.ldapSearchScope = ldapSearchScope;
+	public void setSearchScope(String ldapSearchScope) {
+		this.props.setProperty("searchScope", ldapSearchScope);
 	}
 
 
@@ -396,7 +446,7 @@ public class Ldap {
 	 * @return
 	 */
 	public String getSearchBase() {
-		return ldapSearchBase;
+		return this.props.getProperty("searchBase");
 	}
 
 
@@ -404,7 +454,7 @@ public class Ldap {
 	 * @param ldapSearchBase
 	 */
 	public void setSearchBase(String ldapSearchBase) {
-		this.ldapSearchBase = ldapSearchBase;
+		this.props.setProperty("searchBase", ldapSearchBase);
 	}
 
 
@@ -432,5 +482,5 @@ public class Ldap {
 	public int getResultSize() {
 		return lastResultSize;
 	}
-	
+
 }

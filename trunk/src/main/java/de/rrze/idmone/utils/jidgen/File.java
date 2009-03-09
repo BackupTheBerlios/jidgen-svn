@@ -43,33 +43,38 @@ import org.apache.commons.logging.LogFactory;
  * @author unrza249
  */
 public class File {
-	
+
 	/**
 	 *  The class logger
 	 */
 	private static final Log logger = LogFactory.getLog(File.class);
-	
+
 	/**
 	 * The complete path to the file.
 	 */
 	private String file;
-	
+
 	/**
 	 * The file reader for this object's file
 	 */
-	private BufferedReader reader;
-	
+	private Reader reader;
+
+	/**
+	 * The buffered file reader for this object's file
+	 */
+	private BufferedReader bufferedReader;
+
 	/**
 	 * Indicates whether the file is opened or not
 	 */
 	private boolean open = false;
-	
+
 	/**
 	 * Default constructor
 	 */
 	public File() {
 	}
-	
+
 	/**
 	 * Constructor with file location
 	 * 
@@ -89,11 +94,10 @@ public class File {
 	 * @return	
 	 * 			the buffered reader for the specified file or null on error
 	 */
-	private BufferedReader openFile(String file) {
+	private Reader openFile(String file) {
 		try {
 			Reader r = new FileReader(file);
-			BufferedReader br = new BufferedReader(r);
-			return br;
+			return r;
 		}
 		catch (FileNotFoundException e) {
 			logger.fatal(Messages.getString("File.FILE_NOT_FOUND") + file);
@@ -102,31 +106,36 @@ public class File {
 
 		return null;
 	}
-	
-	
+
+
 	/**
 	 * Closes the file reader
 	 */
 	public void close() {
-		try {
-			this.reader.close();
+		if (this.isOpen()) {
+			try {
+				this.bufferedReader.close();
+			}
+			catch (IOException e) {
+				logger.fatal(e.toString());
+				System.exit(202);
+			}
+			this.setOpen(false);
 		}
-		catch (IOException e) {
-			logger.fatal(e.toString());
-			System.exit(202);
-		}
-		this.open = false;
 	}
-	
+
 	/**
 	 * Opens the file reader
 	 */
 	public void open() {
-		this.reader = this.openFile(this.file);
-		this.open = true;
+		if (!this.isOpen()) {
+			this.reader = this.openFile(this.file);
+			this.bufferedReader = new BufferedReader(this.reader);
+			this.setOpen(true);
+		}
 	}
-	
-	
+
+
 	/**
 	 * Reads one line from the file into a string and
 	 * returns it
@@ -137,10 +146,10 @@ public class File {
 		if (!this.isOpen()) {
 			this.open();
 		}
-		
+
 		String line = null;
 		try {
-			line = this.reader.readLine();
+			line = this.bufferedReader.readLine();
 		}
 		catch (IOException e) {
 			logger.fatal("Exception",e);
@@ -148,7 +157,7 @@ public class File {
 		}
 		return line;
 	}
-	
+
 	/**
 	 * Reads the whole file into a string and returns it.
 	 * Lines are separated by '\n'.
@@ -162,7 +171,7 @@ public class File {
 		}
 		return contents;
 	}
-	
+
 
 	/**
 	 * Resets the file reader by closing and re-opening it.
@@ -183,7 +192,7 @@ public class File {
 	public String toString() {
 		return this.file;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -192,10 +201,31 @@ public class File {
 	}
 
 	/**
+	 * @return
+	 */
+	public Reader getReader() {
+		if (!this.isOpen()) {
+			this.open();
+		}
+		return reader;
+	}
+
+	/**
+	 * @return
+	 */
+	public BufferedReader getBufferedReader() {
+		if (!this.isOpen()) {
+			this.open();
+		}
+		return bufferedReader;
+	}
+
+
+	/**
 	 * @param open
 	 */
-	public void setOpen(boolean open) {
+	private void setOpen(boolean open) {
 		this.open = open;
 	}
-	
+
 }
