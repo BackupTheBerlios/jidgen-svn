@@ -120,6 +120,7 @@ public class Ldap {
 	public Ldap(File f) { 
 		this();
 		try {
+			logger.debug("ldapConfigurationFile = " + f.getFilename());
 			this.props.load(f.getReader());
 		}
 		catch (IOException e) {

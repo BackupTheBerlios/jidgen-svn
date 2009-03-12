@@ -81,6 +81,12 @@ public class Globals
 	 */
 	public static final String DEFAULT_SHELLCMD = "./filter.sh %s";
 	
+
+	/**
+	 * Default configuration file for the LDAP filter
+	 */
+	public static final String DEFAULT_LDAP_CONFIGURATION_FILE="ldapFilter.properties";
+	
 	
 	/**
 	 * Default for output in columns

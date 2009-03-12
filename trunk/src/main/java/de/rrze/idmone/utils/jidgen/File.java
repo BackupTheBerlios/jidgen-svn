@@ -228,4 +228,11 @@ public class File {
 		this.open = open;
 	}
 
+	/**
+	 * @return
+	 */
+	public String getFilename() {
+		return file;
+	}
+
 }

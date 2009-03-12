@@ -140,6 +140,25 @@
 					</tr>
 
 					<tr>
+						<td>-L</td>
+						<td>--enable-ldap-filter</td>
+						<td>
+							Enable the LDAP filter with the default
+							configuration file for the LDAP server.
+							(Default: ldapFilter.properties).
+						</td>
+					</tr>
+
+					<tr>
+						<td>-Lf &lt;file&gt;</td>
+						<td>--ldap-properties-file &lt;file&gt;</td>
+						<td>
+							Sets an alternate location for the LDAP
+							filter configuration file.
+						</td>
+					</tr>
+
+					<tr>
 						<td>-C</td>
 						<td>--print-in-columns</td>
 						<td>Output in columns.</td>

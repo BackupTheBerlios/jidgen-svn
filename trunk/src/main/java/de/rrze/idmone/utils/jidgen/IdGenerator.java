@@ -291,7 +291,12 @@ public class IdGenerator
 			LdapFilter ldapFilter = new LdapFilter();
 
 			// LDAP connection to use
-			ldapFilter.setLdap(new Ldap(new File("ldapFilter.properties")));
+			if (this.options.hasOptionValue("Lf")) {
+				ldapFilter.setLdap(new Ldap(new File(this.options.getOptionValue("Lf"))));
+			}
+			else {
+				ldapFilter.setLdap(new Ldap(new File(Globals.DEFAULT_LDAP_CONFIGURATION_FILE)));
+			}
 			
 			// set a unique ID for this filter
 			ldapFilter.setID(ldapFilter.getClass().getSimpleName() + "-" + ldapFilter.getLdap());
@@ -630,9 +635,19 @@ public class IdGenerator
 		opts.add(
 				"L",
 				"enable-ldap-filter",
-				Messages.getString("IIdGenCommandLineOptions.CL_LDAP_DESC")
+				Messages.getString("IIdGenCommandLineOptions.CL_LDAP_DESC") + " (Default: " + Globals.DEFAULT_LDAP_CONFIGURATION_FILE + ")"
 		);
-		
+
+		// ldap filter configuration file
+		opts.add(
+				"Lf",
+				"ldap-properties-file",
+				Messages.getString("IIdGenCommandLineOptions.CL_LDAP_FILE_DESC"),
+				1,
+				"file",
+				' '
+		);
+
 		
 		// create all "T[a-z]" options as invisible and a dummy option for them
 		for (char currentChar = 'a'; currentChar < 'z'; currentChar++) {
