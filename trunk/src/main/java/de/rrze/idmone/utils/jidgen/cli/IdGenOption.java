@@ -32,13 +32,14 @@ import de.rrze.idmone.utils.jidgen.Messages;
 
 /**
  * This class is an extension to the org.apache.commons.cli.Option
- * class with some modifications to make it fit to the needs
+ * class with some modifications to make it fit to the needs of
  * jidgen.
  * 
  * @see <a href="http://commons.apache.org/cli/api-release/org/apache/commons/cli/Option.html">http://commons.apache.org/cli/api-release/org/apache/commons/cli/Option.html</a>
  * 
  * @author unrza249
  */
+//TODO remove dependency to apache.commons.cli because of lacking functionality
 public class IdGenOption 
 	extends Option 
 {

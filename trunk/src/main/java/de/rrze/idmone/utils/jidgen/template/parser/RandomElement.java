@@ -22,7 +22,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package de.rrze.idmone.utils.jidgen.template;
+package de.rrze.idmone.utils.jidgen.template.parser;
 
 import java.util.Random;
 

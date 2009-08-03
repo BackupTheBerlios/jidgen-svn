@@ -46,7 +46,7 @@ public class AppTest
     	// get a list of generated ids
     	List<String> ids_1 = idGen_1.generateIDs(5);
     	// to have something to look at - output them 
-    	idGen_1.printColumns(ids_1);
+    	idGen_1.print(ids_1);
     	
     	/*
     	 * IdGenerator initialized via setOption() method
@@ -60,7 +60,7 @@ public class AppTest
     	// get a list of generated ids
     	List<String> ids_2 = idGen_2.generateIDs(5);
     	// to have something to look at - output them
-    	idGen_1.printColumns(ids_2);
+    	idGen_1.print(ids_2);
     	
     	
     	assertTrue( !ids_1.isEmpty() 

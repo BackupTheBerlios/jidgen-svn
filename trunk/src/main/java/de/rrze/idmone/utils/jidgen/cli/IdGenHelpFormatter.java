@@ -30,7 +30,6 @@ import java.util.Iterator;
 
 import org.apache.commons.cli.HelpFormatter;
 
-import de.rrze.idmone.utils.jidgen.Globals;
 import de.rrze.idmone.utils.jidgen.Messages;
 import de.rrze.idmone.utils.jidgen.template.Template;
 
@@ -43,12 +42,18 @@ import de.rrze.idmone.utils.jidgen.template.Template;
  * 
  * @author unrza249
  */
+// TODO remove dependency to apache.commons.cli because of lacking functionality
 public class IdGenHelpFormatter 
-extends HelpFormatter 
+	extends HelpFormatter 
 {
 	/**
+	 * The newline character(s) to use for line breaks
+	 */
+	private final String NEWLINE = Messages.getString("IdGenerator.NEW_LINE");
+	
+	/**
 	 * The target length for the string left of the
-	 * description. If it is shorter appropriate padding will be
+	 * description. If it is shorter, appropriate padding will be
 	 * inserted to make it fit.
 	 */
 	private final int TARGET_LENGTH = 45;
@@ -59,10 +64,9 @@ extends HelpFormatter
 	 */
 	public IdGenHelpFormatter() {
 		super();
-		this.setNewLine(Globals.NEWLINE);
+		this.setNewLine(NEWLINE);
 		this.setLeftPadding(3);
 		this.setDescPadding(0);
-		this.setWidth(Globals.TERM_WIDTH);
 	}
 
 	/**
@@ -75,6 +79,8 @@ extends HelpFormatter
 	 * @return the rendered string for this options object
 	 */
 	protected String renderOption(IdGenOption option) {		
+		// TODO write own rendering function
+		
 		// fix the broken padding function of the commons cli class
 		// by calculating and setting our own padding
 		// for each element
@@ -86,8 +92,7 @@ extends HelpFormatter
 
 		// render the current option
 		StringBuffer sb = new StringBuffer();
-		//System.out.println("Processing: " + option.toString());
-		IdGenOptions options = new IdGenOptions();
+		IdGenOptions options = new IdGenOptions(this.getWidth());
 		options.addOption(option);
 		super.renderOptions(sb, this.getWidth(), options, this.getLeftPadding(), this.getDescPadding());
 		sb.append(this.getNewLine());
@@ -134,19 +139,19 @@ extends HelpFormatter
 		sb.append(Messages.getString("IdGenerator.HELP_USAGE"));	
 
 		if (!longHelp) {
-			sb.append(Globals.NEWLINE);
+			sb.append(NEWLINE);
 			sb.append(Messages.getString("IdGenerator.HELP_SHORT_EXAMPLE"));
-			sb.append(Globals.NEWLINE);
+			sb.append(NEWLINE);
 		}
 		
 		if (longHelp) {
-			sb.append(Globals.NEWLINE);
+			sb.append(NEWLINE);
 			sb.append(Messages.getString("IdGenerator.HELP_INTRO"));
 		}
 
 		if (longHelp) {
 			// predefined data
-			sb.append(Globals.NEWLINE);
+			sb.append(NEWLINE);
 			HashMap<String,String> presets = Template.getPredefinedData();
 			if (!presets.isEmpty()) {
 				sb.append(format(Messages.getString("IdGenereator.HELP_PREDEFINED_STRINGS")));
@@ -154,27 +159,27 @@ extends HelpFormatter
 					String key = iter.next();
 					sb.append(format(key + "\t" + Messages.getString("Template.HELP_DATA_PRESET_" + key.toUpperCase()) + " (" + presets.get(key)  + ")" + Messages.getString("IdGenerator.NEW_LINE")));		
 				}
-				sb.append(Globals.NEWLINE);
+				sb.append(NEWLINE);
 			}
 		}
 
 
 		if (longHelp) {
 			// template syntax
-			sb.append(Globals.NEWLINE);
+			sb.append(NEWLINE);
 			sb.append(format(Messages.getString("IdGenerator.HELP_TEMPLATE_SYNTAX")));
 		}		
 
 
 		// command line options
-		sb.append(Globals.NEWLINE);
+		sb.append(NEWLINE);
 		sb.append(format(Messages.getString("IdGenerator.HELP_CLI_OPTIONS")));
 		sb.append(this.renderOptions(options));
 
 
 		if (longHelp) {
 			// example string
-			sb.append(Globals.NEWLINE);
+			sb.append(NEWLINE);
 			sb.append(Messages.getString("IdGenerator.HELP_LONG_EXAMPLE"));
 		}
 

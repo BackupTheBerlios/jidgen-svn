@@ -46,6 +46,7 @@ import de.rrze.idmone.utils.jidgen.Messages;
  * 
  * @author unrza249
  */
+//TODO remove dependency to apache.commons.cli because of lacking functionality
 public class IdGenOptions 
 	extends Options
 {
@@ -55,18 +56,32 @@ public class IdGenOptions
 	private static final Log logger = LogFactory.getLog(IdGenOptions.class);
 
 	/**
+	 * The terminal width in number of characters
+	 */
+	private int termWidth;
+	
+	/**
 	 * The internal data array for storing
 	 * all parsed CLI options with their
 	 * arguments.
 	 */
-	private HashMap<String,String> data = new HashMap<String,String>();
+	private HashMap<String,String> data;
 	
 	/**
 	 * List of dummy options that are displayed but not 
 	 * processed by the parser.
 	 */
-	private HashMap<String,IdGenOption> dummyOptions = new HashMap<String,IdGenOption>();
+	private HashMap<String,IdGenOption> dummyOptions;
 
+	
+	public IdGenOptions(int termWidth) {
+		this.data = new HashMap<String,String>();
+		this.dummyOptions = new HashMap<String,IdGenOption>();
+		this.termWidth = termWidth; 
+	}
+	
+	
+	
 	/**
 	 * A rather complex function with the possibility to set most
 	 * of the available configuration options at once.<br />
@@ -95,7 +110,7 @@ public class IdGenOptions
 	 */
 	protected IdGenOption add(String shortOption, String longOption,
 			String description, int numArgs, String argName, char valueSeparator, 
-			boolean required, boolean visible, boolean dummy) {
+			boolean required, boolean visible, boolean dummy, String defaultValue) {
 
 
 		IdGenOption option;
@@ -109,7 +124,11 @@ public class IdGenOptions
 
 		option.setVisible(visible);
 		option.setDummy(dummy);
-
+		
+		if (!defaultValue.isEmpty()) {
+			option.setDefaultValue(defaultValue);
+		}
+		
 		if (dummy) {			
 			option.setShortOpt(shortOption);
 		}
@@ -140,9 +159,17 @@ public class IdGenOptions
 	 * 				sets the value separator
 	 */
 	public IdGenOption add(String shortOption, String longOption,
-			String description, int numArgs, String argName, char valueSeparator) {
-		return this.add(shortOption, longOption, description, numArgs, argName, valueSeparator, false, true, false);		
+			String description, int numArgs, String argName, 
+			char valueSeparator) {
+		return this.add(shortOption, longOption, description, numArgs, argName, valueSeparator, false, true, false, "");		
 	}
+	/*
+	public IdGenOption add(String shortOption, String longOption,
+			String description, int numArgs, String argName, 
+			char valueSeparator, String defaultValue) {
+		return this.add(shortOption, longOption, description, numArgs, argName, valueSeparator, false, true, false, defaultValue);		
+	}
+	*/
 
 	/**
 	 * A simple function for adding just a regular option
@@ -158,8 +185,14 @@ public class IdGenOptions
 	 */
 	public IdGenOption add(String shortOption, String longOption,
 			String description) {
-		return this.add(shortOption, longOption, description, 0, "", ' ', false, true, false);		
+		return this.add(shortOption, longOption, description, 0, "", ' ', false, true, false, "");		
 	}
+	/*
+	public IdGenOption add(String shortOption, String longOption,
+			String description, String defaultValue) {
+		return this.add(shortOption, longOption, description, 0, "", ' ', false, true, false, defaultValue);		
+	}
+	*/
 
 	
 	/**
@@ -182,16 +215,17 @@ public class IdGenOptions
 	 */
 	public IdGenOption addInvisible(String shortOption, String longOption,
 			int numArgs, String argName, char valueSeparator) {
-		return this.add(shortOption, longOption, "", numArgs, argName, valueSeparator, false, false, false);
+		return this.add(shortOption, longOption, "", numArgs, argName, valueSeparator, false, false, false, "");
 	}
 
+	
 	/**
 	 * A rather complex function with the possibility to set most
 	 * of the available configuration options at once.<br />
 	 * This adds a dummy option that will be displayed in the help string
 	 * but is <b>not</b> processed by the parser.<br />
 	 * This is useful for creating options only for output in the help string
-	 * that describe one or more hidden options in one. 
+	 * that describe one or more hidden options in one line. 
 	 * 
 	 * @param shortOption
 	 *            	a one letter flag
@@ -206,7 +240,7 @@ public class IdGenOptions
 	 */
 	public IdGenOption addDummy(String shortOption, String longOption,
 			String description, int numArgs, String argName) {
-		return this.add(shortOption, longOption, description, numArgs, argName, ' ', false, true, true);
+		return this.add(shortOption, longOption, description, numArgs, argName, ' ', false, true, true, "");
 	}
 
 
@@ -233,6 +267,7 @@ public class IdGenOptions
 	 */
 	public String getHelp(boolean longHelp) {
 		IdGenHelpFormatter formatter = new IdGenHelpFormatter();
+		formatter.setWidth(this.termWidth);
 		return formatter.getHelpString(this, longHelp);
 	}
 
@@ -333,8 +368,7 @@ public class IdGenOptions
 	
 	
 	/**
-	 * returns the value of the requested option, if possible
-	 * 
+	 * Returns the value of the requested option, if possible
 	 * @param shortOpt
 	 * 			the option for which the value is requested
 	 * @return the requested option's value
@@ -369,16 +403,16 @@ public class IdGenOptions
 	
 	/**
 	 * This is a option checking function inherited from
-	 * the super class.
+	 * the super class.<br/>
 	 * It does not work with the added functionality of this
-	 * class, so <b>do not use it</b>.
+	 * class, so <b>do not use it</b>.<br/>
 	 * You most likely want what the hasOptionValue() method
 	 * does.
 	 */
 	public boolean hasOption(String shortOpt) {
 		return super.hasOption(shortOpt);
 	}
-	
+
 	/**
 	 * returns the stored option data
 	 * 
@@ -419,4 +453,63 @@ public class IdGenOptions
 	public int getNum() {
 		return this.data.size();
 	}
+	
+	/**
+	 * Converts the given string into an array
+	 * and calls parseOptions(String[]).
+	 * 
+	 * @param args
+	 * 			argument string
+	 * @return	true on success, false otherwise
+	 */
+	public boolean parseOptions(String args) {
+		String[] argsArr = args.split(" ");
+		return this.parseOptions(argsArr);
+	}
+
+	/**
+	 * Fills the data array inside the options object
+	 * with the arguments specified in the array.
+	 *  
+	 * @param args
+	 * 			the argument array
+	 * @return true on success, false otherwise
+	 */
+	public boolean parseOptions(String[] args) {
+		// parse the command line options and
+		// fill the data array
+		try {
+			logger.trace("Parsing cliArgs...");
+			this.parse(args);
+		} 
+		catch (ParseException e) {
+			logger.debug(e.toString());
+			return false;
+		} 
+		catch (NumberFormatException e)	{
+			logger.debug(e.toString());
+			return false;
+		}
+
+		return true;
+	}
+
+
+
+	/**
+	 * @return the termWidth
+	 */
+	public int getTermWidth() {
+		return termWidth;
+	}
+
+
+
+	/**
+	 * @param termWidth the termWidth to set
+	 */
+	public void setTermWidth(int termWidth) {
+		this.termWidth = termWidth;
+	}
+
 }
