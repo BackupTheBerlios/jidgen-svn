@@ -31,7 +31,7 @@ import java.io.InputStreamReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.rrze.idmone.utils.jidgen.Messages;
+import de.rrze.idmone.utils.jidgen.i18n.Messages;
 
 
 /**
@@ -146,6 +146,11 @@ implements 	IFilter
 				+ Messages.getString("IFilter.TRACE_SKIPPED_ID") 
 				+ " \"" + id
 				+ "\"");		
+		
+		logger.debug(Messages.getString("IFilter.REASON")
+				+ " \"" + this.getCmd() + "\""
+				+ " " + Messages.getString("IFilter.DENIED")
+				+ " \"" + id + "\"");
 
 		
 		return null;

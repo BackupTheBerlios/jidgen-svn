@@ -30,7 +30,7 @@ import java.util.Iterator;
 
 import org.apache.commons.cli.HelpFormatter;
 
-import de.rrze.idmone.utils.jidgen.Messages;
+import de.rrze.idmone.utils.jidgen.i18n.Messages;
 import de.rrze.idmone.utils.jidgen.template.Template;
 
 /**
@@ -133,6 +133,7 @@ public class IdGenHelpFormatter
 	 * @return the formatted help message as a string 
 	 */
 	public String getHelpString(IdGenOptions options, boolean longHelp) {
+		// FIXME ensure that the cli options are printed in the order they were added
 		StringBuffer sb = new StringBuffer();
 
 		// usage string

@@ -27,8 +27,8 @@ package de.rrze.idmone.utils.jidgen.filter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.rrze.idmone.utils.jidgen.Ldap;
-import de.rrze.idmone.utils.jidgen.Messages;
+import de.rrze.idmone.utils.jidgen.i18n.Messages;
+import de.rrze.idmone.utils.jidgen.io.Ldap;
 
 /**
  * This a basic filter template class that implements most of the 
@@ -39,7 +39,7 @@ import de.rrze.idmone.utils.jidgen.Messages;
  *
  */
 public class LdapFilter 
-extends AbstractFilter
+	extends AbstractFilter
 {
 	/**
 	 * A static logger instance
@@ -105,11 +105,15 @@ extends AbstractFilter
 
 		// execute the search request
 		if (this.ldap.doSearch()) {
-			logger.debug(Messages.getString("IFilter.TRACE_FILTER_NAME") 
+			logger.debug(Messages.getString("IFilter.FILTER_NAME") 
 					+ " \"" + this.getID() + "\" "
-					+ Messages.getString("IFilter.TRACE_SKIPPED_ID") 
+					+ Messages.getString("IFilter.SKIPPED_ID") 
 					+ " \"" + id
 					+ "\"");		
+			logger.debug(Messages.getString("IFilter.REASON")
+					+ " \"" + this.getSearchFilter() + "\""
+					+ " " + Messages.getString("IFilter.MATCHED")
+					+ " \"" + id + "\"");
 
 			return null;
 		}

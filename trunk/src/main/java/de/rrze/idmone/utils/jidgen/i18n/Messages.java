@@ -22,7 +22,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package de.rrze.idmone.utils.jidgen;
+package de.rrze.idmone.utils.jidgen.i18n;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;

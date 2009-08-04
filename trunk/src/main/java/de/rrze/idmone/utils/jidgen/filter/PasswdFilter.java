@@ -30,8 +30,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.rrze.idmone.utils.jidgen.File;
-import de.rrze.idmone.utils.jidgen.Messages;
+import de.rrze.idmone.utils.jidgen.i18n.Messages;
+import de.rrze.idmone.utils.jidgen.io.File;
 
 /**
  * A filter for IDs that are already in use within the system's passwd file.
@@ -96,11 +96,17 @@ implements IFilter
 		logger.trace("Checking ID '" + id + "'");
 	
 		if (this.loginList.contains(id)) {
-			logger.trace(Messages.getString("IFilter.TRACE_FILTER_NAME") 
+			logger.trace(Messages.getString("IFilter.FILTER_NAME") 
 					+ " \"" + this.getID() + "\" "
-					+ Messages.getString("IFilter.TRACE_SKIPPED_ID") 
+					+ Messages.getString("IFilter.SKIPPED_ID") 
 					+ " \"" + id
-					+ "\"");		
+					+ "\"");
+			
+			logger.debug(Messages.getString("IFilter.REASON")
+					+ " \"" + this.getPasswdFile().getFilename() + "\""
+					+ " " + Messages.getString("IFilter.CONTAINS")
+					+ " \"" + id + "\"");
+
 
 			return null;
 		}

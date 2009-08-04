@@ -28,7 +28,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.rrze.idmone.utils.jidgen.Messages;
+import de.rrze.idmone.utils.jidgen.i18n.Messages;
 
 /**
  * This class is an extension to the org.apache.commons.cli.Option

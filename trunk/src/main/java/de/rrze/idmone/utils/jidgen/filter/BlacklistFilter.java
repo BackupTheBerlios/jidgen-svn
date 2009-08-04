@@ -31,8 +31,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.rrze.idmone.utils.jidgen.File;
-import de.rrze.idmone.utils.jidgen.Messages;
+import de.rrze.idmone.utils.jidgen.i18n.Messages;
+import de.rrze.idmone.utils.jidgen.io.File;
 
 
 /**
@@ -100,11 +100,17 @@ implements IFilter
 
 			// filter on match
 			if (id.contains(blackword)) {
-				logger.debug(Messages.getString("IFilter.TRACE_FILTER_NAME") 
+				logger.debug(Messages.getString("IFilter.FILTER_NAME") 
 						+ " \"" + this.getID() + "\" "
-						+ Messages.getString("IFilter.TRACE_SKIPPED_ID") 
+						+ Messages.getString("IFilter.SKIPPED_ID") 
 						+ " \"" + id
 						+ "\"");
+				
+				logger.debug(Messages.getString("IFilter.REASON")
+						+ " \"" + this.getBlacklistFile().getFilename() + "\""
+						+ " " + Messages.getString("IFilter.CONTAINS")
+						+ " \"" + id + "\"");
+
 				
 				return null;
 			}

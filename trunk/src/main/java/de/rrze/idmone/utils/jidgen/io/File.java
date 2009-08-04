@@ -22,7 +22,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package de.rrze.idmone.utils.jidgen;
+package de.rrze.idmone.utils.jidgen.io;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -32,6 +32,8 @@ import java.io.Reader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import de.rrze.idmone.utils.jidgen.i18n.Messages;
 
 
 
@@ -201,7 +203,9 @@ public class File {
 	}
 
 	/**
-	 * @return
+	 * Returns the raw file reader object for direct access
+	 * @return 
+	 * 		the raw file reader object
 	 */
 	public Reader getReader() {
 		if (!this.isOpen()) {
