@@ -31,8 +31,9 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.rrze.idmone.utils.jidgen.cli.IdGenOptions;
 import de.rrze.idmone.utils.jidgen.i18n.Messages;
-import de.rrze.idmone.utils.jidgen.template.parser.IElement;
+import de.rrze.idmone.utils.jidgen.template.element.IElement;
 import de.rrze.idmone.utils.jidgen.template.parser.Parser;
 
 
@@ -119,11 +120,15 @@ public class Template {
 	private static final Log logger = LogFactory.getLog(Template.class);
 	
 	/**
-	 * A prefix string for all options parameters
-	 * and the marker for the template string in one.
+	 * A prefix string for all template-related options parameters
 	 */
-	private String prefix = "T";
-		
+	private String optionsPrefix = "T";
+
+	/**
+	 * The marker (short option name) for the template string parameter
+	 */
+	private String optionMarker = "T";
+	
 	/**
 	 * The template string
 	 */
@@ -135,11 +140,17 @@ public class Template {
 	private ArrayList<IElement> elements;
 	
 	/**
-	 * The data used to generate an id out of the template
-	 * string.
+	 * The default data mappings used to generate an id out of the template
+	 * string.<br/>
+	 * This holds some 
 	 */
 	private HashMap<String,String> data = new HashMap<String,String>();
 
+	/**
+	 * A reference to the options manager of the IdGenerator
+	 */
+	private IdGenOptions options;
+	
 	/**
 	 * Whether at least one of the element objects
 	 * claims to have at least one more alternate result
@@ -155,14 +166,6 @@ public class Template {
 	private boolean updateElements = true;
 	
 	/**
-	 * Whether the elements that request external data
-	 * should be fed the current data from the stored
-	 * data array.
-	 * <b>used only internally</b>
-	 */
-	private boolean updateData = true;
-	
-	/**
 	 * Pointer to the next resover element to activate.
 	 * This is automatically set to the first active
 	 * resolver element found by the buildString() loop.
@@ -176,7 +179,7 @@ public class Template {
 	 */
 	public Template() {
 		// init the data map with the predefined defaults
-		this.data.putAll(Template.getPredefinedData(this.prefix));
+		this.data.putAll(Template.getPredefinedData(this.optionsPrefix));
 	}
 	
 	/**
@@ -196,13 +199,14 @@ public class Template {
 	 * @param data
 	 * 			the data array
 	 */
-	public Template(HashMap<String,String> data) {
+	public Template(IdGenOptions options) {
 		this();
-		this.updateData(data);
+
+		this.options = options;
 		
 		// set template string from data array if possible
-		if (this.data.containsKey(this.prefix)) {
-			this.setTemplate(this.data.get(this.prefix));
+		if (this.options.hasOptionValue(this.optionMarker)) {
+			this.setTemplate(this.options.getOptionValue(this.optionMarker));
 		}
 	}
 
@@ -275,8 +279,17 @@ public class Template {
 			IElement currentElement = iter.next();
 			
 			// fill with data (if update is needed)
-			if (this.updateData && currentElement.needsExternalData()) {
-				currentElement.setData(this.data.get(this.prefix + currentElement.getKey()));
+			if (currentElement.needsExternalData()) {
+				String shortOpt = this.optionsPrefix + currentElement.getKey();
+				if (this.options.hasOptionValue(shortOpt)) {
+					currentElement.setData(this.options.getOptionValue(shortOpt));
+				}
+				else if (this.data.containsKey(shortOpt)) {
+					currentElement.setData(this.data.get(shortOpt));
+				}
+				else {
+					logger.fatal(Messages.getString("Template.MISSING_DATA_FOR_ELEMENT") + " \"" + currentElement.getElement() + "\": \"" + shortOpt + "\"");
+				}
 			}
 	
 			
@@ -290,8 +303,6 @@ public class Template {
 				continue;
 			}
 			
-			//logger.debug(this.data.get(this.prefix + currentElement.getKey()));
-
 			// append output to the result string
 			if (currentElement.isComplete()) {
 				result += currentElement.toString().toLowerCase();
@@ -308,10 +319,6 @@ public class Template {
 				logger.debug(Messages.getString("Element.NO_ALTERNATIVES_LEFT") + currentElement.getClass().getSimpleName() + " (element=" + currentElement.getElement() + ")");
 		}
 
-		// either the data was updated or it already was up to date at this point
-		this.updateData = false;
-
-		
 		if (!this.hasAlternatives && this.nextResolver != null) {
 			// this makes the resolver a normal element
 			// which is processed exactly like all other elements
@@ -325,20 +332,6 @@ public class Template {
 		
 		return result;
 	}
-	
-	/**
-	 * Update the stored data array with the one given
-	 * by merging its entries
-	 * 
-	 * @param newData
-	 * 			new data array to update the existing one with
-	 */
-	public void updateData(HashMap<String,String> newData) {
-		this.data.putAll(newData);
-		this.updateData = true;
-	}
-	
-	
 	
 	
 	

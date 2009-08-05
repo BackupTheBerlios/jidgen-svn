@@ -34,6 +34,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.rrze.idmone.utils.jidgen.i18n.Messages;
+import de.rrze.idmone.utils.jidgen.template.element.BasicElement;
+import de.rrze.idmone.utils.jidgen.template.element.CounterElement;
+import de.rrze.idmone.utils.jidgen.template.element.IElement;
+import de.rrze.idmone.utils.jidgen.template.element.RandomElement;
+import de.rrze.idmone.utils.jidgen.template.element.StaticElement;
+import de.rrze.idmone.utils.jidgen.template.element.SubstringElement;
 
 
 /**

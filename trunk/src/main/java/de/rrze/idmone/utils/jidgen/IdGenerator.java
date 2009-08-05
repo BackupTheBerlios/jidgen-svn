@@ -143,18 +143,6 @@ public class IdGenerator
 	 */
 	public static final String DEFAULT_LDAP_CONFIGURATION_FILE="ldapFilter.properties";
 
-	/**
-	 * Special characters that can be included.
-	 * <i>UNUSED</i>
-	 */
-	//public static final String SPECIAL_SYMBOLS = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
-
-	/**
-	 * List of ambiguous characters that can look alike and can confuse users.
-	 * <i>UNUSED</i>
-	 */
-	//public static final String AMBIGUOUS_SYMBOLS = "B8G6I1l0OQDS5Z2";
-	
 	/* 
 	 * END: CONSTANTS 
 	 */
@@ -629,7 +617,7 @@ public class IdGenerator
 		ArrayList<String> validIDs = new ArrayList<String>();
 	
 		// the template object, responsible for building id suggestions
-		Template template = new Template(this.options.getData());
+		Template template = new Template(this.options);
 	
 		// id generation loop
 		int i = 0;

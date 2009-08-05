@@ -22,7 +22,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package de.rrze.idmone.utils.jidgen.template.parser;
+package de.rrze.idmone.utils.jidgen.template.element;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -71,7 +71,7 @@ public class SubstringElement
 	}
 	
 	/**
-	 * Conveniently complex constructor for direct usage by the Parser
+	 * Conveniently complex constructor for direct usage by the parser
 	 * class
 	 * 
 	 * @param element

@@ -22,7 +22,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package de.rrze.idmone.utils.jidgen.template.parser;
+package de.rrze.idmone.utils.jidgen.template.element;
 
 /**
  * This interface needs to be implemented by all classes that
@@ -132,5 +132,5 @@ public interface IElement {
 	 * 			true if this element should be treated as an resolver, false otherwise
 	 */
 	public abstract void setResolver(boolean resolver);
-	
+
 }
