@@ -142,9 +142,10 @@ public class Template {
 	/**
 	 * The default data mappings used to generate an id out of the template
 	 * string.<br/>
-	 * This holds some 
+	 * This holds some default data which might also be specified and overriden
+	 * by some CLI options in the future.
 	 */
-	private HashMap<String,String> data = new HashMap<String,String>();
+	private HashMap<String,String> defaultData = new HashMap<String,String>();
 
 	/**
 	 * A reference to the options manager of the IdGenerator
@@ -179,7 +180,7 @@ public class Template {
 	 */
 	public Template() {
 		// init the data map with the predefined defaults
-		this.data.putAll(Template.getPredefinedData(this.optionsPrefix));
+		this.defaultData.putAll(Template.getPredefinedData(this.optionsPrefix));
 	}
 	
 	/**
@@ -196,7 +197,7 @@ public class Template {
 	/**
 	 * constructor with data array
 	 * 
-	 * @param data
+	 * @param defaultData
 	 * 			the data array
 	 */
 	public Template(IdGenOptions options) {
@@ -284,8 +285,8 @@ public class Template {
 				if (this.options.hasOptionValue(shortOpt)) {
 					currentElement.setData(this.options.getOptionValue(shortOpt));
 				}
-				else if (this.data.containsKey(shortOpt)) {
-					currentElement.setData(this.data.get(shortOpt));
+				else if (this.defaultData.containsKey(shortOpt)) {
+					currentElement.setData(this.defaultData.get(shortOpt));
 				}
 				else {
 					logger.fatal(Messages.getString("Template.MISSING_DATA_FOR_ELEMENT") + " \"" + currentElement.getElement() + "\": \"" + shortOpt + "\"");
