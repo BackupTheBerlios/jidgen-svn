@@ -44,10 +44,11 @@ import org.apache.commons.logging.LogFactory;
 /**
  * This class was written for easy handling
  * of LDAP operations within the jidgen
- * project.
+ * project.<br/>
+ * It utilizes the JNDI - Java Naming and Directory Interface
+ * to cannect to a specified LDAP directory server.
  * 
  * @author unrza249
- *
  */
 public class Ldap {
 

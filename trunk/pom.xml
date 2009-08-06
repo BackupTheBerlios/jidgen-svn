@@ -11,7 +11,7 @@
 
 	<!-- Project Info -->
 	<name>jidgen</name>
-	<version>0.8.0</version>
+	<version>1.0.0</version>
 	<description>
 		Jidgen is an easy-to-use, but powerful Java-based id generator.
 		It uses templates for automated id generation and optional

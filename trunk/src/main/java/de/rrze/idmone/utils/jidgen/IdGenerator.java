@@ -35,11 +35,13 @@ import org.apache.commons.logging.LogFactory;
 import de.rrze.idmone.utils.jidgen.cli.IdGenOptions;
 import de.rrze.idmone.utils.jidgen.filter.BlacklistFilter;
 import de.rrze.idmone.utils.jidgen.filter.FilterChain;
+import de.rrze.idmone.utils.jidgen.filter.JdbcFilter;
 import de.rrze.idmone.utils.jidgen.filter.LdapFilter;
 import de.rrze.idmone.utils.jidgen.filter.PasswdFilter;
 import de.rrze.idmone.utils.jidgen.filter.ShellCmdFilter;
 import de.rrze.idmone.utils.jidgen.i18n.Messages;
 import de.rrze.idmone.utils.jidgen.io.File;
+import de.rrze.idmone.utils.jidgen.io.Jdbc;
 import de.rrze.idmone.utils.jidgen.io.Ldap;
 import de.rrze.idmone.utils.jidgen.template.Template;
 
@@ -95,7 +97,8 @@ public class IdGenerator
 	/* 
 	 * CONSTANTS 
 	 */
-
+	// TODO use the IdGenOptions class for handling of default values
+	
 	/**
 	 * Default terminal width in characters
 	 */
@@ -142,6 +145,12 @@ public class IdGenerator
 	 * Default configuration file for the LDAP filter
 	 */
 	public static final String DEFAULT_LDAP_CONFIGURATION_FILE="ldapFilter.properties";
+
+
+	/**
+	 * Default configuration file for the LDAP filter
+	 */
+	public static final String DEFAULT_JDBC_CONFIGURATION_FILE="jdbcFilter.properties";
 
 	/* 
 	 * END: CONSTANTS 
@@ -298,6 +307,7 @@ public class IdGenerator
 		/*
 		 * FILTER SETUP
 		 */
+		// TODO find a more elegant way to initialize the filters as specified
 		// blacklist filter
 		if (this.options.hasOptionValue("B")) {
 			logger.trace("Enabling blacklist filter.");
@@ -375,6 +385,27 @@ public class IdGenerator
 			
 			this.filterChain.addFilter(ldapFilter);
 		}
+
+		// JDBC filter
+		if (this.options.hasOptionValue("D")) {
+			logger.trace("Enabling JDBC filter.");
+			JdbcFilter jdbcFilter = new JdbcFilter();
+
+			// LDAP connection to use
+			if (this.options.hasOptionValue("Df")) {
+				jdbcFilter.setJdbc(new Jdbc(new File(this.options.getOptionValue("Df"))));
+			}
+			else {
+				jdbcFilter.setJdbc(new Jdbc(new File(DEFAULT_JDBC_CONFIGURATION_FILE)));
+			}
+			
+			// set a unique ID for this filter
+			jdbcFilter.setID(jdbcFilter.getClass().getSimpleName() + "-" + jdbcFilter.getJdbc());
+			
+			
+			this.filterChain.addFilter(jdbcFilter);
+		}
+
 		
 		return true;
 	}
@@ -385,6 +416,7 @@ public class IdGenerator
 	 * @return the CLI options
 	 */
 	private void addOptions(IdGenOptions opts)	{
+		// TODO find a more abstract way of initialising the options object
 		logger.trace("Building CLI options...");
 	
 		// id template string
@@ -493,6 +525,13 @@ public class IdGenerator
 				' '
 		);
 	
+		// jdbc filter enable
+		opts.add(
+				"D",
+				"enable-jdbc-filter",
+				Messages.getString("IIdGenCommandLineOptions.CL_JDBC_DESC") + " (Default: " + DEFAULT_JDBC_CONFIGURATION_FILE + ")"
+		);
+
 		
 		// create all "T[a-z]" options as invisible and a dummy option for them
 		for (char currentChar = 'a'; currentChar < 'z'; currentChar++) {
@@ -560,7 +599,9 @@ public class IdGenerator
 	}
 
 	/**
-	 * Set an option with it's value
+	 * Set an option with it's value<br/>
+	 * <i>Convenience function</i>
+	 * 
 	 * @param opt
 	 * 			the short option parameter to be set
 	 * @param value
@@ -575,6 +616,7 @@ public class IdGenerator
 	 * Clears the filter chain and re-initializes it.<br/>
 	 * Also re-reads the CLI options if indicated by the updateOptions
 	 * member variable.
+	 * 
 	 * @return true on success, false otherwise
 	 */
 	public boolean updateOptions() {
@@ -603,9 +645,9 @@ public class IdGenerator
 		/*
 		 * Update the filter chain's data
 		 * 
-		 * It is VERY important to update all filters inside the chain before every
-		 * generation run. After this all data from external files is re-read and 
-		 * buffered in memory for fast access.
+		 * It is VERY important to update all filters inside the chain directly
+		 * before every generation run. After this all data from external files
+		 * is re-read and buffered in memory for fast access.
 		 * 
 		 * !!! If you forget this your IDs are not guaranteed to be valid !!!
 		 */

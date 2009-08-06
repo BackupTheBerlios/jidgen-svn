@@ -276,14 +276,8 @@ public class IdGenOptions
 	 * 
 	 * @return a collection of all stored options
 	 */
+	@SuppressWarnings("unchecked")
 	public Collection<IdGenOption> getOptions() {
-		/*
-		Collection<IdGenOption> optionList = new HashSet<IdGenOption>();
-		//optionList.addAll(this.dummyOptions);
-		optionList.addAll(super.getOptions());
-		return optionList;
-		 */
-
 		return (Collection<IdGenOption>)super.getOptions();
 	}
 

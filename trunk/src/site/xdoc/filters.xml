@@ -15,21 +15,27 @@
 			</p>
 			<p>
 				All active filters are internally organized within a
-				filter chain. Therefore multiple filters can be
+				filter chain.
+				Therefore multiple filters can be
 				activated simultaneously.
 				<br />
 				Each id candidate that passes the chain is valid. If an
-				id candidate is filtered on its way through the chain
-				the template system checks whether there are any
-				alternative values left for any of the elements. If so,
-				the next id candidate is generated and passed on to the
+				id candidate
+				is filtered on its way through the chain
+				the template system checks
+				whether there are any
+				alternative values left for any of the
+				elements. If so,
+				the next id candidate is generated and passed on to
+				the
 				filter chain. If no more alternatives are left the
-				genreation processes is aborted and a warning is issued.
+				genreation
+				processes is aborted and a warning is issued.
 			</p>
 			<p>
-				<a name="filter_overview">
+				<a name="filter_overview" />
 
-				</a>
+
 				The following filter types are currently available:
 				<ul>
 					<li>
@@ -41,6 +47,11 @@
 					<li>
 						<a href="#Shell_command_filter">
 							Shell command filter
+						</a>
+					</li>
+					<li>
+						<a href="#LDAP_filter">
+							LDAP filter
 						</a>
 					</li>
 				</ul>
@@ -62,16 +73,19 @@
 						forbidden blackwords.
 						<br />
 						If one of the blackwords appears anywhere within
-						the id candidate, it is filtered and an
+						the id candidate,
+						it is filtered and an
 						alternative id is generated.
 					</p>
 					<p>
 						The blackword list is read from an external file
-						with one word per line.
+						with one word per
+						line.
 						<br />
 						<em>
 							This list is only read once on init! So it
-							will not be updated until you call the
+							will not be updated
+							until you call the
 							IdGenerators
 							<a
 								href="apidocs/de/rrze/idmone/utils/jidgen/IdGenerator.html#update()">
@@ -108,21 +122,25 @@
 						The
 						<em>passwd filter</em>
 						checks each generated id against all login
-						names/user ids within the systems passwd file.
+						names/user ids within
+						the systems passwd file.
 						<br />
 						If one of the login names/user ids is identical
-						with the id candidate, it is filtered and an
+						with the id
+						candidate, it is filtered and an
 						alternative id is generated.
 					</p>
 					<p>
 						The
 						<em>passwd filter</em>
 						parses the passwd file syntax and may therefore
-						be directly applied to the system's passwd file.
+						be directly applied
+						to the system's passwd file.
 						<br />
 						<em>
 							The specified passwd file is re-read for
-							every id that is checked. Changes to the
+							every id that is
+							checked. Changes to the
 							passwd file are therefore applied
 							immediately to the filter.
 						</em>
@@ -155,22 +173,27 @@
 						The
 						<em>shell command filter</em>
 						calls an external shell command and appends the
-						current id candidate as a parameter.
+						current id
+						candidate as a parameter.
 						<br />
 						Through the specified shell command (e.g. a
-						shell script) it is possible to apply all kinds
+						shell script) it is
+						possible to apply all kinds
 						of filter combinations most flexibly.
 						<br />
 						The command's exit value indicates whether the
-						current id candidate should be filtered (exit
+						current id candidate
+						should be filtered (exit
 						value = 0) or not (exit value = 1).
 					</p>
 					<p>
 						The command's stdout is logged with 'debug'
-						log-level and therefore usually not displayed.
+						log-level and therefore
+						usually not displayed.
 						<br />
 						The command's stderr is logged with 'error'
-						log-level and therefore usually visible.
+						log-level and therefore
+						usually visible.
 						<br />
 					</p>
 					<p>
@@ -181,7 +204,8 @@
 						<br />
 						<em>
 							Internally no timeout or max. execution time
-							is specified. It is up to you to make sure
+							is specified. It
+							is up to you to make sure
 							your external command ever returns.
 						</em>
 					</p>
@@ -196,7 +220,8 @@
 						be structured.
 						<br />
 						It is a good starting point if you plan to use
-						this filter together with your own filter
+						this filter together
+						with your own filter
 						script.
 					</p>
 					<p>
@@ -232,7 +257,8 @@
 							<br />
 							<br />
 							# Example: Output some debug info to stdout
-							(logged to debug level)
+							(logged to debug
+							level)
 							<br />
 							echo "Got ID to check for collisions:
 							\"$ID\"" &gt;&amp;1
@@ -259,6 +285,111 @@
 							# exit with code 1 to keep the given ID
 							<br />
 							exit 1
+						</code>
+					</p>
+					<p>
+						See jidgen's
+						<a href="cli.html">CLI options</a>
+						for more information.
+					</p>
+				</li>
+			</ul>
+			<a href="#filter_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+		</section>
+		
+		<section name="LDAP filter">
+			<a href="#filter_overview">
+				<img src="images/arrow_up.gif" />
+			</a>
+			<ul>
+				<li>
+					<b>Explanation</b>
+					<br />
+					<p>
+						The
+						<em>LDAP filter</em>
+						checks entries, e.g. user entities, stored in a 
+						LDAP directory server for a match with the current id.<br/>
+						If the configured attribute of an entry matches the current
+						id an alternative is generated. 
+					</p>
+					<p>
+						The <em>LDPA filter</em>
+						can be configured via an external 
+						<a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Properties.html#load(java.io.InputStream)">
+							JAVA properties file
+						</a> which defaults to "ldapFilter.properties".
+						Within the properties file the connection parameters for the
+						LDAP directory server as well as the search parameters are
+						defined.
+					</p>
+				</li>
+				<li>
+					<b>Usage</b>
+					<br />
+					<p/>
+					<p>
+						The following is an example of a possible configuration file
+						for the LDAP filter. The file is also included in the SVN
+						repository.
+					</p>
+					<p>
+						ldapFilter.properties<br/>
+						<code>
+							# ########################## #
+							<br />
+							# Properties for LDAP Filter #
+							<br />
+							# ########################## #
+							<br />
+							<br />
+							#
+							<br />
+							# Connection
+							<br />
+							#
+							<br />
+							<br />
+							host = local
+							<br />
+							port = 389
+							<br />
+							namingContext = dc=example,dc=com
+							<br />
+							<br />
+							<br />
+							#
+							<br />
+							# Bind
+							<br />
+							#
+							<br />
+							<br />
+							user = cn=jidgen,ou=people,dc=example,dc=com
+							<br />
+							password = jidgen
+							<br />
+							<br />
+							<br />
+							#
+							<br />
+							# Search
+							<br />
+							#
+							<br />
+							<br />
+							# The string {ID} will be replaced for the
+							<br/>
+							# current ID candidate in question
+							<br />
+							searchFilter = (cn={ID})
+							<br />
+							# The search scope defaults to SUBTREE
+							<br />
+							searchBase = ou=people
+							<br />
 						</code>
 					</p>
 					<p>
