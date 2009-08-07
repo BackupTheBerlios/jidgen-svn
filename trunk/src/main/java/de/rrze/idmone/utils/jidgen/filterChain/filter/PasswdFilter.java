@@ -30,105 +30,95 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.rrze.idmone.utils.jidgen.Defaults;
 import de.rrze.idmone.utils.jidgen.i18n.Messages;
 import de.rrze.idmone.utils.jidgen.io.FileAccessor;
 
 /**
- * A filter for IDs that are already in use within 
- * the system's passwd file.
+ * A filter for IDs that are already in use within the system's passwd file.
  * 
  * @author unrza249
  */
-public class PasswdFilter 
-	extends AbstractFilter
-	implements IFilter 
-{
+public class PasswdFilter extends AbstractFilter implements IFilter {
 	/**
 	 * The class logger
 	 */
 	private static final Log logger = LogFactory.getLog(PasswdFilter.class);
 
 	/**
-	 * The location of the passwd file. This should 
-	 * usually be /etc/passwd, at least for the local system.
+	 * The location of the passwd file. This should usually be /etc/passwd, at
+	 * least for the local system.<br/>
+	 * The connection via this accessor is managed by the filter class alone.
 	 */
 	private FileAccessor pwFileAccessor;
 
-	
 	/**
-	 *  A list that stores the forbidden logins
+	 * A list that stores the forbidden logins
 	 */
-	private List<String> loginList = new ArrayList<String>();
-	
-	
-	
-	
-	
-	
+	private List<String> loginList;
+
 	/**
 	 * Default constructor
 	 */
 	public PasswdFilter() {
-		logger.info(Messages.getString(this.getClass().getSimpleName() + ".INIT_MESSAGE"));
-	}
+		logger.info(Messages.getString(this.getClass().getSimpleName()
+				+ ".INIT_MESSAGE"));
 
-	/**
-	 * @param id
-	 */
-	public PasswdFilter(String id) {
-		super(id);
-	}
-
-	/**
-	 * @param id
-	 * @param description
-	 */
-	public PasswdFilter(String id, String description) {
-		super(id, description);
+		this.loginList = new ArrayList<String>();
+		
+		this.loadDefaults();
 	}
 
 	
+	private void loadDefaults() {
+		this.setDefaultProp("filename", Defaults.DEFAULT_PASSWD_FILE);
+	}
 	
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#apply(java.lang.String)
 	 */
 	public String apply(String id) {
 		logger.trace("Checking ID '" + id + "'");
-	
-		if (this.loginList.contains(id)) {
-			logger.trace(Messages.getString("IFilter.FILTER_NAME") 
-					+ " \"" + this.getID() + "\" "
-					+ Messages.getString("IFilter.SKIPPED_ID") 
-					+ " \"" + id
-					+ "\"");
-			
-			logger.debug(Messages.getString("IFilter.REASON")
-					+ " \"" + this.getFilename() + "\""
-					+ " " + Messages.getString("IFilter.CONTAINS")
-					+ " \"" + id + "\"");
 
+		if (this.pwFileAccessor == null)
+			this.connect();
+
+		if (this.loginList.contains(id)) {
+			logger.trace(Messages.getString("IFilter.FILTER_NAME") + " \""
+					+ this.getID() + "\" "
+					+ Messages.getString("IFilter.SKIPPED_ID") + " \"" + id
+					+ "\"");
+
+			logger.debug(Messages.getString("IFilter.REASON") + " \""
+					+ this.getProp("filename") + "\"" + " "
+					+ Messages.getString("IFilter.CONTAINS") + " \"" + id
+					+ "\"");
 
 			return null;
-		}
-		else {
+		} else {
 			return id;
 		}
 	}
-	
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.rrze.idmone.utils.jidgen.filter.AbstractFilter#update()
 	 */
 	public boolean update() {
 		logger.trace("Update called.");
-		
+
+		if (this.pwFileAccessor == null)
+			this.connect();
+			
 		// reset the blacklist file
 		this.pwFileAccessor.reset();
-		
+
 		// clear buffered login list
 		this.loginList.clear();
-		
+
 		// re-read passwd file and fill list
 		String line;
 		while ((line = this.pwFileAccessor.getLine()) != null) {
@@ -136,40 +126,23 @@ public class PasswdFilter
 			this.loginList.add(userID);
 			logger.trace("Added user: \"" + userID + "\"");
 		}
-		
-		
+
 		return true;
 	}
-	
-	/**
-	 * @param passwdFile
-	 */
-	public void setFileAccessor(FileAccessor pwFileAccessor) {
-		logger.debug("passwdFile = " + pwFileAccessor);
-		this.pwFileAccessor = pwFileAccessor;
-	}
 
 	/**
-	 * @return
+	 * "Connects" to the passwd file
 	 */
-	public FileAccessor getFileAccessor() {
-		return pwFileAccessor;
+	private void connect() {
+		this.pwFileAccessor = new FileAccessor(this.getProp("filename"));
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param pwFile
+	 * @see de.rrze.idmone.utils.jidgen.filterChain.filter.IFilter#autosetID()
 	 */
-	public void setFilename(String pwFile) {
-		logger.debug("passwdFile = " + pwFileAccessor);
-		this.pwFileAccessor = new FileAccessor(pwFile);
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String getFilename() {
-		return this.pwFileAccessor.getFilename();
+	public void autosetID() {
+		this.setID(this.getClass().getSimpleName() + "-" + this.getProp("filename"));
 	}
 }

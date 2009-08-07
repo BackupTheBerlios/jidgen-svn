@@ -27,9 +27,9 @@ package de.rrze.idmone.utils.jidgen.filterChain.filter;
 import java.util.List;
 
 /**
- * Interface representing the basic functionality that should be supported by
- * an id filter class. Implementations of this class can be registered
- * for usage by the FilterChain class.
+ * Interface representing the basic functionality that should be supported by an
+ * id filter class. Implementations of this class can be registered for usage by
+ * the FilterChain class.
  * 
  * @author unrza249
  * @author unrz205
@@ -37,32 +37,50 @@ import java.util.List;
 public interface IFilter {
 
 	/**
+	 * Returns the property value with the given name. If the the property is
+	 * not speciefied a default value is returned instead - if available.
 	 * 
 	 * @param propName
-	 * @return
+	 *            the name of the property - aka "key"
+	 * @return the property's value
 	 */
 	public abstract String getProp(String propName);
-	
+
 	/**
+	 * Sets a property with the specified name and value.
 	 * 
 	 * @param propName
+	 *            the property name to use - aka "key"
 	 * @param propValue
+	 *            the property's value
 	 */
 	public abstract void setProp(String propName, String propValue);
 
 	/**
+	 * Sets a default property with the specified name and value.<br/>
+	 * This value will only be returned by the getProp() method if there was no
+	 * property with the same named set by the setProp(String,String) method.<br/>
+	 * <i>Although this method is public it is mostly used internally. However
+	 * if you think you must use it, you are free to do so.</i>
 	 * 
 	 * @param propName
+	 *            the property name to use - aka "key"
 	 * @param propValue
+	 *            the property's <b>default</b> value to fall back on
 	 */
 	public abstract void setDefaultProp(String propName, String propValue);
-	
+
 	/**
+	 * Loads a set of properties from the given filename.<br/>
+	 * The properties file must be formatted according to the Java Propteries
+	 * File specifications.
 	 * 
 	 * @param filename
+	 *            the name of the properties file without the ".properties"
+	 *            ending
 	 */
 	public abstract void loadPropFile(String filename);
-	
+
 	/**
 	 * This method must return the unique identifier of the filter. A unique
 	 * identifier is needed for correct registration of the filter.
@@ -100,36 +118,39 @@ public interface IFilter {
 	 * 
 	 * @param id
 	 *            the id to be checked
-	 * @return <em>null</em> if the id should be filtered and the
-	 *         id if it satisfies the rules.
+	 * @return <em>null</em> if the id should be filtered and the id if it
+	 *         satisfies the rules.
 	 */
 	public abstract String apply(String id);
 
 	/**
 	 * This method checks a whole list of ids. It should return a list of
-	 * suitable ids or an empty list if none of the ids fits the
-	 * rules.
+	 * suitable ids or an empty list if none of the ids fits the rules.
 	 * 
 	 * @param ids
 	 *            a list of ids to be checked
 	 * @return the list with filtered ids
 	 */
 	public abstract List<String> apply(List<String> ids);
-	
-	
+
 	/**
 	 * Returns the filter type (simple class name)
 	 * 
 	 * @return filter type
 	 */
 	public abstract String getType();
-	
-	
+
 	/**
-	 * Re-reads data needed for the filter process, e.g. an
-	 * externally stored blacklist
+	 * Re-reads data needed for the filter process, e.g. an externally stored
+	 * blacklist
 	 * 
 	 * @return true on success, false on failure
 	 */
 	public abstract boolean update();
+
+	/**
+	 * Try to automatically assemble a verbose and unique id for this filter.<br/>
+	 * <i>This should only be used after setting the filter's properties</i>
+	 */
+	public abstract void autosetID();
 }

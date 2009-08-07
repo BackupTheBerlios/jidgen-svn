@@ -31,114 +31,102 @@ import de.rrze.idmone.utils.jidgen.i18n.Messages;
 import de.rrze.idmone.utils.jidgen.io.JdbcAccessor;
 
 /**
- * This a basic filter template class that implements most of the 
- * common filter functions. All real filter implementations should
- * extend this class to avoid duplicate code.
+ * This a basic filter template class that implements most of the common filter
+ * functions. All real filter implementations should extend this class to avoid
+ * duplicate code.
  * 
  * @author unrza249
- *
+ * 
  */
-public class JdbcFilter 
-	extends AbstractFilter
-{
+public class JdbcFilter extends AbstractFilter {
 	/**
 	 * A static logger instance
 	 */
 	private static final Log logger = LogFactory.getLog(JdbcFilter.class);
 
-	private String searchQuery = "(sn={ID})";
-	
-	private JdbcAccessor jdbc;
+	/**
+	 * The JDBC accessor object that provides access to the database<br/>
+	 * The connection via this accessor is managed by the filter class alone.
+	 */
+	private JdbcAccessor jdbcAccessor;
 
 	/**
 	 * Default constructor
 	 */
 	public JdbcFilter() {
-		logger.info(Messages.getString(this.getClass().getSimpleName() + ".INIT_MESSAGE"));
+		logger.info(Messages.getString(this.getClass().getSimpleName()
+				+ ".INIT_MESSAGE"));
+		
+		this.loadDefaults();
 	}
 
-	/**
-	 * Constructor with filter ID
+	
+	private void loadDefaults() {
+		this.setDefaultProp("driver", "com.mysql.jdbc.Driver");
+		// URL: jdbc:<subprotocol>:<subname>
+		this.setDefaultProp("url", "jdbc:mysql://localhost:3306/jidgen");
+		this.setDefaultProp("user", "jidgen");
+		this.setDefaultProp("password", "jidgen");
+		this.setDefaultProp("query", "SELECT `user_name` FROM `users` WHERE `user_name` = '{ID}';");
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param id
-	 * 		A unique ID to identify this filter object within the filter chain
-	 */
-	public JdbcFilter(String id) {
-		super(id);
-	}
-
-	/**
-	 * Constructor with filter ID and description
-	 * 
-	 * @param id
-	 * 		A unique ID to identify this filter object within the filter chain
-	 * @param description
-	 * 		A textual description for this filter object to be printed on usage
-	 */
-	public JdbcFilter(String id, String description) {
-		super(id, description);
-	}
-
-
-
-
-
-	/* (non-Javadoc)
 	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#apply(java.lang.String)
 	 */
-	public String apply(String id)	{
+	public String apply(String id) {
 		logger.trace("Checking ID '" + id + "'");
 
-		String query = this.searchQuery.replace("{ID}", id);
-
-		// execute the search request
-		this.jdbc.query("SELECT `user_name` FROM `users` WHERE `user_name` = '" + id + "';");
-		int numRows = this.jdbc.getNumRows();
+		if (this.jdbcAccessor == null)
+			this.connect();
 		
+		// execute the search request
+		this.jdbcAccessor.query(this.getProp("query").replace("{ID}", id));
+		int numRows = this.jdbcAccessor.getNumRows();
+
 		if (numRows > 0) {
-			logger.debug(Messages.getString("IFilter.FILTER_NAME") 
-					+ " \"" + this.getID() + "\" "
-					+ Messages.getString("IFilter.SKIPPED_ID") 
-					+ " \"" + id
-					+ "\"");		
-			logger.debug(Messages.getString("IFilter.REASON")
-					+ " \"" + this.getSearchQuery() + "\""
-					+ " " + Messages.getString("IFilter.MATCHED")
-					+ " \"" + id + "\"");
+			logger.debug(Messages.getString("IFilter.FILTER_NAME") + " \""
+					+ this.getID() + "\" "
+					+ Messages.getString("IFilter.SKIPPED_ID") + " \"" + id
+					+ "\"");
+			logger
+					.debug(Messages.getString("IFilter.REASON") + " \""
+							+ this.getProp("query") + "\"" + " "
+							+ Messages.getString("IFilter.MATCHED") + " \""
+							+ id + "\"");
 
 			return null;
-		}
-		else {
+		} else {
 			return id;
 		}
 	}
 
 	/**
-	 * @return
+	 * Instantiates the JDBC accessor with the given properties and connects to
+	 * the database.
 	 */
-	public String getSearchQuery() {
-		return searchQuery;
+	private void connect() {
+		// get a jdbc accessor instance
+		this.jdbcAccessor = new JdbcAccessor();
+		
+		// configure the jdbc accessor
+		this.jdbcAccessor.setDriver(this.getProp("driver"));
+		this.jdbcAccessor.setUrl(this.getProp("url"));
+		this.jdbcAccessor.setUser(this.getProp("user"));
+		this.jdbcAccessor.setPassword(this.getProp("password"));
+		
+		// connect to the database
+		this.jdbcAccessor.connect();
 	}
+	
 
-	/**
-	 * @param searchQuery
+	/* (non-Javadoc)
+	 * @see de.rrze.idmone.utils.jidgen.filterChain.filter.IFilter#autosetID()
 	 */
-	public void setSearchQuery(String searchQuery) {
-		this.searchQuery = searchQuery;
+	public void autosetID() {
+		this.setID(this.getClass().getSimpleName() + "-" + this.getProp("url"));
 	}
-
-	/**
-	 * @return the jdbc
-	 */
-	public JdbcAccessor getJdbc() {
-		return jdbc;
-	}
-
-	/**
-	 * @param jdbc the jdbc to set
-	 */
-	public void setJdbc(JdbcAccessor jdbc) {
-		this.jdbc = jdbc;
-	}
-
+	
+	
 }

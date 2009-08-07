@@ -31,87 +31,78 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.rrze.idmone.utils.jidgen.Defaults;
 import de.rrze.idmone.utils.jidgen.i18n.Messages;
 import de.rrze.idmone.utils.jidgen.io.FileAccessor;
 
-
 /**
- * This class is used for filtering IDs from a blacklist. If the proposed
- * id is contained within the blacklist, <em>null</em> is returned to
- * indicate the password is not suitable. Otherwise the password itself is
- * returned.
+ * This class is used for filtering IDs from a blacklist. If the proposed id is
+ * contained within the blacklist, <em>null</em> is returned to indicate the
+ * password is not suitable. Otherwise the password itself is returned.
  * 
  * @author unrza249
  * @author unrz205
  */
-public class BlacklistFilter 
-	extends AbstractFilter
-	implements IFilter
-{
+public class BlacklistFilter extends AbstractFilter implements IFilter {
 	/**
-	 *  The class logger
+	 * The class logger
 	 */
 	private static final Log logger = LogFactory.getLog(BlacklistFilter.class);
 
 	/**
-	 * The file containing the forbidden words 
+	 * The file containing the forbidden words<br/>
+	 * The connection via this accessor is managed by the filter class alone.
 	 */
 	private FileAccessor blFileAccessor;
-	
-	
+
 	/**
-	 *  A list that stores the forbidden words
+	 * A list that caches the forbidden words read from the blacklist file
 	 */
-	private List<String> bl = new ArrayList<String>();
-	
-	
+	private List<String> bl;
+
 	/**
 	 * Default constructor.
 	 */
 	public BlacklistFilter() {
-		logger.info(Messages.getString(this.getClass().getSimpleName() + ".INIT_MESSAGE"));
+		logger.info(Messages.getString(this.getClass().getSimpleName()
+				+ ".INIT_MESSAGE"));
+
+		this.bl = new ArrayList<String>();
+
+		this.loadDefaults();
 	}
 
-	/**
-	 * @param id
-	 */
-	public BlacklistFilter(String id) {
-		super(id);
+	private void loadDefaults() {
+		this.setDefaultProp("filename", Defaults.DEFAULT_BLACKLIST_FILE);
 	}
-	
-	/**
-	 * @param id
-	 * @param description
-	 */
-	public BlacklistFilter(String id, String description) {
-		super(id, description);
-	}	
-	
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#apply(java.lang.String)
 	 */
 	public String apply(String id) {
 		logger.trace("Checking ID '" + id + "'");
+
+		if (this.blFileAccessor == null)
+			connect();
 		
 		// Iterate over the list and check whether it contains the word
-		for (Iterator<String> iter = bl.iterator(); iter.hasNext();)	{
+		for (Iterator<String> iter = bl.iterator(); iter.hasNext();) {
 			String blackword = iter.next();
 
 			// filter on match
 			if (id.contains(blackword)) {
-				logger.debug(Messages.getString("IFilter.FILTER_NAME") 
-						+ " \"" + this.getID() + "\" "
-						+ Messages.getString("IFilter.SKIPPED_ID") 
-						+ " \"" + id
+				logger.debug(Messages.getString("IFilter.FILTER_NAME") + " \""
+						+ this.getID() + "\" "
+						+ Messages.getString("IFilter.SKIPPED_ID") + " \"" + id
 						+ "\"");
-				
-				logger.debug(Messages.getString("IFilter.REASON")
-						+ " \"" + this.getFileAccessor().getFilename() + "\""
-						+ " " + Messages.getString("IFilter.CONTAINS")
-						+ " \"" + id + "\"");
 
-				
+				logger.debug(Messages.getString("IFilter.REASON") + " \""
+						+ this.getProp("filename") + "\"" + " "
+						+ Messages.getString("IFilter.CONTAINS") + " \"" + id
+						+ "\"");
+
 				return null;
 			}
 		}
@@ -120,106 +111,52 @@ public class BlacklistFilter
 	}
 
 	/**
-	 * Returns a reference of the blacklist used by this filter and
-	 * <em>null</em> if the filters is purely procedural and checks
-	 * ids against rule.
+	 * "Connects" to the blacklist file 
+	 */
+	private void connect() {
+		this.blFileAccessor = new FileAccessor(this.getProp("filename"));
+	}
+	
+	/**
+	 * Returns a reference of the blacklist used by this filter.
 	 * 
-	 * @return the blacklist of the filter or <em>null</em> if one is not
-	 *         used.
+	 * @return list of forbidden words as read from the specified blacklist file
 	 */
 	public List<String> getBlacklist() {
 		return this.bl;
 	}
 
-	/**
-	 * Sets the blacklist of the filter.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param blacklist
-	 */
-	public void setBlacklist(List<String> blacklist) {
-		this.bl = blacklist;
-	}
-
-	/**
-	 * Adds a password to the list of forbidden ids.
-	 * 
-	 * @param blackWord
-	 *            the forbidden word
-	 */
-	public void add(String blackWord) {
-			logger.trace("Added blackword: \"" + blackWord + "\"");
-			this.bl.add(blackWord);
-	}
-
-	/**
-	 * Removes a word from the blacklist.
-	 * 
-	 * @param blackWord
-	 *            the word to be removed from the blacklist
-	 */
-	public void remove(String blackWord) {
-		this.bl.remove(blackWord);
-	}
-
-	/**
-	 * Removes all words from the blacklist leaving it empty.
-	 */
-	public void clear() {
-		this.bl.clear();
-	}
-	
-	
-	/* (non-Javadoc)
 	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#update()
 	 */
 	public boolean update() {
 		logger.trace("Update called.");
-		
+
+		if (this.blFileAccessor == null)
+			connect();
+
 		// reset the blacklist file
 		this.blFileAccessor.reset();
-		
+
 		// clear the stored blacklist
-		this.clear();
-		
+		this.bl.clear();
+
 		// re-fill the blacklist from file
 		String word;
-		while((word = this.blFileAccessor.getLine()) != null) {
-			this.add(word);
+		while ((word = this.blFileAccessor.getLine()) != null) {
+			this.bl.add(word);
 		}
-		
+
 		return true;
 	}
-	
-	
-	/**
-	 * @return
-	 */
-	public FileAccessor getFileAccessor() {
-		return blFileAccessor;
-	}
 
-	/**
-	 * @param blFileAccessor
+	/* (non-Javadoc)
+	 * @see de.rrze.idmone.utils.jidgen.filterChain.filter.IFilter#autosetID()
 	 */
-	public void setFileAccessor(FileAccessor blFileAccessor) {
-		logger.debug("blacklistFile = " + blFileAccessor);
-		this.blFileAccessor = blFileAccessor;
-	}
-
-	/**
-	 * 
-	 * @param blFile
-	 */
-	public void setFilename(String blFile) {
-		logger.debug("blacklistFile = " + blFile);
-		this.blFileAccessor = new FileAccessor(blFile);
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String getFilename() {
-		return this.blFileAccessor.getFilename();
+	public void autosetID() {
+		this.setID(this.getClass().getSimpleName() + "-"
+				+ this.getProp("filename"));
 	}
 }

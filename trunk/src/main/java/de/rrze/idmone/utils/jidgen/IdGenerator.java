@@ -92,70 +92,6 @@ public class IdGenerator
 	 */
 	private FilterChain filterChain; 
 
-	
-	/* 
-	 * CONSTANTS 
-	 */
-	// TODO use the IdGenOptions class for handling of default values
-	
-	/**
-	 * Default terminal width in characters
-	 */
-	public static final int DEFAULT_TERM_WIDTH = 80;
-	
-	/**
-	 * Default for output in columns
-	 */
-	public static final boolean DEFAULT_ENABLE_COLUMN_OUTPUT = false;
-
-	/**
-	 * Default number of id proposals to be generated after one 
-	 * invocation of jidgen. 
-	 */
-	public static final int DEFAULT_NUM_IDs = 1;
-	
-	/**
-	 * This is meant to be the emergency exit if the
-	 * id generation loop does not exit.
-	 * If this happens the loop is broken after MAX_ATTEMPTS
-	 * loops and a proper error message is displayed.
-	 */
-	private static final int MAX_ATTEMPTS = 10000;
-	
-	/**
-	 * Default blacklist file
-	 */
-	public static final String DEFAULT_BLACKLIST_FILE = "blacklist";
-	
-	
-	/**
-	 * Default passwd file
-	 */
-	public static final String DEFAULT_PASSWD_FILE = "/etc/passwd";
-	
-	
-	/**
-	 * Default shell command
-	 */
-	public static final String DEFAULT_SHELLCMD = "./filter.sh %s";
-	
-
-	/**
-	 * Default configuration file for the LDAP filter
-	 */
-	public static final String DEFAULT_LDAP_CONFIGURATION_FILE="ldapFilter.properties";
-
-
-	/**
-	 * Default configuration file for the LDAP filter
-	 */
-	public static final String DEFAULT_JDBC_CONFIGURATION_FILE="jdbcFilter.properties";
-
-	/* 
-	 * END: CONSTANTS 
-	 */
-	
-	
 	/**
 	 * Default constructor of the IdGenerator
 	 */
@@ -166,7 +102,7 @@ public class IdGenerator
 		this.filterChain = new FilterChain();
 		
 		// create and fill options manager for CLI and library usage
-		this.options = new IdGenOptions(DEFAULT_TERM_WIDTH);
+		this.options = new IdGenOptions(Defaults.DEFAULT_TERM_WIDTH);
 		addOptions(this.options);
 	}
 
@@ -222,7 +158,7 @@ public class IdGenerator
 		 */
 
 		// set terminal width
-		int termWidth = DEFAULT_TERM_WIDTH;
+		int termWidth = Defaults.DEFAULT_TERM_WIDTH;
 		if (generator.options.hasOptionValue("W")) {
 			termWidth = Integer.parseInt(generator.options.getOptionValue("W"));
 		}
@@ -242,14 +178,14 @@ public class IdGenerator
 		}
 
 		// set number of ids
-		int numIds = DEFAULT_NUM_IDs;
+		int numIds = Defaults.DEFAULT_NUM_IDs;
 		if (generator.options.hasOptionValue("N")) {
 			numIds = Integer.parseInt(generator.options.getOptionValue("N"));
 		}
 		logger.trace("Set number of ids to generate to " + numIds + ".");
 
 		// enable column output
-		boolean enableColumnOutput = DEFAULT_ENABLE_COLUMN_OUTPUT;
+		boolean enableColumnOutput = Defaults.DEFAULT_ENABLE_COLUMN_OUTPUT;
 		if (generator.options.hasOptionValue("C")) {
 			enableColumnOutput = true;
 		}
@@ -307,6 +243,8 @@ public class IdGenerator
 		 * FILTER SETUP
 		 */
 		// TODO find a more elegant way to initialize the filters as specified
+		
+		
 		// blacklist filter
 		if (this.options.hasOptionValue("B")) {
 			logger.trace("Enabling blacklist filter.");
@@ -314,15 +252,9 @@ public class IdGenerator
 
 			// source file
 			if (this.options.hasOptionValue("Bf")) {
-				blacklistFilter.setFilename(this.options.getOptionValue("Bf"));
+				blacklistFilter.setProp("filename", this.options.getOptionValue("Bf"));
 			}
-			else {
-				blacklistFilter.setFilename(DEFAULT_BLACKLIST_FILE);
-			}
-			
-			// set a unique ID for this filter
-			blacklistFilter.setID(blacklistFilter.getClass().getSimpleName() + "-" + blacklistFilter.getFileAccessor());
-			
+			blacklistFilter.autosetID();
 			this.filterChain.addFilter(blacklistFilter);
 		}
 
@@ -333,15 +265,9 @@ public class IdGenerator
 
 			// source file
 			if (this.options.hasOptionValue("Pf")) {
-				passwdFilter.setFilename(this.options.getOptionValue("Pf"));
+				passwdFilter.setProp("filename", this.options.getOptionValue("Pf"));
 			}
-			else {
-				passwdFilter.setFilename(DEFAULT_PASSWD_FILE);
-			}
-
-			// set a unique ID for this filter
-			passwdFilter.setID(passwdFilter.getClass().getSimpleName() + "-" + passwdFilter.getFilename());
-
+			passwdFilter.autosetID();
 			this.filterChain.addFilter(passwdFilter);
 		}
 
@@ -353,15 +279,9 @@ public class IdGenerator
 			// file to execute
 			// TODO introduce Shell class similar to File/Ldap classes
 			if (this.options.hasOptionValue("Sf")) {
-				shellCmdFilter.setCmd(this.options.getOptionValue("Sf"));
+				shellCmdFilter.setProp("shellCommand", this.options.getOptionValue("Sf"));
 			}
-			else {
-				shellCmdFilter.setCmd(DEFAULT_SHELLCMD);
-			}
-			
-			// set a unique ID for this filter
-			shellCmdFilter.setID(shellCmdFilter.getClass().getSimpleName() + "-" + shellCmdFilter.getCmd());
-			
+			shellCmdFilter.autosetID();
 			this.filterChain.addFilter(shellCmdFilter);	
 		}
 		
@@ -375,21 +295,10 @@ public class IdGenerator
 				ldapFilter.loadPropFile(this.options.getOptionValue("Lf"));
 			}
 			else {
-				ldapFilter.loadPropFile(DEFAULT_LDAP_CONFIGURATION_FILE);
+				// TODO automatically detect and load the default configuration file - if available
+				ldapFilter.loadPropFile(Defaults.DEFAULT_LDAP_CONFIGURATION_FILE);
 			}
-			
-			// set a unique ID for this filter
-			ldapFilter.setID(
-					ldapFilter.getClass().getSimpleName() 
-					+ "-" 
-					+ ldapFilter.getProp("host")
-					+ ":"
-					+ ldapFilter.getProp("port")
-					+ "/"
-					+ ldapFilter.getProp("namingContext")
-			);
-			
-			
+			ldapFilter.autosetID();
 			this.filterChain.addFilter(ldapFilter);
 		}
 
@@ -400,22 +309,13 @@ public class IdGenerator
 
 			// LDAP connection to use
 			if (this.options.hasOptionValue("Df")) {
-				jdbcFilter.setJdbc(new JdbcAccessor(new FileAccessor(this.options.getOptionValue("Df"))));
+				jdbcFilter.loadPropFile(this.options.getOptionValue("Df"));
 			}
 			else {
-				FileAccessor f = new FileAccessor(DEFAULT_JDBC_CONFIGURATION_FILE);
-				if (f.exists()) {
-					jdbcFilter.setJdbc(new JdbcAccessor(f));
-				}
-				else {
-					jdbcFilter.setJdbc(new JdbcAccessor());
-				}
+				// TODO automatically detect and load the default configuration file - if available
+				jdbcFilter.loadPropFile(Defaults.DEFAULT_JDBC_CONFIGURATION_FILE);
 			}
-			
-			// set a unique ID for this filter
-			jdbcFilter.setID(jdbcFilter.getClass().getSimpleName() + "-" + jdbcFilter.getJdbc());
-			
-			
+			jdbcFilter.autosetID();
 			this.filterChain.addFilter(jdbcFilter);
 		}
 
@@ -446,7 +346,7 @@ public class IdGenerator
 		opts.add(
 				"W",
 				"terminal-width",
-				Messages.getString("IIdGenCommandLineOptions.CL_TERMINAL_WIDTH_DESC") + " (Default: " + DEFAULT_TERM_WIDTH + ")",
+				Messages.getString("IIdGenCommandLineOptions.CL_TERMINAL_WIDTH_DESC") + " (Default: " + Defaults.DEFAULT_TERM_WIDTH + ")",
 				1,
 				"number",
 				' '
@@ -483,7 +383,7 @@ public class IdGenerator
 		opts.add(
 				"S",
 				"enable-shellcmd-filter",
-				Messages.getString("IIdGenCommandLineOptions.CL_SHELLCMD_DESC") + " (Default: " + DEFAULT_SHELLCMD + ")"
+				Messages.getString("IIdGenCommandLineOptions.CL_SHELLCMD_DESC") + " (Default: " + Defaults.DEFAULT_SHELLCMD + ")"
 		);		
 		
 		// passwd filter file
@@ -500,7 +400,7 @@ public class IdGenerator
 		opts.add(
 				"P",
 				"enable-passwd-filter",
-				Messages.getString("IIdGenCommandLineOptions.CL_PASSWD_DESC") + " (Default: " + DEFAULT_PASSWD_FILE + ")"
+				Messages.getString("IIdGenCommandLineOptions.CL_PASSWD_DESC") + " (Default: " + Defaults.DEFAULT_PASSWD_FILE + ")"
 		);
 	
 		// blacklist filter file
@@ -517,7 +417,7 @@ public class IdGenerator
 		opts.add(
 				"B",
 				"enable-blacklist-filter",
-				Messages.getString("IIdGenCommandLineOptions.CL_BLACKLIST_DESC") + " (Default: " + DEFAULT_BLACKLIST_FILE + ")"
+				Messages.getString("IIdGenCommandLineOptions.CL_BLACKLIST_DESC") + " (Default: " + Defaults.DEFAULT_BLACKLIST_FILE + ")"
 		);
 	
 		
@@ -525,7 +425,7 @@ public class IdGenerator
 		opts.add(
 				"L",
 				"enable-ldap-filter",
-				Messages.getString("IIdGenCommandLineOptions.CL_LDAP_DESC") + " (Default: " + DEFAULT_LDAP_CONFIGURATION_FILE + ")"
+				Messages.getString("IIdGenCommandLineOptions.CL_LDAP_DESC") + " (Default: " + Defaults.DEFAULT_LDAP_CONFIGURATION_FILE + ")"
 		);
 	
 		// ldap filter configuration file
@@ -542,7 +442,7 @@ public class IdGenerator
 		opts.add(
 				"D",
 				"enable-jdbc-filter",
-				Messages.getString("IIdGenCommandLineOptions.CL_JDBC_DESC") + " (Default: " + DEFAULT_JDBC_CONFIGURATION_FILE + ")"
+				Messages.getString("IIdGenCommandLineOptions.CL_JDBC_DESC") + " (Default: " + Defaults.DEFAULT_JDBC_CONFIGURATION_FILE + ")"
 		);
 
 		
@@ -677,8 +577,8 @@ public class IdGenerator
 		// id generation loop
 		int i = 0;
 		while (template.hasAlternatives() && (validIDs.size() < num)) {
-			if (i++ == MAX_ATTEMPTS) {
-				logger.fatal(Messages.getString("IdGenerator.MAX_ATTEMPTS_REACHED") + " (" + MAX_ATTEMPTS + ")");
+			if (i++ == Defaults.MAX_ATTEMPTS) {
+				logger.fatal(Messages.getString("IdGenerator.MAX_ATTEMPTS_REACHED") + " (" + Defaults.MAX_ATTEMPTS + ")");
 				System.exit(152);
 			}
 			String idCandidate = null;

@@ -45,9 +45,11 @@ public class LdapFilter extends AbstractFilter {
 	private static final Log logger = LogFactory.getLog(LdapFilter.class);
 
 	/**
-	 * The LDAP access object for this filter
+	 * The LDAP access object for this filter.<br/>
+	 * The LDAP connection via this accessor is managed by the filter class
+	 * alone.
 	 */
-	private LdapAccessor ldapAccessor = null;
+	private LdapAccessor ldapAccessor;
 
 	/**
 	 * Default constructor
@@ -55,44 +57,21 @@ public class LdapFilter extends AbstractFilter {
 	public LdapFilter() {
 		logger.info(Messages.getString(this.getClass().getSimpleName()
 				+ ".INIT_MESSAGE"));
+		
 		this.loadDefaults();
 	}
 
 	/**
-	 * Constructor with filter ID
-	 * 
-	 * @param id
-	 *            A unique ID to identify this filter object within the filter
-	 *            chain
-	 */
-	public LdapFilter(String id) {
-		super(id);
-		this.loadDefaults();
-	}
-
-	/**
-	 * Constructor with filter ID and description
-	 * 
-	 * @param id
-	 *            A unique ID to identify this filter object within the filter
-	 *            chain
-	 * @param description
-	 *            A textual description for this filter object to be printed on
-	 *            usage
-	 */
-	public LdapFilter(String id, String description) {
-		super(id, description);
-		this.loadDefaults();
-	}
-
-	/**
-	 * Loads the default properties for this filter.<br/><br/>
- 	 * At the moment the following properties are recognized:<br />
+	 * Loads the default properties for this filter.<br/>
+	 * <br/>
+	 * At the moment the following properties are recognized:<br />
 	 * <ul>
 	 * <li><b>host</b> -- the hostname to connect to (Default: localhost)</li>
 	 * <li><b>port</b> -- the port to connect to (Default: 389)</li>
-	 * <li><b>namingContext</b> -- the naming context to use (Default: dc=example,dc=com)</li>
-	 * <li><b>user</b> -- the user DN to bind to (Default: cn=jidgen,ou=people,dc=example,dc=com)</li>
+	 * <li><b>namingContext</b> -- the naming context to use (Default:
+	 * dc=example,dc=com)</li>
+	 * <li><b>user</b> -- the user DN to bind to (Default:
+	 * cn=jidgen,ou=people,dc=example,dc=com)</li>
 	 * <li><b>password</b> -- the bind-user's password (Default: jidgen)</li>
 	 * <li><b>searchFilter</b> -- the search filter to use (Default: null)</li>
 	 * <li><b>searchBase</b> -- the search base to use (Default: ou=people)</li>
@@ -104,14 +83,13 @@ public class LdapFilter extends AbstractFilter {
 		this.setDefaultProp("namingContext", "dc=example,dc=com");
 		this.setDefaultProp("user", "cn=jidgen,ou=people,dc=example,dc=com");
 		this.setDefaultProp("password", "jidgen");
-		
+
 		/*
-		 * The ldap search filter to use.<br> 
-		 * The string <b>{ID}</b> will be replaced by the ID which 
-		 * is currently being checked.
+		 * The ldap search filter to use.<br> The string <b>{ID}</b> will be
+		 * replaced by the ID which is currently being checked.
 		 */
 		this.setDefaultProp("searchFilter", "(sn={ID})");
-		
+
 		this.setDefaultProp("searchBase", "ou=people");
 	}
 
@@ -126,12 +104,11 @@ public class LdapFilter extends AbstractFilter {
 		if (this.ldapAccessor == null) {
 			this.connect();
 		}
-		
+
 		// Update the search filter to the current id.
 		// This has to be updated for every id that must be checked!
-		this.ldapAccessor.setSearchFilter(
-				this.getProp("searchFilter").replace("{ID}", id)
-		);
+		this.ldapAccessor.setSearchFilter(this.getProp("searchFilter").replace(
+				"{ID}", id));
 
 		// execute the search request
 		if (this.ldapAccessor.doSearch()) {
@@ -141,7 +118,7 @@ public class LdapFilter extends AbstractFilter {
 					+ "\"");
 			logger
 					.debug(Messages.getString("IFilter.REASON") + " \""
-							+ this.getSearchFilter() + "\"" + " "
+							+ this.getProp("searchFilter") + "\"" + " "
 							+ Messages.getString("IFilter.MATCHED") + " \""
 							+ id + "\"");
 
@@ -152,13 +129,13 @@ public class LdapFilter extends AbstractFilter {
 	}
 
 	/**
-	 * Instantiates the LDAP accessor with the given
-	 * properties and connects to the directory server.
+	 * Instantiates the LDAP accessor with the given properties and connects to
+	 * the directory server.
 	 */
 	private void connect() {
 		// get an ldap accessor instance
 		this.ldapAccessor = new LdapAccessor();
-		
+
 		// configure the ldap accessor
 		this.ldapAccessor.setHost(this.getProp("host"));
 		this.ldapAccessor.setPort(this.getProp("port"));
@@ -166,41 +143,16 @@ public class LdapFilter extends AbstractFilter {
 		this.ldapAccessor.setPassword(this.getProp("password"));
 		this.ldapAccessor.setSearchBase(this.getProp("searchBase"));
 		this.ldapAccessor.setNamingContext(this.getProp("namingContext"));
-		
+
 		// connect
 		this.ldapAccessor.connect();
 	}
-	
-	
-	/**
-	 * @return
-	 */
-	public String getSearchFilter() {
-		return this.getProp("searchFilter");
-	}
 
-	/**
-	 * @param searchFilter
+	/* (non-Javadoc)
+	 * @see de.rrze.idmone.utils.jidgen.filterChain.filter.IFilter#autosetID()
 	 */
-	public void setSearchFilter(String searchFilter) {
-		this.setProp("searchFilter", searchFilter);
+	public void autosetID() {
+		this.setID(LdapFilter.class.getSimpleName() + "-" + getProp("host")
+				+ ":" + getProp("port") + "/" + getProp("namingContext"));
 	}
-
-	/**
-	 * @return
-	 */
-	public LdapAccessor getLdapAccessor() {
-		return ldapAccessor;
-	}
-
-	/**
-	 * @param ldapAccessor
-	 */
-	public void setLdapAccessor(LdapAccessor ldapAccessor) {
-		logger.debug("ldapConnection = " + ldapAccessor.getHost() + ":"
-				+ ldapAccessor.getPort() + "/"
-				+ ldapAccessor.getNamingContext());
-		this.ldapAccessor = ldapAccessor;
-	}
-	
 }

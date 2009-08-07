@@ -24,14 +24,12 @@
 
 package de.rrze.idmone.utils.jidgen.io;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,150 +41,62 @@ import org.apache.commons.logging.LogFactory;
 public class JdbcAccessor {
 
 	/**
-	 *  The class logger
+	 * The class logger
 	 */
 	private static final Log logger = LogFactory.getLog(JdbcAccessor.class);
-	
-	private Properties defaultProperties = new Properties();
-	
-	private Properties props = new Properties(defaultProperties);
-	
+
 	Connection db;
 
 	ResultSet lastResult = null;
 
 	boolean connected = false;
-
-
+	
+	private String driver;
+	private String url;
+	private String user;
+	private String password;
 
 	/**
-	 * 
+	 * Default constructor
 	 */
 	public JdbcAccessor() {
-		this.setDefaultProperties();
 	}
 
-	public JdbcAccessor(Properties props) {
-		this();
-		this.setProperties(props);
-	}
-	
-	/**
-	 * 
-	 * @param f
-	 */
-	public JdbcAccessor(FileAccessor f) {
-		this();
-		try {
-			logger.debug("jndiConfigurationFile = " + f.getFilename());
-			this.props.load(f.getReader());
-		}
-		catch (IOException e) {
-			logger.fatal("Exception", e);
-		}
-	}
-
-
-	
-	/**
-	 * Initializes the defaultProperties member
-	 * with the internal presets
-	 */
-	private void setDefaultProperties() {
-		this.defaultProperties.setProperty("driver", "com.mysql.jdbc.Driver");
-		// URL: jdbc:<subprotocol>:<subname>
-		this.defaultProperties.setProperty("url", "jdbc:mysql://localhost:3306/jidgen");
-		this.defaultProperties.setProperty("username", "jidgen");
-		this.defaultProperties.setProperty("password", "jidgen");
-	}
-	
-	/**
-	 * Takes the given properties object and copies the contained values
-	 * to the internal properties object. Values that are not contained (as far as
-	 * the containsKey() method says) are not copied.
-	 * <p>
-	 * At the moment the following properties are recognized:<br />
-	 * <ul>
-	 * <li><b>host</b> -- the hostname to connect to (Default: localhost)</li>
-	 * <li><b>port</b> -- the port to connect to (Default: 389)</li>
-	 * <li><b>namingContext</b> -- the naming context to use (Default: dc=example,dc=com)</li>
-	 * <li><b>user</b> -- the user DN to bind to (Default: cn=jidgen,ou=people,dc=example,dc=com)</li>
-	 * <li><b>password</b> -- the bind-user's password (Default: jidgen)</li>
-	 * <li><b>searchFilter</b> -- the search filter to use (Default: null)</li>
-	 * <li><b>searchBase</b> -- the search base to use (Default: ou=people)</li>
-	 * </ul>
-	 * <p>
-	 * For use with jidgen <i>no attributes</i> are retrieved and the search scope defaults
-	 * to <i>subtree</i>.
-	 * 
-	 * 
-	 * @param p
-	 * 		properties object to copy values from
-	 */
-	public void setProperties(Properties p) {
-		
-		/*
-		if (p.containsKey("host")) 
-			this.setHost(p.getProperty("host"));
-
-		if (p.containsKey("port")) 
-			this.setPort(p.getProperty("port"));
-
-		if (p.containsKey("namingContext")) 
-			this.setNamingContext(p.getProperty("namingContext"));
-
-		if (p.containsKey("user")) 
-			this.setUser(p.getProperty("user"));
-
-		if (p.containsKey("password")) 
-			this.setPassword(p.getProperty("password"));
-
-		if (p.containsKey("searchFilter")) 
-			this.setSearchFilter(p.getProperty("searchFilter"));
-
-		if (p.containsKey("searchBase")) 
-			this.setSearchBase(p.getProperty("searchBase"));
-		*/
-	}
-	
-	
 	/**
 	 * 
 	 */
 	private void load() {
-		String className = this.props.getProperty("driver");
 		try {
 			// TODO enable user defined classpath
-			Class.forName(className);
-		}
-		catch(ClassNotFoundException e){
-			logger.fatal("Unable to load the driver class: Class not found \"" + className + "\".");
+			Class.forName(this.driver);
+		} catch (ClassNotFoundException e) {
+			logger.fatal("Unable to load the driver class: Class not found \""
+					+ this.driver + "\".");
 			System.exit(-1); // TODO error code
 		}
 	}
 
 	/**
-	 * 
+	 * Establish a connection to the configured JDBC endpoint, e.g. a mysql
+	 * database
 	 */
-	private void connect() {
-		// Define URL of database server for
-		// database named mysql on the localhost
-		// with the default port number 3306.
-		String url = this.props.getProperty("url");
-
+	public void connect() {
+		this.load();
+		
 		try {
-			//this.db = DriverManager.getConnection(url, "loginName", "Password");
-			this.db = DriverManager.getConnection(url, this.props.getProperty("username"), this.props.getProperty("password"));
+			this.db = DriverManager.getConnection(this.url, this.user,
+					this.password);
 
-			if(this.db != null){
+			if (this.db != null) {
 				DatabaseMetaData meta = this.db.getMetaData();
-				logger.debug("Got Connection - Driver Name: " + meta.getDriverName() + ", Driver Version: " + meta.getDriverVersion());
+				logger.debug("Got Connection - Driver Name: "
+						+ meta.getDriverName() + ", Driver Version: "
+						+ meta.getDriverVersion());
 			} else {
 				logger.fatal("Could not Get Connection");
 				System.exit(-1); // TODO error code
 			}
-		}
-		catch(SQLException e){
+		} catch (SQLException e) {
 			logger.fatal("Error while connecting: " + e.toString());
 			System.exit(-1); // TODO error code
 		}
@@ -200,20 +110,16 @@ public class JdbcAccessor {
 	 * @return
 	 */
 	public ResultSet query(String q) {
-		if (!this.connected) {
-			this.load();
+		if (!this.connected)
 			this.connect();
-		}
-		
-		
+
 		ResultSet rs = null;
 		try {
 			Statement statement = this.db.createStatement();
 
 			rs = statement.executeQuery(q);
-			//while (rs.next()) System.out.println(rs.getString(1));
-		}
-		catch (SQLException e) {
+			// while (rs.next()) System.out.println(rs.getString(1));
+		} catch (SQLException e) {
 			logger.fatal("Error while executing query: " + e.toString());
 			System.exit(-1); // TODO error code
 		}
@@ -233,13 +139,73 @@ public class JdbcAccessor {
 				this.lastResult.last();
 				return this.lastResult.getRow();
 			}
-		}
-		catch (SQLException e) {
-			logger.fatal("Error while retrieving result meta-data: " + e.toString());
+		} catch (SQLException e) {
+			logger.fatal("Error while retrieving result meta-data: "
+					+ e.toString());
 			System.exit(-1); // TODO error code
 		}
-	
+
 		return 0;
+	}
+
+	/**
+	 * @return the driver
+	 */
+	public String getDriver() {
+		return driver;
+	}
+
+	/**
+	 * @param driver
+	 *            the driver to set
+	 */
+	public void setDriver(String driver) {
+		this.driver = driver;
+	}
+
+	/**
+	 * @return the url
+	 */
+	public String getUrl() {
+		return url;
+	}
+
+	/**
+	 * @param url
+	 *            the url to set
+	 */
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	/**
+	 * @return the username
+	 */
+	public String getUser() {
+		return user;
+	}
+
+	/**
+	 * @param user
+	 *            the username to set
+	 */
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
+	}
+
+	/**
+	 * @param password
+	 *            the password to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }

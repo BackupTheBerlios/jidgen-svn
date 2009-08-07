@@ -31,148 +31,110 @@ import java.io.InputStreamReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.rrze.idmone.utils.jidgen.Defaults;
 import de.rrze.idmone.utils.jidgen.i18n.Messages;
 
-
 /**
- * A filter that calls the given shell command
- * with the id or subsequently with all ids, if there
- * are more than one, to be tested and
- * filters the id on exit code 0 (success).
- * Any exit code other than 0 will not filter the id.
+ * A filter that calls the given shell command with the id or subsequently with
+ * all ids, if there are more than one, to be tested and filters the id on exit
+ * code 0 (success). Any exit code other than 0 will not filter the id.
  * 
  * @author unrza249
  */
-public class ShellCmdFilter
-	extends AbstractFilter
-	implements 	IFilter
-{
+public class ShellCmdFilter extends AbstractFilter implements IFilter {
 	/**
-	 *  The class logger
+	 * The class logger
 	 */
 	private static final Log logger = LogFactory.getLog(ShellCmdFilter.class);
 
-	/**
-	 * The command to run 
-	 */
-	private String cmdTemplate = "./filter.sh %s";
+	// TODO this class does not have a ShellAccessor, yet
 
 	/**
 	 * Default construct.
 	 */
 	public ShellCmdFilter() {
-		logger.info(Messages.getString(this.getClass().getSimpleName() + ".INIT_MESSAGE"));
+		logger.info(Messages.getString(this.getClass().getSimpleName()
+				+ ".INIT_MESSAGE"));
+
+		this.loadDefaults();
 	}
 
-	/**
-	 * @param id
-	 */
-	public ShellCmdFilter(String id) {
-		super(id);
+	private void loadDefaults() {
+		this.setDefaultProp("shellCommand", Defaults.DEFAULT_SHELLCMD);
 	}
 
-	/**
-	 * @param id
-	 * @param description
-	 */
-	public ShellCmdFilter(String id, String description) {
-		super(id, description);
-	}
-
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#apply(java.lang.String)
 	 */
-	public String apply(String id)	{
+	public String apply(String id) {
 		logger.trace("Checking ID '" + id + "'");
-		
-		String cmd = this.cmdTemplate.replace("%s", id);
+
+		String cmd = this.getProp("shellCommand").replace("%s", id);
 
 		logger.trace("Executing command: " + cmd);
-		
+
 		Runtime run = Runtime.getRuntime();
 		try {
 			Process proc = run.exec(cmd);
-			
+
 			// read stdout and log it to the debug level
-			BufferedReader stdOut = new BufferedReader(
-					new InputStreamReader(proc.getInputStream())
-			);
+			BufferedReader stdOut = new BufferedReader(new InputStreamReader(
+					proc.getInputStream()));
 			String stdOutput = "";
-			while( (stdOutput = stdOut.readLine()) != null) {
+			while ((stdOutput = stdOut.readLine()) != null) {
 				logger.debug("STDOUT: " + stdOutput);
 			}
 			stdOut.close();
-			
 
 			// read stderr and log it to the error level
-			BufferedReader stdErr = new BufferedReader(
-					new InputStreamReader(proc.getErrorStream())
-			);
+			BufferedReader stdErr = new BufferedReader(new InputStreamReader(
+					proc.getErrorStream()));
 			String errOutput = "";
-			while( (errOutput = stdErr.readLine()) != null) {
+			while ((errOutput = stdErr.readLine()) != null) {
 				logger.error("STDERR: " + errOutput);
 			}
 			stdErr.close();
 
-			
 			int exitCode = proc.waitFor();
 			proc.destroy();
-			
+
 			if (exitCode == 0) {
 				logger.trace("Filtered!");
 				return null;
-			}
-			else {
+			} else {
 				return id;
 			}
-			
-			
 
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			logger.fatal(e.toString());
 			System.exit(120);
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			logger.fatal(e.toString());
-			System.exit(121);			
+			System.exit(121);
 		}
 
-		
-		
-		logger.debug(Messages.getString("IFilter.TRACE_FILTER_NAME") 
-				+ " \"" + this.getID() + "\" "
-				+ Messages.getString("IFilter.TRACE_SKIPPED_ID") 
-				+ " \"" + id
-				+ "\"");		
-		
-		logger.debug(Messages.getString("IFilter.REASON")
-				+ " \"" + this.getCmd() + "\""
-				+ " " + Messages.getString("IFilter.DENIED")
-				+ " \"" + id + "\"");
+		logger.debug(Messages.getString("IFilter.TRACE_FILTER_NAME") + " \""
+				+ this.getID() + "\" "
+				+ Messages.getString("IFilter.TRACE_SKIPPED_ID") + " \"" + id
+				+ "\"");
 
-		
+		logger.debug(Messages.getString("IFilter.REASON") + " \""
+				+ this.getProp("shellCommand") + "\"" + " "
+				+ Messages.getString("IFilter.DENIED") + " \"" + id + "\"");
+
 		return null;
 	}
 
-	/**
-	 * Get the command that is set to be executed.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return the command to be executed 
+	 * @see de.rrze.idmone.utils.jidgen.filterChain.filter.IFilter#autosetID()
 	 */
-	public String getCmd() {
-		return cmdTemplate;
+	public void autosetID() {
+		this.setID(this.getClass().getSimpleName() + "-"
+				+ this.getProp("shellCommand"));
 	}
 
-	/**
-	 * Set the command to be executed
-	 * 
-	 * @param cmd
-	 * 			the command to be executed
-	 */
-	public void setCmd(String cmd) {
-		logger.debug("shellCommand = " + cmd);
-		this.cmdTemplate = cmd;
-	}
 }

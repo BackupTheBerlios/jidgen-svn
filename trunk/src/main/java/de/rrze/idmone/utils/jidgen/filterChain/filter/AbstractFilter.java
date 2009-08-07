@@ -80,24 +80,6 @@ public abstract class AbstractFilter implements IFilter {
 	 * Default constructor
 	 */
 	public AbstractFilter() {
-		// logger.info(Messages.getString(this.getClass().getSimpleName() +
-		// ".INIT_MESSAGE"));
-	}
-
-	/**
-	 * @param id
-	 */
-	public AbstractFilter(String id) {
-		this.setID(id);
-	}
-
-	/**
-	 * @param id
-	 * @param description
-	 */
-	public AbstractFilter(String id, String description) {
-		this(id);
-		this.setDescription(description);
 	}
 
 	/*
@@ -119,6 +101,7 @@ public abstract class AbstractFilter implements IFilter {
 	 * .String, java.lang.String)
 	 */
 	public void setProp(String propName, String propValue) {
+		logger.debug(propName + " = " + propValue);
 		this.filterProps.setProperty(propName, propValue);
 	}
 
@@ -130,6 +113,7 @@ public abstract class AbstractFilter implements IFilter {
 	 * (java.lang.String, java.lang.String)
 	 */
 	public void setDefaultProp(String propName, String propValue) {
+		logger.debug(propName + " = " + propValue + "(DEFAULT)");
 		this.defaultProps.setProperty(propName, propValue);
 	}
 
@@ -230,5 +214,6 @@ public abstract class AbstractFilter implements IFilter {
 		logger.trace("Nothing to update.");
 		return true;
 	}
+	
 
 }
