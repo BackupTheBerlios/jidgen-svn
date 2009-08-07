@@ -33,16 +33,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.rrze.idmone.utils.jidgen.cli.IdGenOptions;
-import de.rrze.idmone.utils.jidgen.filter.BlacklistFilter;
-import de.rrze.idmone.utils.jidgen.filter.FilterChain;
-import de.rrze.idmone.utils.jidgen.filter.JdbcFilter;
-import de.rrze.idmone.utils.jidgen.filter.LdapFilter;
-import de.rrze.idmone.utils.jidgen.filter.PasswdFilter;
-import de.rrze.idmone.utils.jidgen.filter.ShellCmdFilter;
+import de.rrze.idmone.utils.jidgen.filterChain.FilterChain;
+import de.rrze.idmone.utils.jidgen.filterChain.filter.BlacklistFilter;
+import de.rrze.idmone.utils.jidgen.filterChain.filter.JdbcFilter;
+import de.rrze.idmone.utils.jidgen.filterChain.filter.LdapFilter;
+import de.rrze.idmone.utils.jidgen.filterChain.filter.PasswdFilter;
+import de.rrze.idmone.utils.jidgen.filterChain.filter.ShellCmdFilter;
 import de.rrze.idmone.utils.jidgen.i18n.Messages;
-import de.rrze.idmone.utils.jidgen.io.File;
-import de.rrze.idmone.utils.jidgen.io.Jdbc;
-import de.rrze.idmone.utils.jidgen.io.Ldap;
+import de.rrze.idmone.utils.jidgen.io.FileAccessor;
+import de.rrze.idmone.utils.jidgen.io.JdbcAccessor;
 import de.rrze.idmone.utils.jidgen.template.Template;
 
 /**
@@ -315,14 +314,14 @@ public class IdGenerator
 
 			// source file
 			if (this.options.hasOptionValue("Bf")) {
-				blacklistFilter.setFile(new File(this.options.getOptionValue("Bf")));
+				blacklistFilter.setFilename(this.options.getOptionValue("Bf"));
 			}
 			else {
-				blacklistFilter.setFile(new File(DEFAULT_BLACKLIST_FILE));
+				blacklistFilter.setFilename(DEFAULT_BLACKLIST_FILE);
 			}
 			
 			// set a unique ID for this filter
-			blacklistFilter.setID(blacklistFilter.getClass().getSimpleName() + "-" + blacklistFilter.getBlacklistFile());
+			blacklistFilter.setID(blacklistFilter.getClass().getSimpleName() + "-" + blacklistFilter.getFileAccessor());
 			
 			this.filterChain.addFilter(blacklistFilter);
 		}
@@ -334,14 +333,14 @@ public class IdGenerator
 
 			// source file
 			if (this.options.hasOptionValue("Pf")) {
-				passwdFilter.setFile(new File(this.options.getOptionValue("Pf")));
+				passwdFilter.setFilename(this.options.getOptionValue("Pf"));
 			}
 			else {
-				passwdFilter.setFile(new File(DEFAULT_PASSWD_FILE));
+				passwdFilter.setFilename(DEFAULT_PASSWD_FILE);
 			}
 
 			// set a unique ID for this filter
-			passwdFilter.setID(passwdFilter.getClass().getSimpleName() + "-" + passwdFilter.getPasswdFile());
+			passwdFilter.setID(passwdFilter.getClass().getSimpleName() + "-" + passwdFilter.getFilename());
 
 			this.filterChain.addFilter(passwdFilter);
 		}
@@ -373,14 +372,22 @@ public class IdGenerator
 
 			// LDAP connection to use
 			if (this.options.hasOptionValue("Lf")) {
-				ldapFilter.setLdap(new Ldap(new File(this.options.getOptionValue("Lf"))));
+				ldapFilter.loadPropFile(this.options.getOptionValue("Lf"));
 			}
 			else {
-				ldapFilter.setLdap(new Ldap(new File(DEFAULT_LDAP_CONFIGURATION_FILE)));
+				ldapFilter.loadPropFile(DEFAULT_LDAP_CONFIGURATION_FILE);
 			}
 			
 			// set a unique ID for this filter
-			ldapFilter.setID(ldapFilter.getClass().getSimpleName() + "-" + ldapFilter.getLdap());
+			ldapFilter.setID(
+					ldapFilter.getClass().getSimpleName() 
+					+ "-" 
+					+ ldapFilter.getProp("host")
+					+ ":"
+					+ ldapFilter.getProp("port")
+					+ "/"
+					+ ldapFilter.getProp("namingContext")
+			);
 			
 			
 			this.filterChain.addFilter(ldapFilter);
@@ -393,15 +400,15 @@ public class IdGenerator
 
 			// LDAP connection to use
 			if (this.options.hasOptionValue("Df")) {
-				jdbcFilter.setJdbc(new Jdbc(new File(this.options.getOptionValue("Df"))));
+				jdbcFilter.setJdbc(new JdbcAccessor(new FileAccessor(this.options.getOptionValue("Df"))));
 			}
 			else {
-				File f = new File(DEFAULT_JDBC_CONFIGURATION_FILE);
+				FileAccessor f = new FileAccessor(DEFAULT_JDBC_CONFIGURATION_FILE);
 				if (f.exists()) {
-					jdbcFilter.setJdbc(new Jdbc(f));
+					jdbcFilter.setJdbc(new JdbcAccessor(f));
 				}
 				else {
-					jdbcFilter.setJdbc(new Jdbc());
+					jdbcFilter.setJdbc(new JdbcAccessor());
 				}
 			}
 			

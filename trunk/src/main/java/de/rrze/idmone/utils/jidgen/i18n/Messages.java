@@ -24,6 +24,7 @@
 
 package de.rrze.idmone.utils.jidgen.i18n;
 
+import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -35,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
  * contains the localized (external) strings used by the classes.
  * 
  * @author unrz205
+ * @author unrza249
  * 
  */
 public class Messages
@@ -50,10 +52,15 @@ public class Messages
 	 */
 	public static final String BUNDLE_NAME = "messages";
 
-	// The ResourceBundle instance
-	// FIXME use default locale (e.g. en_EN) if the appropriate file cannot be found -> MissingResourceException
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+	/**
+	 *  The ResourceBundle instance
+	 */
+	private static ResourceBundle RESOURCE_BUNDLE = null;
 
+	
+	
+	
+	
 	/**
 	 * Returns the localized message for this key. If the key is not found its
 	 * value is returned surrounded by exclamation marks.
@@ -61,8 +68,11 @@ public class Messages
 	 * @param key the key to be searched for in the resource bundle
 	 * @return the localized value for the key
 	 */
-	public static String getString(String key)
-	{
+	public static String getString(String key) {
+		if (RESOURCE_BUNDLE == null) {
+			loadBundle();
+		}
+		
 		try
 		{
 			String ret = RESOURCE_BUNDLE.getString(key);
@@ -71,6 +81,23 @@ public class Messages
 		{
 			logger.debug(e.getLocalizedMessage());
 			return '!' + key + '!';
+		}
+	}
+
+	
+	/**
+	 * Try to load the correct, locale specific, resource bundle
+	 * or fall back to the default bundle if the correct one is not available
+	 */
+	private static void loadBundle() {
+		try {
+			RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+		}
+		catch (MissingResourceException e) {
+			// Try to fall back to the default locale, e.g. "en" (see ISO-639 for two-letter codes)
+			logger.debug(e.getMessage());
+			logger.debug("Falling back to default locale 'en'.");
+			RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, new Locale("en"));
 		}
 	}
 }

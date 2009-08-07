@@ -40,12 +40,12 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  */
-public class Jdbc {
+public class JdbcAccessor {
 
 	/**
 	 *  The class logger
 	 */
-	private static final Log logger = LogFactory.getLog(Jdbc.class);
+	private static final Log logger = LogFactory.getLog(JdbcAccessor.class);
 	
 	private Properties defaultProperties = new Properties();
 	
@@ -62,11 +62,11 @@ public class Jdbc {
 	/**
 	 * 
 	 */
-	public Jdbc() {
+	public JdbcAccessor() {
 		this.setDefaultProperties();
 	}
 
-	public Jdbc(Properties props) {
+	public JdbcAccessor(Properties props) {
 		this();
 		this.setProperties(props);
 	}
@@ -75,7 +75,7 @@ public class Jdbc {
 	 * 
 	 * @param f
 	 */
-	public Jdbc(File f) {
+	public JdbcAccessor(FileAccessor f) {
 		this();
 		try {
 			logger.debug("jndiConfigurationFile = " + f.getFilename());
@@ -153,9 +153,10 @@ public class Jdbc {
 	/**
 	 * 
 	 */
-	public void load() {
+	private void load() {
 		String className = this.props.getProperty("driver");
 		try {
+			// TODO enable user defined classpath
 			Class.forName(className);
 		}
 		catch(ClassNotFoundException e){
@@ -167,7 +168,7 @@ public class Jdbc {
 	/**
 	 * 
 	 */
-	public void connect() {
+	private void connect() {
 		// Define URL of database server for
 		// database named mysql on the localhost
 		// with the default port number 3306.

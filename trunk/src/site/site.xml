@@ -64,8 +64,10 @@
 		${reports}
 
 		<menu name="Technical" collapse="false">
-			<item name="Development Page"
+			<item name="berlios"
 				href="https://developer.berlios.de/projects/jidgen/" />
+			<item name="ohloh"
+				href="https://www.ohloh.net/p/jidgen" />
 		</menu>
 	</body>
 </project>

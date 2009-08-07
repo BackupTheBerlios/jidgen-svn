@@ -25,6 +25,7 @@
 package de.rrze.idmone.utils.jidgen.io;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -44,12 +45,12 @@ import de.rrze.idmone.utils.jidgen.i18n.Messages;
  *  
  * @author unrza249
  */
-public class File {
+public class FileAccessor {
 
 	/**
 	 *  The class logger
 	 */
-	private static final Log logger = LogFactory.getLog(File.class);
+	private static final Log logger = LogFactory.getLog(FileAccessor.class);
 
 	/**
 	 * The complete path to the file.
@@ -74,7 +75,7 @@ public class File {
 	/**
 	 * Default constructor
 	 */
-	public File() {
+	public FileAccessor() {
 	}
 
 	/**
@@ -83,30 +84,8 @@ public class File {
 	 * @param file
 	 * 			the location of the file to process
 	 */
-	public File(String file) {
+	public FileAccessor(String file) {
 		this.file = file;
-	}
-
-
-	/**
-	 * Tries to get a buffered reader for the specified file
-	 * 
-	 * @param file
-	 * 			the file we want to have a reader for
-	 * @return	
-	 * 			the buffered reader for the specified file or null on error
-	 */
-	private Reader openFile(String file) {
-		try {
-			Reader r = new FileReader(file);
-			return r;
-		}
-		catch (FileNotFoundException e) {
-			logger.fatal(Messages.getString("File.FILE_NOT_FOUND") + file);
-			System.exit(200);
-		}
-
-		return null;
 	}
 
 
@@ -137,6 +116,27 @@ public class File {
 		}
 	}
 
+
+	/**
+	 * Tries to get a buffered reader for the specified file
+	 * 
+	 * @param file
+	 * 			the file we want to have a reader for
+	 * @return	
+	 * 			the buffered reader for the specified file or null on error
+	 */
+	private Reader openFile(String file) {
+		try {
+			Reader r = new FileReader(file);
+			return r;
+		}
+		catch (FileNotFoundException e) {
+			logger.fatal(Messages.getString("File.FILE_NOT_FOUND") + file);
+			System.exit(200);
+		}
+	
+		return null;
+	}
 
 	/**
 	 * Reads one line from the file into a string and
@@ -240,7 +240,11 @@ public class File {
 	}
 
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean exists() {
-		return (new java.io.File(this.file)).exists();
+		return (new File(this.file)).exists();
 	}
 }
