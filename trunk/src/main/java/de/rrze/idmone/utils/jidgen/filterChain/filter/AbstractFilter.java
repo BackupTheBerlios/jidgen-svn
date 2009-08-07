@@ -101,6 +101,7 @@ public abstract class AbstractFilter implements IFilter {
 	 * .String, java.lang.String)
 	 */
 	public void setProp(String propName, String propValue) {
+		Log logger = LogFactory.getLog(this.getClass());
 		logger.debug(propName + " = " + propValue);
 		this.filterProps.setProperty(propName, propValue);
 	}
@@ -113,7 +114,8 @@ public abstract class AbstractFilter implements IFilter {
 	 * (java.lang.String, java.lang.String)
 	 */
 	public void setDefaultProp(String propName, String propValue) {
-		logger.debug(propName + " = " + propValue + "(DEFAULT)");
+		Log logger = LogFactory.getLog(this.getClass());
+		logger.debug("[DEFAULT] " + propName + " = " + propValue);
 		this.defaultProps.setProperty(propName, propValue);
 	}
 
@@ -125,6 +127,7 @@ public abstract class AbstractFilter implements IFilter {
 	 * .lang.String)
 	 */
 	public void loadPropFile(String filename) {
+		Log logger = LogFactory.getLog(this.getClass());
 		try {
 			this.filterProps.load(new FileReader(filename));
 		} catch (FileNotFoundException e) {
