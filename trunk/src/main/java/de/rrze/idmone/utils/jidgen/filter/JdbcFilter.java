@@ -97,7 +97,6 @@ public class JdbcFilter
 		// execute the search request
 		this.jdbc.query("SELECT `user_name` FROM `users` WHERE `user_name` = '" + id + "';");
 		int numRows = this.jdbc.getNumRows();
-		//System.out.println(numRows);
 		
 		if (numRows > 0) {
 			logger.debug(Messages.getString("IFilter.FILTER_NAME") 

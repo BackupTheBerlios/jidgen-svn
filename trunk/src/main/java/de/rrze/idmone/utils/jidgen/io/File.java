@@ -239,4 +239,8 @@ public class File {
 		return file;
 	}
 
+	
+	public boolean exists() {
+		return (new java.io.File(this.file)).exists();
+	}
 }

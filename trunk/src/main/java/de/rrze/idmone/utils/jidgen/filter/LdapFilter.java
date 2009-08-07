@@ -50,6 +50,7 @@ public class LdapFilter
 	 * LDAP search -- the ldap search filter to use<br>
 	 * The string <b>{ID}</b> will be replaced by the ID which is currently being checked.
 	 */
+	// FIXME this is not beeing updated to the value specified in the properties file
 	private String searchFilter = "(sn={ID})";
 
 	/**

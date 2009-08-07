@@ -396,7 +396,13 @@ public class IdGenerator
 				jdbcFilter.setJdbc(new Jdbc(new File(this.options.getOptionValue("Df"))));
 			}
 			else {
-				jdbcFilter.setJdbc(new Jdbc(new File(DEFAULT_JDBC_CONFIGURATION_FILE)));
+				File f = new File(DEFAULT_JDBC_CONFIGURATION_FILE);
+				if (f.exists()) {
+					jdbcFilter.setJdbc(new Jdbc(f));
+				}
+				else {
+					jdbcFilter.setJdbc(new Jdbc());
+				}
 			}
 			
 			// set a unique ID for this filter
