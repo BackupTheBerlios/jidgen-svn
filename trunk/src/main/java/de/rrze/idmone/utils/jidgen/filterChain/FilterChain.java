@@ -22,7 +22,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package de.rrze.idmone.utils.jidgen.filter;
+package de.rrze.idmone.utils.jidgen.filterChain;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +33,8 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.rrze.idmone.utils.jidgen.Messages;
+import de.rrze.idmone.utils.jidgen.filterChain.filter.IFilter;
+import de.rrze.idmone.utils.jidgen.i18n.Messages;
 
 
 /**

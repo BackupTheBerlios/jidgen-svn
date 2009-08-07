@@ -22,128 +22,185 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package de.rrze.idmone.utils.jidgen.filter;
+package de.rrze.idmone.utils.jidgen.filterChain.filter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.rrze.idmone.utils.jidgen.Ldap;
-import de.rrze.idmone.utils.jidgen.Messages;
+import de.rrze.idmone.utils.jidgen.i18n.Messages;
+import de.rrze.idmone.utils.jidgen.io.LdapAccessor;
 
 /**
- * This a basic filter template class that implements most of the 
- * common filter functions. All real filter implementations should
- * extend this class to avoid duplicate code.
+ * This a basic filter template class that implements most of the common filter
+ * functions. All real filter implementations should extend this class to avoid
+ * duplicate code.
  * 
  * @author unrza249
- *
+ * 
  */
-public class LdapFilter 
-extends AbstractFilter
-{
+public class LdapFilter extends AbstractFilter {
 	/**
 	 * A static logger instance
 	 */
 	private static final Log logger = LogFactory.getLog(LdapFilter.class);
 
 	/**
-	 * LDAP search -- the ldap search filter to use<br>
-	 * The string <b>{ID}</b> will be replaced by the ID which is currently being checked.
+	 * The LDAP access object for this filter
 	 */
-	private String searchFilter = "(sn={ID})";
-
-	/**
-	 * The LDAP connection object for this filter
-	 */
-	private Ldap ldap;
-
-
-
-
+	private LdapAccessor ldapAccessor = null;
 
 	/**
 	 * Default constructor
 	 */
 	public LdapFilter() {
-		logger.info(Messages.getString(this.getClass().getSimpleName() + ".INIT_MESSAGE"));
+		logger.info(Messages.getString(this.getClass().getSimpleName()
+				+ ".INIT_MESSAGE"));
+		this.loadDefaults();
 	}
 
 	/**
 	 * Constructor with filter ID
 	 * 
 	 * @param id
-	 * 		A unique ID to identify this filter object within the filter chain
+	 *            A unique ID to identify this filter object within the filter
+	 *            chain
 	 */
 	public LdapFilter(String id) {
 		super(id);
+		this.loadDefaults();
 	}
 
 	/**
 	 * Constructor with filter ID and description
 	 * 
 	 * @param id
-	 * 		A unique ID to identify this filter object within the filter chain
+	 *            A unique ID to identify this filter object within the filter
+	 *            chain
 	 * @param description
-	 * 		A textual description for this filter object to be printed on usage
+	 *            A textual description for this filter object to be printed on
+	 *            usage
 	 */
 	public LdapFilter(String id, String description) {
 		super(id, description);
+		this.loadDefaults();
 	}
 
+	/**
+	 * Loads the default properties for this filter.<br/><br/>
+ 	 * At the moment the following properties are recognized:<br />
+	 * <ul>
+	 * <li><b>host</b> -- the hostname to connect to (Default: localhost)</li>
+	 * <li><b>port</b> -- the port to connect to (Default: 389)</li>
+	 * <li><b>namingContext</b> -- the naming context to use (Default: dc=example,dc=com)</li>
+	 * <li><b>user</b> -- the user DN to bind to (Default: cn=jidgen,ou=people,dc=example,dc=com)</li>
+	 * <li><b>password</b> -- the bind-user's password (Default: jidgen)</li>
+	 * <li><b>searchFilter</b> -- the search filter to use (Default: null)</li>
+	 * <li><b>searchBase</b> -- the search base to use (Default: ou=people)</li>
+	 * </ul>
+	 */
+	private void loadDefaults() {
+		this.setDefaultProp("host", "localhost");
+		this.setDefaultProp("port", "389");
+		this.setDefaultProp("namingContext", "dc=example,dc=com");
+		this.setDefaultProp("user", "cn=jidgen,ou=people,dc=example,dc=com");
+		this.setDefaultProp("password", "jidgen");
+		
+		/*
+		 * The ldap search filter to use.<br> 
+		 * The string <b>{ID}</b> will be replaced by the ID which 
+		 * is currently being checked.
+		 */
+		this.setDefaultProp("searchFilter", "(sn={ID})");
+		
+		this.setDefaultProp("searchBase", "ou=people");
+	}
 
-
-
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#apply(java.lang.String)
 	 */
-	public String apply(String id)	{
+	public String apply(String id) {
 		logger.trace("Checking ID '" + id + "'");
 
-		// Specify the search filter to match
-		this.ldap.setSearchFilter(this.searchFilter.replace("{ID}", id));
+		if (this.ldapAccessor == null) {
+			this.connect();
+		}
+		
+		// Update the search filter to the current id.
+		// This has to be updated for every id that must be checked!
+		this.ldapAccessor.setSearchFilter(
+				this.getProp("searchFilter").replace("{ID}", id)
+		);
 
 		// execute the search request
-		if (this.ldap.doSearch()) {
-			logger.debug(Messages.getString("IFilter.TRACE_FILTER_NAME") 
-					+ " \"" + this.getID() + "\" "
-					+ Messages.getString("IFilter.TRACE_SKIPPED_ID") 
-					+ " \"" + id
-					+ "\"");		
+		if (this.ldapAccessor.doSearch()) {
+			logger.debug(Messages.getString("IFilter.FILTER_NAME") + " \""
+					+ this.getID() + "\" "
+					+ Messages.getString("IFilter.SKIPPED_ID") + " \"" + id
+					+ "\"");
+			logger
+					.debug(Messages.getString("IFilter.REASON") + " \""
+							+ this.getSearchFilter() + "\"" + " "
+							+ Messages.getString("IFilter.MATCHED") + " \""
+							+ id + "\"");
 
 			return null;
-		}
-		else {
+		} else {
 			return id;
 		}
 	}
 
 	/**
+	 * Instantiates the LDAP accessor with the given
+	 * properties and connects to the directory server.
+	 */
+	private void connect() {
+		// get an ldap accessor instance
+		this.ldapAccessor = new LdapAccessor();
+		
+		// configure the ldap accessor
+		this.ldapAccessor.setHost(this.getProp("host"));
+		this.ldapAccessor.setPort(this.getProp("port"));
+		this.ldapAccessor.setUser(this.getProp("user"));
+		this.ldapAccessor.setPassword(this.getProp("password"));
+		this.ldapAccessor.setSearchBase(this.getProp("searchBase"));
+		this.ldapAccessor.setNamingContext(this.getProp("namingContext"));
+		
+		// connect
+		this.ldapAccessor.connect();
+	}
+	
+	
+	/**
 	 * @return
 	 */
 	public String getSearchFilter() {
-		return searchFilter;
+		return this.getProp("searchFilter");
 	}
 
 	/**
 	 * @param searchFilter
 	 */
 	public void setSearchFilter(String searchFilter) {
-		this.searchFilter = searchFilter;
+		this.setProp("searchFilter", searchFilter);
 	}
 
 	/**
 	 * @return
 	 */
-	public Ldap getLdap() {
-		return ldap;
+	public LdapAccessor getLdapAccessor() {
+		return ldapAccessor;
 	}
 
 	/**
-	 * @param ldap
+	 * @param ldapAccessor
 	 */
-	public void setLdap(Ldap ldap) {
-		logger.debug("ldapConnection = " + ldap.getHost() + ":" + ldap.getPort() + "/" + ldap.getNamingContext());
-		this.ldap = ldap;
+	public void setLdapAccessor(LdapAccessor ldapAccessor) {
+		logger.debug("ldapConnection = " + ldapAccessor.getHost() + ":"
+				+ ldapAccessor.getPort() + "/"
+				+ ldapAccessor.getNamingContext());
+		this.ldapAccessor = ldapAccessor;
 	}
+	
 }

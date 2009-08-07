@@ -22,7 +22,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package de.rrze.idmone.utils.jidgen.filter;
+package de.rrze.idmone.utils.jidgen.filterChain.filter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,17 +30,18 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.rrze.idmone.utils.jidgen.File;
-import de.rrze.idmone.utils.jidgen.Messages;
+import de.rrze.idmone.utils.jidgen.i18n.Messages;
+import de.rrze.idmone.utils.jidgen.io.FileAccessor;
 
 /**
- * A filter for IDs that are already in use within the system's passwd file.
+ * A filter for IDs that are already in use within 
+ * the system's passwd file.
  * 
  * @author unrza249
  */
 public class PasswdFilter 
-extends AbstractFilter
-implements IFilter 
+	extends AbstractFilter
+	implements IFilter 
 {
 	/**
 	 * The class logger
@@ -48,10 +49,10 @@ implements IFilter
 	private static final Log logger = LogFactory.getLog(PasswdFilter.class);
 
 	/**
-	 * The location of the passwd file. This should usually be /etc/passwd, at
-	 * least for the local system
+	 * The location of the passwd file. This should 
+	 * usually be /etc/passwd, at least for the local system.
 	 */
-	private File passwdFile;
+	private FileAccessor pwFileAccessor;
 
 	
 	/**
@@ -96,11 +97,17 @@ implements IFilter
 		logger.trace("Checking ID '" + id + "'");
 	
 		if (this.loginList.contains(id)) {
-			logger.trace(Messages.getString("IFilter.TRACE_FILTER_NAME") 
+			logger.trace(Messages.getString("IFilter.FILTER_NAME") 
 					+ " \"" + this.getID() + "\" "
-					+ Messages.getString("IFilter.TRACE_SKIPPED_ID") 
+					+ Messages.getString("IFilter.SKIPPED_ID") 
 					+ " \"" + id
-					+ "\"");		
+					+ "\"");
+			
+			logger.debug(Messages.getString("IFilter.REASON")
+					+ " \"" + this.getFilename() + "\""
+					+ " " + Messages.getString("IFilter.CONTAINS")
+					+ " \"" + id + "\"");
+
 
 			return null;
 		}
@@ -117,14 +124,14 @@ implements IFilter
 		logger.trace("Update called.");
 		
 		// reset the blacklist file
-		this.passwdFile.reset();
+		this.pwFileAccessor.reset();
 		
 		// clear buffered login list
 		this.loginList.clear();
 		
 		// re-read passwd file and fill list
 		String line;
-		while ((line = this.passwdFile.getLine()) != null) {
+		while ((line = this.pwFileAccessor.getLine()) != null) {
 			String userID = line.substring(0, line.indexOf(':'));
 			this.loginList.add(userID);
 			logger.trace("Added user: \"" + userID + "\"");
@@ -137,17 +144,32 @@ implements IFilter
 	/**
 	 * @param passwdFile
 	 */
-	public void setFile(File passwdFile) {
-		logger.debug("passwdFile = " + passwdFile);
-		this.passwdFile = passwdFile;
+	public void setFileAccessor(FileAccessor pwFileAccessor) {
+		logger.debug("passwdFile = " + pwFileAccessor);
+		this.pwFileAccessor = pwFileAccessor;
 	}
 
 	/**
 	 * @return
 	 */
-	public File getPasswdFile() {
-		return passwdFile;
+	public FileAccessor getFileAccessor() {
+		return pwFileAccessor;
 	}
 
+	/**
+	 * 
+	 * @param pwFile
+	 */
+	public void setFilename(String pwFile) {
+		logger.debug("passwdFile = " + pwFileAccessor);
+		this.pwFileAccessor = new FileAccessor(pwFile);
+	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public String getFilename() {
+		return this.pwFileAccessor.getFilename();
+	}
 }

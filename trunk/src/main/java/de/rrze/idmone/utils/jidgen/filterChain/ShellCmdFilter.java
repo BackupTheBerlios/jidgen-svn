@@ -22,7 +22,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package de.rrze.idmone.utils.jidgen.filter;
+package de.rrze.idmone.utils.jidgen.filterChain.filter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import java.io.InputStreamReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.rrze.idmone.utils.jidgen.Messages;
+import de.rrze.idmone.utils.jidgen.i18n.Messages;
 
 
 /**
@@ -44,8 +44,8 @@ import de.rrze.idmone.utils.jidgen.Messages;
  * @author unrza249
  */
 public class ShellCmdFilter
-extends AbstractFilter
-implements 	IFilter
+	extends AbstractFilter
+	implements 	IFilter
 {
 	/**
 	 *  The class logger
@@ -146,6 +146,11 @@ implements 	IFilter
 				+ Messages.getString("IFilter.TRACE_SKIPPED_ID") 
 				+ " \"" + id
 				+ "\"");		
+		
+		logger.debug(Messages.getString("IFilter.REASON")
+				+ " \"" + this.getCmd() + "\""
+				+ " " + Messages.getString("IFilter.DENIED")
+				+ " \"" + id + "\"");
 
 		
 		return null;

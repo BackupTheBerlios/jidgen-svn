@@ -22,7 +22,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package de.rrze.idmone.utils.jidgen.filter;
+package de.rrze.idmone.utils.jidgen.filterChain.filter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,8 +31,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.rrze.idmone.utils.jidgen.File;
-import de.rrze.idmone.utils.jidgen.Messages;
+import de.rrze.idmone.utils.jidgen.i18n.Messages;
+import de.rrze.idmone.utils.jidgen.io.FileAccessor;
 
 
 /**
@@ -45,8 +45,8 @@ import de.rrze.idmone.utils.jidgen.Messages;
  * @author unrz205
  */
 public class BlacklistFilter 
-extends AbstractFilter
-implements IFilter
+	extends AbstractFilter
+	implements IFilter
 {
 	/**
 	 *  The class logger
@@ -56,13 +56,13 @@ implements IFilter
 	/**
 	 * The file containing the forbidden words 
 	 */
-	private File blacklistFile;
+	private FileAccessor blFileAccessor;
 	
 	
 	/**
 	 *  A list that stores the forbidden words
 	 */
-	private List<String> blacklist = new ArrayList<String>();
+	private List<String> bl = new ArrayList<String>();
 	
 	
 	/**
@@ -95,16 +95,22 @@ implements IFilter
 		logger.trace("Checking ID '" + id + "'");
 		
 		// Iterate over the list and check whether it contains the word
-		for (Iterator<String> iter = blacklist.iterator(); iter.hasNext();)	{
+		for (Iterator<String> iter = bl.iterator(); iter.hasNext();)	{
 			String blackword = iter.next();
 
 			// filter on match
 			if (id.contains(blackword)) {
-				logger.debug(Messages.getString("IFilter.TRACE_FILTER_NAME") 
+				logger.debug(Messages.getString("IFilter.FILTER_NAME") 
 						+ " \"" + this.getID() + "\" "
-						+ Messages.getString("IFilter.TRACE_SKIPPED_ID") 
+						+ Messages.getString("IFilter.SKIPPED_ID") 
 						+ " \"" + id
 						+ "\"");
+				
+				logger.debug(Messages.getString("IFilter.REASON")
+						+ " \"" + this.getFileAccessor().getFilename() + "\""
+						+ " " + Messages.getString("IFilter.CONTAINS")
+						+ " \"" + id + "\"");
+
 				
 				return null;
 			}
@@ -122,7 +128,7 @@ implements IFilter
 	 *         used.
 	 */
 	public List<String> getBlacklist() {
-		return this.blacklist;
+		return this.bl;
 	}
 
 	/**
@@ -131,7 +137,7 @@ implements IFilter
 	 * @param blacklist
 	 */
 	public void setBlacklist(List<String> blacklist) {
-		this.blacklist = blacklist;
+		this.bl = blacklist;
 	}
 
 	/**
@@ -142,7 +148,7 @@ implements IFilter
 	 */
 	public void add(String blackWord) {
 			logger.trace("Added blackword: \"" + blackWord + "\"");
-			this.blacklist.add(blackWord);
+			this.bl.add(blackWord);
 	}
 
 	/**
@@ -152,14 +158,14 @@ implements IFilter
 	 *            the word to be removed from the blacklist
 	 */
 	public void remove(String blackWord) {
-		this.blacklist.remove(blackWord);
+		this.bl.remove(blackWord);
 	}
 
 	/**
 	 * Removes all words from the blacklist leaving it empty.
 	 */
 	public void clear() {
-		this.blacklist.clear();
+		this.bl.clear();
 	}
 	
 	
@@ -170,14 +176,14 @@ implements IFilter
 		logger.trace("Update called.");
 		
 		// reset the blacklist file
-		this.blacklistFile.reset();
+		this.blFileAccessor.reset();
 		
 		// clear the stored blacklist
 		this.clear();
 		
 		// re-fill the blacklist from file
 		String word;
-		while((word = this.blacklistFile.getLine()) != null) {
+		while((word = this.blFileAccessor.getLine()) != null) {
 			this.add(word);
 		}
 		
@@ -188,16 +194,32 @@ implements IFilter
 	/**
 	 * @return
 	 */
-	public File getBlacklistFile() {
-		return blacklistFile;
+	public FileAccessor getFileAccessor() {
+		return blFileAccessor;
 	}
 
 	/**
-	 * @param blacklistFile
+	 * @param blFileAccessor
 	 */
-	public void setFile(File blacklistFile) {
-		logger.debug("blacklistFile = " + blacklistFile);
-		this.blacklistFile = blacklistFile;
+	public void setFileAccessor(FileAccessor blFileAccessor) {
+		logger.debug("blacklistFile = " + blFileAccessor);
+		this.blFileAccessor = blFileAccessor;
 	}
 
+	/**
+	 * 
+	 * @param blFile
+	 */
+	public void setFilename(String blFile) {
+		logger.debug("blacklistFile = " + blFile);
+		this.blFileAccessor = new FileAccessor(blFile);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getFilename() {
+		return this.blFileAccessor.getFilename();
+	}
 }

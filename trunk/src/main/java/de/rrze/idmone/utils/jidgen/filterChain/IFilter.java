@@ -22,7 +22,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package de.rrze.idmone.utils.jidgen.filter;
+package de.rrze.idmone.utils.jidgen.filterChain.filter;
 
 import java.util.List;
 
@@ -36,6 +36,33 @@ import java.util.List;
  */
 public interface IFilter {
 
+	/**
+	 * 
+	 * @param propName
+	 * @return
+	 */
+	public abstract String getProp(String propName);
+	
+	/**
+	 * 
+	 * @param propName
+	 * @param propValue
+	 */
+	public abstract void setProp(String propName, String propValue);
+
+	/**
+	 * 
+	 * @param propName
+	 * @param propValue
+	 */
+	public abstract void setDefaultProp(String propName, String propValue);
+	
+	/**
+	 * 
+	 * @param filename
+	 */
+	public abstract void loadPropFile(String filename);
+	
 	/**
 	 * This method must return the unique identifier of the filter. A unique
 	 * identifier is needed for correct registration of the filter.
