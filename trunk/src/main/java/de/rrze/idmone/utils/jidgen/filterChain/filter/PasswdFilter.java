@@ -71,7 +71,7 @@ public class PasswdFilter extends AbstractFilter implements IFilter {
 
 	
 	private void loadDefaults() {
-		this.setDefaultProp("filename", Defaults.DEFAULT_PASSWD_FILE);
+		this.setDefaultProp("filename", Defaults.PASSWD_FILE);
 	}
 	
 	/*

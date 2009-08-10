@@ -73,7 +73,7 @@ public class BlacklistFilter extends AbstractFilter implements IFilter {
 	}
 
 	private void loadDefaults() {
-		this.setDefaultProp("filename", Defaults.DEFAULT_BLACKLIST_FILE);
+		this.setDefaultProp("filename", Defaults.BLACKLIST_FILE);
 	}
 
 	/*

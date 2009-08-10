@@ -60,7 +60,7 @@ public class ShellCmdFilter extends AbstractFilter implements IFilter {
 	}
 
 	private void loadDefaults() {
-		this.setDefaultProp("shellCommand", Defaults.DEFAULT_SHELLCMD);
+		this.setDefaultProp("shellCommand", Defaults.SHELLCMD);
 	}
 
 	/*

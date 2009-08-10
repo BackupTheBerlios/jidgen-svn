@@ -24,7 +24,6 @@
 
 package de.rrze.idmone.utils.jidgen;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,35 +39,30 @@ import de.rrze.idmone.utils.jidgen.filterChain.filter.LdapFilter;
 import de.rrze.idmone.utils.jidgen.filterChain.filter.PasswdFilter;
 import de.rrze.idmone.utils.jidgen.filterChain.filter.ShellCmdFilter;
 import de.rrze.idmone.utils.jidgen.i18n.Messages;
-import de.rrze.idmone.utils.jidgen.io.FileAccessor;
-import de.rrze.idmone.utils.jidgen.io.JdbcAccessor;
 import de.rrze.idmone.utils.jidgen.template.Template;
 
 /**
- * class IdGenerator
+ * Main class of the jidgen IdGenerator.
  * <p>
- * 		<b>Used external packages</b>
- * 		<br />
- * 		For further infos about the cli package see <a href="http://commons.apache.org/cli/">
- * 		org.apache.commons.cli</a>.
- * 		<br />
- * 		For further infos about the logging package see 
- * 		<a href="http://commons.apache.org/logging/commons-logging-1.1/index.html">
- * 		org.apache.commons.logging</a>
+ * <b>Used external packages</b> <br />
+ * For further infos about the cli package see <a
+ * href="http://commons.apache.org/cli/"> org.apache.commons.cli</a>. <br />
+ * For further infos about the logging package see <a
+ * href="http://commons.apache.org/logging/commons-logging-1.1/index.html">
+ * org.apache.commons.logging</a>
  * </p>
- *  
+ * 
  * @author unrza249
  * @author unrz205
  */
-public class IdGenerator
-{
+public class IdGenerator {
 	/**
-	 *  The class logger
+	 * The class logger
 	 */
 	private static final Log logger = LogFactory.getLog(IdGenerator.class);
 
 	/**
-	 * The options manager for IdGen 
+	 * The CLI options manager for IdGen
 	 */
 	private IdGenOptions options;
 
@@ -76,21 +70,19 @@ public class IdGenerator
 	 * The option string array as passed to the options parser
 	 */
 	private String[] cliArgs;
-	
+
 	/**
-	 * Flag that indicates whether or not an update of the
-	 * options object is needed.
-	 * <b>Only used internally!</b>
+	 * Flag that indicates whether or not an update of the options object is
+	 * needed. <b>Only used internally!</b>
 	 */
 	private boolean cliArgsDirtyFlag = true;
 
-
 	/**
 	 * A filter chain for the IdGenerator<br />
-	 * This chain contains all filters that should be applied to
-	 * the generated ids.
+	 * This chain contains all filters that should be applied to the generated
+	 * ids.
 	 */
-	private FilterChain filterChain; 
+	private FilterChain filterChain;
 
 	/**
 	 * Default constructor of the IdGenerator
@@ -100,47 +92,49 @@ public class IdGenerator
 
 		// create a new filter chain
 		this.filterChain = new FilterChain();
-		
+
 		// create and fill options manager for CLI and library usage
-		this.options = new IdGenOptions(Defaults.DEFAULT_TERM_WIDTH);
+		this.options = new IdGenOptions();
 		addOptions(this.options);
 	}
 
-
 	/**
 	 * Constructor with argument <b>array</b>
-	 * @param args Array of string arguments in CLI notation
+	 * 
+	 * @param args
+	 *            Array of string arguments in CLI notation
 	 */
 	public IdGenerator(String[] args) {
 		this(); // Call default constructor
-		
+
 		this.setCLIArgs(args);
 		this.init();
 	}
 
-
 	/**
-	 * Constructor with argument <b>string</b> 
-	 * @param args Argument string in CLI notation
+	 * Constructor with argument <b>string</b>
+	 * 
+	 * @param args
+	 *            Argument string in CLI notation
 	 */
 	public IdGenerator(String args) {
 		this(); // Call default constructor
-	
+
 		this.setCLIArgs(args);
 		this.init();
 	}
 
-	
-	
 	/**
 	 * Entry point of the program (CLI)
+	 * 
 	 * @param args
 	 *            the program arguments
 	 */
 	public static void main(String[] args) {
 		logger.info(Messages.getString("IdGenerator.WELCOME"));
 
-		// create an instance of the IdGenerator and start the generation process
+		// create an instance of the IdGenerator and start the generation
+		// process
 		IdGenerator generator = new IdGenerator();
 
 		// pass on the CLI options array
@@ -158,7 +152,7 @@ public class IdGenerator
 		 */
 
 		// set terminal width
-		int termWidth = Defaults.DEFAULT_TERM_WIDTH;
+		int termWidth = Defaults.TERM_WIDTH;
 		if (generator.options.hasOptionValue("W")) {
 			termWidth = Integer.parseInt(generator.options.getOptionValue("W"));
 		}
@@ -166,7 +160,8 @@ public class IdGenerator
 		logger.trace("Set terminal width to " + termWidth + ".");
 
 		// check for -h option or call with no options at all
-		if (generator.options.hasOptionValue("h") || generator.options.getNum() == 0) {
+		if (generator.options.hasOptionValue("h")
+				|| generator.options.getNum() == 0) {
 			generator.printUsage();
 			System.exit(0);
 		}
@@ -178,20 +173,20 @@ public class IdGenerator
 		}
 
 		// set number of ids
-		int numIds = Defaults.DEFAULT_NUM_IDs;
+		int numIds = Defaults.NUM_IDs;
 		if (generator.options.hasOptionValue("N")) {
 			numIds = Integer.parseInt(generator.options.getOptionValue("N"));
 		}
 		logger.trace("Set number of ids to generate to " + numIds + ".");
 
 		// enable column output
-		boolean enableColumnOutput = Defaults.DEFAULT_ENABLE_COLUMN_OUTPUT;
+		boolean enableColumnOutput = Defaults.ENABLE_COLUMN_OUTPUT;
 		if (generator.options.hasOptionValue("C")) {
 			enableColumnOutput = true;
 		}
-		logger.trace("Column output " + (enableColumnOutput?"enabled":"disabled") + ".");
+		logger.trace("Column output "
+				+ (enableColumnOutput ? "enabled" : "disabled") + ".");
 
-		
 		/*
 		 * START WORKING
 		 */
@@ -204,8 +199,7 @@ public class IdGenerator
 			logger.info(Messages.getString("IdGenerator.ID"));
 			if (enableColumnOutput) {
 				generator.printColumns(ids, termWidth);
-			}
-			else {
+			} else {
 				generator.print(ids);
 			}
 		}
@@ -214,25 +208,26 @@ public class IdGenerator
 	/**
 	 * Init the IdGenerator object<br />
 	 * This means:<br/>
-	 * - reading or re-reading the options data
-	 * from the the specified CLI arguments, if needed<br/>
-	 * - setting up the specified filters and adding them to the
-	 * filter chain<br/>
-	 * <i>This got a seperate method, so that it can
-	 * be called more flexibly and especially also from the main
-	 * method for CLI usage.</i>
-	 * @return true if no errors occurred, false otherwise 
+	 * - reading or re-reading the options data from the the specified CLI
+	 * arguments, if needed<br/>
+	 * - setting up the specified filters and adding them to the filter chain<br/>
+	 * <i>This got a seperate method, so that it can be called more flexibly and
+	 * especially also from the main method for CLI usage.</i>
+	 * 
+	 * @return true if no errors occurred, false otherwise
 	 */
 	private boolean init() {
-		
+
 		logger.trace("Init called.");
-		
+
 		// at first: update the options data (-> cliArgs) if needed
 		if (this.cliArgsDirtyFlag) {
 			this.cliArgsDirtyFlag = false;
 
 			if (!this.options.parseOptions(this.cliArgs)) {
-				logger.error(Messages.getString("IdGenerator.ERROR_OPTIONS_UPDATE") + " " + Arrays.toString(this.cliArgs));
+				logger.error(Messages
+						.getString("IdGenerator.ERROR_OPTIONS_UPDATE")
+						+ " " + Arrays.toString(this.cliArgs));
 				return false;
 			}
 		}
@@ -243,8 +238,7 @@ public class IdGenerator
 		 * FILTER SETUP
 		 */
 		// TODO find a more elegant way to initialize the filters as specified
-		
-		
+
 		// blacklist filter
 		if (this.options.hasOptionValue("B")) {
 			logger.trace("Enabling blacklist filter.");
@@ -252,7 +246,8 @@ public class IdGenerator
 
 			// source file
 			if (this.options.hasOptionValue("Bf")) {
-				blacklistFilter.setProp("filename", this.options.getOptionValue("Bf"));
+				blacklistFilter.setProp("filename", this.options
+						.getOptionValue("Bf"));
 			}
 			blacklistFilter.autosetID();
 			this.filterChain.addFilter(blacklistFilter);
@@ -265,7 +260,8 @@ public class IdGenerator
 
 			// source file
 			if (this.options.hasOptionValue("Pf")) {
-				passwdFilter.setProp("filename", this.options.getOptionValue("Pf"));
+				passwdFilter.setProp("filename", this.options
+						.getOptionValue("Pf"));
 			}
 			passwdFilter.autosetID();
 			this.filterChain.addFilter(passwdFilter);
@@ -275,16 +271,17 @@ public class IdGenerator
 		if (this.options.hasOptionValue("S")) {
 			logger.trace("Enabling shellcmd filter.");
 			ShellCmdFilter shellCmdFilter = new ShellCmdFilter();
-			
+
 			// file to execute
 			// TODO introduce Shell class similar to File/Ldap classes
 			if (this.options.hasOptionValue("Sf")) {
-				shellCmdFilter.setProp("shellCommand", this.options.getOptionValue("Sf"));
+				shellCmdFilter.setProp("shellCommand", this.options
+						.getOptionValue("Sf"));
 			}
 			shellCmdFilter.autosetID();
-			this.filterChain.addFilter(shellCmdFilter);	
+			this.filterChain.addFilter(shellCmdFilter);
 		}
-		
+
 		// LDAP filter
 		if (this.options.hasOptionValue("L")) {
 			logger.trace("Enabling LDAP filter.");
@@ -293,10 +290,11 @@ public class IdGenerator
 			// LDAP connection to use
 			if (this.options.hasOptionValue("Lf")) {
 				ldapFilter.loadPropFile(this.options.getOptionValue("Lf"));
-			}
-			else {
-				// TODO automatically detect and load the default configuration file - if available
-				ldapFilter.loadPropFile(Defaults.DEFAULT_LDAP_CONFIGURATION_FILE);
+			} else {
+				// TODO automatically detect and load the default configuration
+				// file - if available
+				ldapFilter
+						.loadPropFile(Defaults.LDAP_CONFIGURATION_FILE);
 			}
 			ldapFilter.autosetID();
 			this.filterChain.addFilter(ldapFilter);
@@ -310,183 +308,137 @@ public class IdGenerator
 			// LDAP connection to use
 			if (this.options.hasOptionValue("Df")) {
 				jdbcFilter.loadPropFile(this.options.getOptionValue("Df"));
-			}
-			else {
-				// TODO automatically detect and load the default configuration file - if available
-				jdbcFilter.loadPropFile(Defaults.DEFAULT_JDBC_CONFIGURATION_FILE);
+			} else {
+				// TODO automatically detect and load the default configuration
+				// file - if available
+				jdbcFilter
+						.loadPropFile(Defaults.JDBC_CONFIGURATION_FILE);
 			}
 			jdbcFilter.autosetID();
 			this.filterChain.addFilter(jdbcFilter);
 		}
 
-		
 		return true;
 	}
 
-
 	/**
-	 * Initializes the CLI (Command Line Interface) options of the IdGenerator. 
+	 * Initializes the CLI (Command Line Interface) options of the IdGenerator.
+	 * 
 	 * @return the CLI options
 	 */
-	private void addOptions(IdGenOptions opts)	{
+	private void addOptions(IdGenOptions opts) {
 		// TODO find a more abstract way of initialising the options object
 		logger.trace("Building CLI options...");
-	
-		// id template string
-		opts.add(
-				"T",
-				"template", 
-				Messages.getString("IIdGenCommandLineOptions.CL_TEMPLATE_DESC"), 
-				1,
-				"template",
-				' '
-		);
-		
-		// terminal width
-		opts.add(
-				"W",
-				"terminal-width",
-				Messages.getString("IIdGenCommandLineOptions.CL_TERMINAL_WIDTH_DESC") + " (Default: " + Defaults.DEFAULT_TERM_WIDTH + ")",
-				1,
-				"number",
-				' '
-		);
-	
-		// number of ids
-		opts.add(
-				"N",
-				"number-ids",
-				Messages.getString("IIdGenCommandLineOptions.CL_NUMBER_IDS_DESC"),
-				1,
-				"number",
-				' '
-		);
-	
-		// print in columns flag
-		opts.add(
-				"C",
-				"print-in-columns",
-				Messages.getString("IIdGenCommandLineOptions.CL_PRINT_IN_COLUMNS_DESC")
-		);
-	
-		// shellcmd filter command
-		opts.add(
-				"Sf",
-				"shellcmd-command",
-				Messages.getString("IIdGenCommandLineOptions.CL_SHELLCMD_COMMAND_DESC"),
-				1,
-				"command",
-				' '
-		);
-	
-		// shellcmd filter enable
-		opts.add(
-				"S",
-				"enable-shellcmd-filter",
-				Messages.getString("IIdGenCommandLineOptions.CL_SHELLCMD_DESC") + " (Default: " + Defaults.DEFAULT_SHELLCMD + ")"
-		);		
-		
-		// passwd filter file
-		opts.add(
-				"Pf",
-				"passwd-file",
-				Messages.getString("IIdGenCommandLineOptions.CL_PASSWD_FILE_DESC"),
-				1,
-				"file",
-				' '
-		);
-	
-		// passwd filter enable
-		opts.add(
-				"P",
-				"enable-passwd-filter",
-				Messages.getString("IIdGenCommandLineOptions.CL_PASSWD_DESC") + " (Default: " + Defaults.DEFAULT_PASSWD_FILE + ")"
-		);
-	
-		// blacklist filter file
-		opts.add(
-				"Bf",
-				"blacklist-file",
-				Messages.getString("IIdGenCommandLineOptions.CL_BLACKLIST_FILE_DESC"),
-				1,
-				"file",
-				' '
-		);
-	
-		// blacklist filter enable
-		opts.add(
-				"B",
-				"enable-blacklist-filter",
-				Messages.getString("IIdGenCommandLineOptions.CL_BLACKLIST_DESC") + " (Default: " + Defaults.DEFAULT_BLACKLIST_FILE + ")"
-		);
-	
-		
-		// ldap filter enable
-		opts.add(
-				"L",
-				"enable-ldap-filter",
-				Messages.getString("IIdGenCommandLineOptions.CL_LDAP_DESC") + " (Default: " + Defaults.DEFAULT_LDAP_CONFIGURATION_FILE + ")"
-		);
-	
-		// ldap filter configuration file
-		opts.add(
-				"Lf",
-				"ldap-properties-file",
-				Messages.getString("IIdGenCommandLineOptions.CL_LDAP_FILE_DESC"),
-				1,
-				"file",
-				' '
-		);
-	
-		// jdbc filter enable
-		opts.add(
-				"D",
-				"enable-jdbc-filter",
-				Messages.getString("IIdGenCommandLineOptions.CL_JDBC_DESC") + " (Default: " + Defaults.DEFAULT_JDBC_CONFIGURATION_FILE + ")"
-		);
 
-		
+		// id template string
+		opts.add("T", "template", Messages
+				.getString("IIdGenCommandLineOptions.CL_TEMPLATE_DESC"), 1,
+				"template", ' ');
+
+		// terminal width
+		opts.add("W", "terminal-width", Messages
+				.getString("IIdGenCommandLineOptions.CL_TERMINAL_WIDTH_DESC")
+				+ " (Default: " + Defaults.TERM_WIDTH + ")", 1,
+				"number", ' ');
+
+		// number of ids
+		opts.add("N", "number-ids", Messages
+				.getString("IIdGenCommandLineOptions.CL_NUMBER_IDS_DESC"), 1,
+				"number", ' ');
+
+		// print in columns flag
+		opts
+				.add(
+						"C",
+						"print-in-columns",
+						Messages
+								.getString("IIdGenCommandLineOptions.CL_PRINT_IN_COLUMNS_DESC"));
+
+		// shellcmd filter command
+		opts
+				.add(
+						"Sf",
+						"shellcmd-command",
+						Messages
+								.getString("IIdGenCommandLineOptions.CL_SHELLCMD_COMMAND_DESC"),
+						1, "command", ' ');
+
+		// shellcmd filter enable
+		opts.add("S", "enable-shellcmd-filter", Messages
+				.getString("IIdGenCommandLineOptions.CL_SHELLCMD_DESC")
+				+ " (Default: " + Defaults.SHELLCMD + ")");
+
+		// passwd filter file
+		opts.add("Pf", "passwd-file", Messages
+				.getString("IIdGenCommandLineOptions.CL_PASSWD_FILE_DESC"), 1,
+				"file", ' ');
+
+		// passwd filter enable
+		opts.add("P", "enable-passwd-filter", Messages
+				.getString("IIdGenCommandLineOptions.CL_PASSWD_DESC")
+				+ " (Default: " + Defaults.PASSWD_FILE + ")");
+
+		// blacklist filter file
+		opts.add("Bf", "blacklist-file", Messages
+				.getString("IIdGenCommandLineOptions.CL_BLACKLIST_FILE_DESC"),
+				1, "file", ' ');
+
+		// blacklist filter enable
+		opts.add("B", "enable-blacklist-filter", Messages
+				.getString("IIdGenCommandLineOptions.CL_BLACKLIST_DESC")
+				+ " (Default: " + Defaults.BLACKLIST_FILE + ")");
+
+		// ldap filter enable
+		opts.add("L", "enable-ldap-filter", Messages
+				.getString("IIdGenCommandLineOptions.CL_LDAP_DESC")
+				+ " (Default: "
+				+ Defaults.LDAP_CONFIGURATION_FILE
+				+ ")");
+
+		// ldap filter configuration file
+		opts.add("Lf", "ldap-properties-file", Messages
+				.getString("IIdGenCommandLineOptions.CL_LDAP_FILE_DESC"), 1,
+				"file", ' ');
+
+		// jdbc filter enable
+		opts.add("D", "enable-jdbc-filter", Messages
+				.getString("IIdGenCommandLineOptions.CL_JDBC_DESC")
+				+ " (Default: "
+				+ Defaults.JDBC_CONFIGURATION_FILE
+				+ ")");
+
+		// jdbc filter configuration file
+		opts.add("Df", "jdbc-properties-file", Messages
+				.getString("IIdGenCommandLineOptions.CL_JDBC_FILE_DESC"), 1,
+				"file", ' ');
+
 		// create all "T[a-z]" options as invisible and a dummy option for them
 		for (char currentChar = 'a'; currentChar < 'z'; currentChar++) {
-			opts.addInvisible(
-					"T" + currentChar,
-					"template-variable-" + currentChar, 
-					1,
-					"data",
-					' '
-			);
+			opts.addInvisible("T" + currentChar, "template-variable-"
+					+ currentChar, 1, "data", ' ');
 		}
-		opts.addDummy(
-				"T[a-z]",
-				"template-variable-[a-z]",
-				Messages.getString("IIdGenCommandLineOptions.CL_TEMPLATE_VARIABLE_DESC"),
-				1,
-				"data"
-		);
-	
-	
+		opts
+				.addDummy(
+						"T[a-z]",
+						"template-variable-[a-z]",
+						Messages
+								.getString("IIdGenCommandLineOptions.CL_TEMPLATE_VARIABLE_DESC"),
+						1, "data");
+
 		// display usage (short help)
-		opts.add(
-				"h",
-				"help", 
-				Messages.getString("IIdGenCommandLineOptions.CL_HELP")
-		);
-	
+		opts.add("h", "help", Messages
+				.getString("IIdGenCommandLineOptions.CL_HELP"));
+
 		// display help page (long help)
-		opts.add(
-				"hh",
-				"help-page", 
-				Messages.getString("IIdGenCommandLineOptions.CL_HELP_PAGE")
-		);
+		opts.add("hh", "help-page", Messages
+				.getString("IIdGenCommandLineOptions.CL_HELP_PAGE"));
 	}
 
-
 	/**
-	 * Converts the given string into an array
-	 * and calls setCLIArgs(String[]).
+	 * Converts the given string into an array and calls setCLIArgs(String[]).
 	 * 
 	 * @param args
-	 * 			the argument string
+	 *            the argument string
 	 */
 	public void setCLIArgs(String args) {
 		logger.trace("Converting argument string to array...");
@@ -495,15 +447,13 @@ public class IdGenerator
 	}
 
 	/**
-	 * Sets the stored argument array for
-	 * later parsing.<br />
-	 * An update of the data array can be 
-	 * done explicitly by calling the
-	 * updateOptions() method or automatically
-	 * on the next call to generateIds(int). 
+	 * Sets the stored argument array for later parsing.<br />
+	 * An update of the data array can be done explicitly by calling the
+	 * updateOptions() method or automatically on the next call to
+	 * generateIds(int).
 	 * 
 	 * @param args
-	 * 			the new argument array
+	 *            the new argument array
 	 */
 	public void setCLIArgs(String[] args) {
 		this.cliArgsDirtyFlag = true;
@@ -516,19 +466,18 @@ public class IdGenerator
 	 * <i>Convenience function</i>
 	 * 
 	 * @param opt
-	 * 			the short option parameter to be set
+	 *            the short option parameter to be set
 	 * @param value
-	 * 			the value to be associated with the parameter
+	 *            the value to be associated with the parameter
 	 */
 	public void setOption(String opt, String value) {
 		this.options.setOptionValue(opt, value);
 	}
 
-
 	/**
 	 * Clears the filter chain and re-initializes it.<br/>
-	 * Also re-reads the CLI options if indicated by the updateOptions
-	 * member variable.
+	 * Also re-reads the CLI options if indicated by the updateOptions member
+	 * variable.
 	 * 
 	 * @return true on success, false otherwise
 	 */
@@ -537,24 +486,22 @@ public class IdGenerator
 		return this.init();
 	}
 
-
 	/**
-	 * This method tries to generate the given number of ids. 
-	 * The method returns an empty list if it does 
-	 * not manage to create any suitable id within the <i>MAX_ATTEMPTS</i>
-	 * or null if an error occurs.
+	 * This method tries to generate the given number of ids. The method returns
+	 * an empty list if it does not manage to create any suitable id within the
+	 * <i>MAX_ATTEMPTS</i> or null if an error occurs.
 	 * 
 	 * @param num
-	 * 			target number of ids to generate
-	 * @return a suitable id list, an empty list if such could not be
-	 *         generated or null on error
+	 *            target number of ids to generate
+	 * @return a suitable id list, an empty list if such could not be generated
+	 *         or null on error
 	 */
 	public List<String> generateIDs(int num) {
-		
+
 		if (this.cliArgsDirtyFlag) {
 			this.updateOptions();
 		}
-	
+
 		/*
 		 * Update the filter chain's data
 		 * 
@@ -565,62 +512,69 @@ public class IdGenerator
 		 * !!! If you forget this your IDs are not guaranteed to be valid !!!
 		 */
 		this.filterChain.update();
-		
+
 		logger.info(Messages.getString("IdGenerator.START_GENERATION") + num);
-	
+
 		// the result array
 		ArrayList<String> validIDs = new ArrayList<String>();
-	
+
 		// the template object, responsible for building id suggestions
 		Template template = new Template(this.options);
-	
+
 		// id generation loop
 		int i = 0;
 		while (template.hasAlternatives() && (validIDs.size() < num)) {
 			if (i++ == Defaults.MAX_ATTEMPTS) {
-				logger.fatal(Messages.getString("IdGenerator.MAX_ATTEMPTS_REACHED") + " (" + Defaults.MAX_ATTEMPTS + ")");
+				logger.fatal(Messages
+						.getString("IdGenerator.MAX_ATTEMPTS_REACHED")
+						+ " (" + Defaults.MAX_ATTEMPTS + ")");
 				System.exit(152);
 			}
 			String idCandidate = null;
 			idCandidate = template.buildString();
-			logger.trace(Messages.getString("IdGenerator.TRACE_ID_CANDIDATE") + " " + idCandidate);
-	
+			logger.trace(Messages.getString("IdGenerator.TRACE_ID_CANDIDATE")
+					+ " " + idCandidate);
+
 			// apply the filter chain to the generated id
-			// add to list if we got a valid, unique id 
-			if (	(this.filterChain.apply(idCandidate) != null)
-					&& (!validIDs.contains(idCandidate)))
-			{
+			// add to list if we got a valid, unique id
+			if ((this.filterChain.apply(idCandidate) != null)
+					&& (!validIDs.contains(idCandidate))) {
 				validIDs.add(idCandidate);
-			}
-			else { 
-				// log some info about the failed attempt 
-				logger.trace(Messages.getString("IdGenerator.TRACE_ATTEMPT_GENERATE") + " " + idCandidate);
+			} else {
+				// log some info about the failed attempt
+				logger.trace(Messages
+						.getString("IdGenerator.TRACE_ATTEMPT_GENERATE")
+						+ " " + idCandidate);
 			}
 		}
-	
-		logger.debug(Messages.getString("IdGenerator.NUMBER_OF_ITERATIONS") + i);
-	
+
+		logger
+				.debug(Messages.getString("IdGenerator.NUMBER_OF_ITERATIONS")
+						+ i);
+
 		if (validIDs.size() < num) {
-			logger.warn(Messages.getString("IdGenerator.FAILED_TO_REACH_TARGET_NUM") + validIDs.size());
+			logger.warn(Messages
+					.getString("IdGenerator.FAILED_TO_REACH_TARGET_NUM")
+					+ validIDs.size());
 		}
-	
+
 		if (validIDs.size() == 0) {
-			logger.fatal(Messages.getString("IdGenerator.NO_ALTERNATIVES_LEFT"));
+			logger
+					.fatal(Messages
+							.getString("IdGenerator.NO_ALTERNATIVES_LEFT"));
 		}
-	
+
 		return validIDs;
 	}
 
-
 	/**
-	 * Prints ids into columns with a predefined terminal width (to
-	 * System.out). The number of columns is calculated from the terminal width.
+	 * Prints ids into columns with a predefined terminal width (to System.out).
+	 * The number of columns is calculated from the terminal width.
 	 * 
 	 * @param ids
 	 *            a list of ids to be printed
 	 */
-	public void printColumns(List<String> ids, int termWidth)
-	{
+	public void printColumns(List<String> ids, int termWidth) {
 		int idLength = ids.get(0).length();
 		int numberOfColumns = termWidth / (idLength + 1);
 		if (numberOfColumns == 0)
@@ -630,15 +584,13 @@ public class IdGenerator
 
 		int i;
 		int column = 0;
-		for (i = 0; i < ids.size(); i++)
-		{
+		for (i = 0; i < ids.size(); i++) {
 			column++;
 			String id = (String) ids.get(i);
-			if (((column % numberOfColumns) == 0))
-			{
-				System.out.print(id + Messages.getString("IdGenerator.NEW_LINE"));
-			} else
-			{
+			if (((column % numberOfColumns) == 0)) {
+				System.out.print(id
+						+ Messages.getString("IdGenerator.NEW_LINE"));
+			} else {
 				System.out.print(id + ' ');
 			}
 		}
@@ -654,32 +606,28 @@ public class IdGenerator
 	 * @param ids
 	 *            a list of ids to be printed
 	 */
-	public void print(List<String> ids)
-	{
+	public void print(List<String> ids) {
 		logger.debug(Messages.getString("IdGenerator.N_SEPARATOR"));
 
-		for (int i = 0; i < ids.size(); i++)
-		{
+		for (int i = 0; i < ids.size(); i++) {
 			String id = (String) ids.get(i);
-			System.out.print(id	+ Messages.getString("IdGenerator.NEW_LINE"));
+			System.out.print(id + Messages.getString("IdGenerator.NEW_LINE"));
 		}
 		logger.debug(Messages.getString("IdGenerator.N_SEPARATOR"));
 	}
 
 	/**
-	 * Prints the usage info
-	 * and the available CLI options
+	 * Prints the usage info and the available CLI options
 	 */
 	public void printUsage() {
 		System.out.println(options.getHelp(false));
 	}
 
 	/**
-	 * Prints a very verbose help page
-	 * with more detailed info
+	 * Prints a very verbose help page with more detailed info
 	 */
 	public void printHelp() {
-		System.out.println(options.getHelp(true));		
+		System.out.println(options.getHelp(true));
 	}
 
 }

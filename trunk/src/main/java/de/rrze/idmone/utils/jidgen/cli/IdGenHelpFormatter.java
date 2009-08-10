@@ -92,7 +92,8 @@ public class IdGenHelpFormatter
 
 		// render the current option
 		StringBuffer sb = new StringBuffer();
-		IdGenOptions options = new IdGenOptions(this.getWidth());
+		IdGenOptions options = new IdGenOptions();
+		options.setTermWidth(this.getWidth());
 		options.addOption(option);
 		super.renderOptions(sb, this.getWidth(), options, this.getLeftPadding(), this.getDescPadding());
 		sb.append(this.getNewLine());

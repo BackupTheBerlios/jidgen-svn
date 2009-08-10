@@ -67,12 +67,16 @@ public class JdbcAccessor {
 	 */
 	private void load() {
 		try {
+			
 			// TODO enable user defined classpath
 			Class.forName(this.driver);
+			
 		} catch (ClassNotFoundException e) {
+			
 			logger.fatal("Unable to load the driver class: Class not found \""
 					+ this.driver + "\".");
 			System.exit(-1); // TODO error code
+			
 		}
 	}
 

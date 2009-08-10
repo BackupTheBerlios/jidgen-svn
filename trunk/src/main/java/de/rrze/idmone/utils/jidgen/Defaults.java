@@ -29,18 +29,18 @@ public class Defaults {
 	/**
 	 * Default terminal width in characters
 	 */
-	public static final int DEFAULT_TERM_WIDTH = 80;
+	public static final int TERM_WIDTH = 80;
 	
 	/**
 	 * Default for output in columns
 	 */
-	public static final boolean DEFAULT_ENABLE_COLUMN_OUTPUT = false;
+	public static final boolean ENABLE_COLUMN_OUTPUT = false;
 
 	/**
 	 * Default number of id proposals to be generated after one 
 	 * invocation of jidgen. 
 	 */
-	public static final int DEFAULT_NUM_IDs = 1;
+	public static final int NUM_IDs = 1;
 	
 	/**
 	 * This is meant to be the emergency exit if the
@@ -53,30 +53,30 @@ public class Defaults {
 	/**
 	 * Default blacklist file
 	 */
-	public static final String DEFAULT_BLACKLIST_FILE = "blacklist";
+	public static final String BLACKLIST_FILE = "blacklist";
 	
 	
 	/**
 	 * Default passwd file
 	 */
-	public static final String DEFAULT_PASSWD_FILE = "/etc/passwd";
+	public static final String PASSWD_FILE = "/etc/passwd";
 	
 	
 	/**
 	 * Default shell command
 	 */
-	public static final String DEFAULT_SHELLCMD = "./filter.sh %s";
+	public static final String SHELLCMD = "./filter.sh %s";
 	
 
 	/**
 	 * Default configuration file for the LDAP filter
 	 */
-	public static final String DEFAULT_LDAP_CONFIGURATION_FILE="ldapFilter.properties";
+	public static final String LDAP_CONFIGURATION_FILE="ldapFilter.properties";
 
 
 	/**
 	 * Default configuration file for the LDAP filter
 	 */
-	public static final String DEFAULT_JDBC_CONFIGURATION_FILE="jdbcFilter.properties";
+	public static final String JDBC_CONFIGURATION_FILE="jdbcFilter.properties";
 
 }
