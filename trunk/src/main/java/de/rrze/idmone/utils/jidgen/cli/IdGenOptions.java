@@ -428,7 +428,7 @@ public class IdGenOptions extends Options {
 	 *            short option name to check for
 	 * @return true if the option was specified, false otherwise
 	 */
-	public boolean hasOptionValue(String shortOpt) {
+	public boolean isset(String shortOpt) {
 		return (this.data.containsKey(shortOpt));
 	}
 

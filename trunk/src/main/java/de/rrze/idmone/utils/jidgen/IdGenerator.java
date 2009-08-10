@@ -153,35 +153,35 @@ public class IdGenerator {
 
 		// set terminal width
 		int termWidth = Defaults.TERM_WIDTH;
-		if (generator.options.hasOptionValue("W")) {
+		if (generator.options.isset("W")) {
 			termWidth = Integer.parseInt(generator.options.getOptionValue("W"));
 		}
 		generator.options.setTermWidth(termWidth);
 		logger.trace("Set terminal width to " + termWidth + ".");
 
 		// check for -h option or call with no options at all
-		if (generator.options.hasOptionValue("h")
+		if (generator.options.isset("h")
 				|| generator.options.getNum() == 0) {
 			generator.printUsage();
 			System.exit(0);
 		}
 
 		// check for -hh option
-		if (generator.options.hasOptionValue("hh")) {
+		if (generator.options.isset("hh")) {
 			generator.printHelp();
 			System.exit(0);
 		}
 
 		// set number of ids
 		int numIds = Defaults.NUM_IDs;
-		if (generator.options.hasOptionValue("N")) {
+		if (generator.options.isset("N")) {
 			numIds = Integer.parseInt(generator.options.getOptionValue("N"));
 		}
 		logger.trace("Set number of ids to generate to " + numIds + ".");
 
 		// enable column output
 		boolean enableColumnOutput = Defaults.ENABLE_COLUMN_OUTPUT;
-		if (generator.options.hasOptionValue("C")) {
+		if (generator.options.isset("C")) {
 			enableColumnOutput = true;
 		}
 		logger.trace("Column output "
@@ -240,12 +240,12 @@ public class IdGenerator {
 		// TODO find a more elegant way to initialize the filters as specified
 
 		// blacklist filter
-		if (this.options.hasOptionValue("B")) {
+		if (this.options.isset("B") || this.options.isset("Bf")) {
 			logger.trace("Enabling blacklist filter.");
 			BlacklistFilter blacklistFilter = new BlacklistFilter();
 
 			// source file
-			if (this.options.hasOptionValue("Bf")) {
+			if (this.options.isset("Bf")) {
 				blacklistFilter.setProp("filename", this.options
 						.getOptionValue("Bf"));
 			}
@@ -254,12 +254,12 @@ public class IdGenerator {
 		}
 
 		// passwd filter
-		if (this.options.hasOptionValue("P")) {
+		if (this.options.isset("P") || this.options.isset("Pf")) {
 			logger.trace("Enabling passwd filter.");
 			PasswdFilter passwdFilter = new PasswdFilter();
 
 			// source file
-			if (this.options.hasOptionValue("Pf")) {
+			if (this.options.isset("Pf")) {
 				passwdFilter.setProp("filename", this.options
 						.getOptionValue("Pf"));
 			}
@@ -268,13 +268,13 @@ public class IdGenerator {
 		}
 
 		// shellcmd filter
-		if (this.options.hasOptionValue("S")) {
+		if (this.options.isset("S") || this.options.isset("Sf")) {
 			logger.trace("Enabling shellcmd filter.");
 			ShellCmdFilter shellCmdFilter = new ShellCmdFilter();
 
 			// file to execute
 			// TODO introduce Shell class similar to File/Ldap classes
-			if (this.options.hasOptionValue("Sf")) {
+			if (this.options.isset("Sf")) {
 				shellCmdFilter.setProp("shellCommand", this.options
 						.getOptionValue("Sf"));
 			}
@@ -283,12 +283,12 @@ public class IdGenerator {
 		}
 
 		// LDAP filter
-		if (this.options.hasOptionValue("L")) {
+		if (this.options.isset("L") || this.options.isset("Lf")) {
 			logger.trace("Enabling LDAP filter.");
 			LdapFilter ldapFilter = new LdapFilter();
 
 			// LDAP connection to use
-			if (this.options.hasOptionValue("Lf")) {
+			if (this.options.isset("Lf")) {
 				ldapFilter.loadPropFile(this.options.getOptionValue("Lf"));
 			} else {
 				// TODO automatically detect and load the default configuration
@@ -301,12 +301,12 @@ public class IdGenerator {
 		}
 
 		// JDBC filter
-		if (this.options.hasOptionValue("D")) {
+		if (this.options.isset("D") || this.options.isset("Df")) {
 			logger.trace("Enabling JDBC filter.");
 			JdbcFilter jdbcFilter = new JdbcFilter();
 
 			// LDAP connection to use
-			if (this.options.hasOptionValue("Df")) {
+			if (this.options.isset("Df")) {
 				jdbcFilter.loadPropFile(this.options.getOptionValue("Df"));
 			} else {
 				// TODO automatically detect and load the default configuration
