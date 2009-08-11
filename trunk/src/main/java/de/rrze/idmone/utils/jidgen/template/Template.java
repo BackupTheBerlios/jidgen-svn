@@ -206,8 +206,8 @@ public class Template {
 		this.options = options;
 		
 		// set template string from data array if possible
-		if (this.options.isset(this.optionMarker)) {
-			this.setTemplate(this.options.getOptionValue(this.optionMarker));
+		if (this.options.isSpecified(this.optionMarker)) {
+			this.setTemplate(this.options.getValue(this.optionMarker));
 		}
 	}
 
@@ -282,8 +282,8 @@ public class Template {
 			// fill with data (if update is needed)
 			if (currentElement.needsExternalData()) {
 				String shortOpt = this.optionsPrefix + currentElement.getKey();
-				if (this.options.isset(shortOpt)) {
-					currentElement.setData(this.options.getOptionValue(shortOpt));
+				if (this.options.isSpecified(shortOpt)) {
+					currentElement.setData(this.options.getValue(shortOpt));
 				}
 				else if (this.defaultData.containsKey(shortOpt)) {
 					currentElement.setData(this.defaultData.get(shortOpt));

@@ -26,14 +26,17 @@ package de.rrze.idmone.utils.jidgen;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.rrze.idmone.utils.jidgen.cli.IdGenOption;
 import de.rrze.idmone.utils.jidgen.cli.IdGenOptions;
 import de.rrze.idmone.utils.jidgen.filterChain.FilterChain;
 import de.rrze.idmone.utils.jidgen.filterChain.filter.BlacklistFilter;
+import de.rrze.idmone.utils.jidgen.filterChain.filter.IFilter;
 import de.rrze.idmone.utils.jidgen.filterChain.filter.JdbcFilter;
 import de.rrze.idmone.utils.jidgen.filterChain.filter.LdapFilter;
 import de.rrze.idmone.utils.jidgen.filterChain.filter.PasswdFilter;
@@ -153,35 +156,35 @@ public class IdGenerator {
 
 		// set terminal width
 		int termWidth = Defaults.TERM_WIDTH;
-		if (generator.options.isset("W")) {
-			termWidth = Integer.parseInt(generator.options.getOptionValue("W"));
+		if (generator.options.isSpecified("W")) {
+			termWidth = Integer.parseInt(generator.options.getValue("W"));
 		}
 		generator.options.setTermWidth(termWidth);
 		logger.trace("Set terminal width to " + termWidth + ".");
 
 		// check for -h option or call with no options at all
-		if (generator.options.isset("h")
-				|| generator.options.getNum() == 0) {
+		if (generator.options.isSpecified("h")
+				|| generator.options.getCount() == 0) {
 			generator.printUsage();
 			System.exit(0);
 		}
 
 		// check for -hh option
-		if (generator.options.isset("hh")) {
+		if (generator.options.isSpecified("hh")) {
 			generator.printHelp();
 			System.exit(0);
 		}
 
 		// set number of ids
 		int numIds = Defaults.NUM_IDs;
-		if (generator.options.isset("N")) {
-			numIds = Integer.parseInt(generator.options.getOptionValue("N"));
+		if (generator.options.isSpecified("N")) {
+			numIds = Integer.parseInt(generator.options.getValue("N"));
 		}
 		logger.trace("Set number of ids to generate to " + numIds + ".");
 
 		// enable column output
 		boolean enableColumnOutput = Defaults.ENABLE_COLUMN_OUTPUT;
-		if (generator.options.isset("C")) {
+		if (generator.options.isSpecified("C")) {
 			enableColumnOutput = true;
 		}
 		logger.trace("Column output "
@@ -224,7 +227,7 @@ public class IdGenerator {
 		if (this.cliArgsDirtyFlag) {
 			this.cliArgsDirtyFlag = false;
 
-			if (!this.options.parseOptions(this.cliArgs)) {
+			if (!this.options.parseCommandLine(this.cliArgs)) {
 				logger.error(Messages
 						.getString("IdGenerator.ERROR_OPTIONS_UPDATE")
 						+ " " + Arrays.toString(this.cliArgs));
@@ -237,88 +240,106 @@ public class IdGenerator {
 		/*
 		 * FILTER SETUP
 		 */
-		// TODO find a more elegant way to initialize the filters as specified
 
 		// blacklist filter
-		if (this.options.isset("B") || this.options.isset("Bf")) {
-			logger.trace("Enabling blacklist filter.");
-			BlacklistFilter blacklistFilter = new BlacklistFilter();
-
-			// source file
-			if (this.options.isset("Bf")) {
-				blacklistFilter.setProp("filename", this.options
-						.getOptionValue("Bf"));
-			}
-			blacklistFilter.autosetID();
-			this.filterChain.addFilter(blacklistFilter);
-		}
+		initFilter("B", BlacklistFilter.class, "BLACKLIST", "filename",
+				Defaults.BLACKLIST_FILE);
 
 		// passwd filter
-		if (this.options.isset("P") || this.options.isset("Pf")) {
-			logger.trace("Enabling passwd filter.");
-			PasswdFilter passwdFilter = new PasswdFilter();
-
-			// source file
-			if (this.options.isset("Pf")) {
-				passwdFilter.setProp("filename", this.options
-						.getOptionValue("Pf"));
-			}
-			passwdFilter.autosetID();
-			this.filterChain.addFilter(passwdFilter);
-		}
+		initFilter("P", PasswdFilter.class, "PASSWD", "filename",
+				Defaults.PASSWD_FILE);
 
 		// shellcmd filter
-		if (this.options.isset("S") || this.options.isset("Sf")) {
-			logger.trace("Enabling shellcmd filter.");
-			ShellCmdFilter shellCmdFilter = new ShellCmdFilter();
-
-			// file to execute
-			// TODO introduce Shell class similar to File/Ldap classes
-			if (this.options.isset("Sf")) {
-				shellCmdFilter.setProp("shellCommand", this.options
-						.getOptionValue("Sf"));
-			}
-			shellCmdFilter.autosetID();
-			this.filterChain.addFilter(shellCmdFilter);
-		}
-
-		// LDAP filter
-		if (this.options.isset("L") || this.options.isset("Lf")) {
-			logger.trace("Enabling LDAP filter.");
-			LdapFilter ldapFilter = new LdapFilter();
-
-			// LDAP connection to use
-			if (this.options.isset("Lf")) {
-				ldapFilter.loadPropFile(this.options.getOptionValue("Lf"));
-			} else {
-				// TODO automatically detect and load the default configuration
-				// file - if available
-				ldapFilter
-						.loadPropFile(Defaults.LDAP_CONFIGURATION_FILE);
-			}
-			ldapFilter.autosetID();
-			this.filterChain.addFilter(ldapFilter);
-		}
+		initFilter("S", ShellCmdFilter.class, "SHELLCMD", "shellCommand",
+				Defaults.SHELLCMD);
 
 		// JDBC filter
-		if (this.options.isset("D") || this.options.isset("Df")) {
-			logger.trace("Enabling JDBC filter.");
-			JdbcFilter jdbcFilter = new JdbcFilter();
+		initFilter("D", JdbcFilter.class, "JDBC", null,
+				Defaults.JDBC_CONFIGURATION_FILE);
 
-			// LDAP connection to use
-			if (this.options.isset("Df")) {
-				jdbcFilter.loadPropFile(this.options.getOptionValue("Df"));
-			} else {
-				// TODO automatically detect and load the default configuration
-				// file - if available
-				jdbcFilter
-						.loadPropFile(Defaults.JDBC_CONFIGURATION_FILE);
-			}
-			jdbcFilter.autosetID();
-			this.filterChain.addFilter(jdbcFilter);
-		}
+		// LDAP filter
+		initFilter("L", LdapFilter.class, "LDAP", null,
+				Defaults.LDAP_CONFIGURATION_FILE);
 
 		return true;
+	}
+
+	/**
+	 * Convenience function to initialize all supported filters as requested by
+	 * the cli options.<br/>
+	 * <b>!!INTENDED FOR INTERNAL USE ONLY!!</b>
+	 * 
+	 * @param shortOpt
+	 *            the one letter short option identifier
+	 * @param filterClass
+	 *            the class to instantiate for this filter
+	 * @param name
+	 *            filter name for logging purposes
+	 * @param propName
+	 *            name of the property to set from the cli value(s) or null if a
+	 *            properties file should be loaded instead
+	 * @param defaultValue
+	 *            the default value for the specified propterty or the default
+	 *            properties file to load if the propName is null
+	 */
+	@SuppressWarnings("unchecked")
+	private void initFilter(String shortOpt, Class filterClass, String name,
+			String propName, String defaultValue) {
+
+		try {
+			if (this.options.isSpecified(shortOpt)) {
+				logger.trace("Enabling " + name + " filter " + "(Default: "
+						+ defaultValue + ").");
+				IFilter filter = (IFilter) filterClass.newInstance();
+
+				if (propName == null) {
+					filter.loadPropFile(defaultValue);
+				} else {
+					filter.setProp(propName, defaultValue);
+				}
+				filter.autosetID();
+				this.filterChain.addFilter(filter);
+			}
+
+			if (this.options.isSpecified(shortOpt + "f")) {
+				Iterator<String> valueIt = this.options.getValues(
+						shortOpt + "f").iterator();
+
+				if (propName == null) {
+					while (valueIt.hasNext()) {
+						IFilter filter = (IFilter) filterClass.newInstance();
+
+						String propFile = valueIt.next();
+						logger.trace("Enabling " + name + " filter " + "("
+								+ propFile + ").");
+
+						filter.loadPropFile(propFile);
+						filter.autosetID();
+
+						this.filterChain.addFilter(filter);
+					}
+				} else {
+					while (valueIt.hasNext()) {
+						IFilter filter = (IFilter) filterClass.newInstance();
+
+						String propValue = valueIt.next();
+						logger.trace("Enabling " + name + " filter " + "("
+								+ propValue + ").");
+
+						filter.setProp(propName, propValue);
+						filter.autosetID();
+
+						this.filterChain.addFilter(filter);
+					}
+
+				}
+			}
+		} catch (IllegalAccessException e) {
+			// FIXME
+		} catch (InstantiationException e) {
+			// FIXME
+		}
+
 	}
 
 	/**
@@ -338,8 +359,7 @@ public class IdGenerator {
 		// terminal width
 		opts.add("W", "terminal-width", Messages
 				.getString("IIdGenCommandLineOptions.CL_TERMINAL_WIDTH_DESC")
-				+ " (Default: " + Defaults.TERM_WIDTH + ")", 1,
-				"number", ' ');
+				+ " (Default: " + Defaults.TERM_WIDTH + ")", 1, "number", ' ');
 
 		// number of ids
 		opts.add("N", "number-ids", Messages
@@ -361,7 +381,8 @@ public class IdGenerator {
 						"shellcmd-command",
 						Messages
 								.getString("IIdGenCommandLineOptions.CL_SHELLCMD_COMMAND_DESC"),
-						1, "command", ' ');
+						IdGenOption.UNLIMITED_VALUES, "command",
+						Defaults.CLI_VALUE_SEPERATOR);
 
 		// shellcmd filter enable
 		opts.add("S", "enable-shellcmd-filter", Messages
@@ -370,8 +391,9 @@ public class IdGenerator {
 
 		// passwd filter file
 		opts.add("Pf", "passwd-file", Messages
-				.getString("IIdGenCommandLineOptions.CL_PASSWD_FILE_DESC"), 1,
-				"file", ' ');
+				.getString("IIdGenCommandLineOptions.CL_PASSWD_FILE_DESC"),
+				IdGenOption.UNLIMITED_VALUES, "file",
+				Defaults.CLI_VALUE_SEPERATOR);
 
 		// passwd filter enable
 		opts.add("P", "enable-passwd-filter", Messages
@@ -381,7 +403,8 @@ public class IdGenerator {
 		// blacklist filter file
 		opts.add("Bf", "blacklist-file", Messages
 				.getString("IIdGenCommandLineOptions.CL_BLACKLIST_FILE_DESC"),
-				1, "file", ' ');
+				IdGenOption.UNLIMITED_VALUES, "file",
+				Defaults.CLI_VALUE_SEPERATOR);
 
 		// blacklist filter enable
 		opts.add("B", "enable-blacklist-filter", Messages
@@ -391,26 +414,24 @@ public class IdGenerator {
 		// ldap filter enable
 		opts.add("L", "enable-ldap-filter", Messages
 				.getString("IIdGenCommandLineOptions.CL_LDAP_DESC")
-				+ " (Default: "
-				+ Defaults.LDAP_CONFIGURATION_FILE
-				+ ")");
+				+ " (Default: " + Defaults.LDAP_CONFIGURATION_FILE + ")");
 
 		// ldap filter configuration file
 		opts.add("Lf", "ldap-properties-file", Messages
-				.getString("IIdGenCommandLineOptions.CL_LDAP_FILE_DESC"), 1,
-				"file", ' ');
+				.getString("IIdGenCommandLineOptions.CL_LDAP_FILE_DESC"),
+				IdGenOption.UNLIMITED_VALUES, "file",
+				Defaults.CLI_VALUE_SEPERATOR);
 
 		// jdbc filter enable
 		opts.add("D", "enable-jdbc-filter", Messages
 				.getString("IIdGenCommandLineOptions.CL_JDBC_DESC")
-				+ " (Default: "
-				+ Defaults.JDBC_CONFIGURATION_FILE
-				+ ")");
+				+ " (Default: " + Defaults.JDBC_CONFIGURATION_FILE + ")");
 
 		// jdbc filter configuration file
 		opts.add("Df", "jdbc-properties-file", Messages
-				.getString("IIdGenCommandLineOptions.CL_JDBC_FILE_DESC"), 1,
-				"file", ' ');
+				.getString("IIdGenCommandLineOptions.CL_JDBC_FILE_DESC"),
+				IdGenOption.UNLIMITED_VALUES, "file",
+				Defaults.CLI_VALUE_SEPERATOR);
 
 		// create all "T[a-z]" options as invisible and a dummy option for them
 		for (char currentChar = 'a'; currentChar < 'z'; currentChar++) {
@@ -471,7 +492,7 @@ public class IdGenerator {
 	 *            the value to be associated with the parameter
 	 */
 	public void setOption(String opt, String value) {
-		this.options.setOptionValue(opt, value);
+		this.options.setValue(opt, value);
 	}
 
 	/**
@@ -620,14 +641,14 @@ public class IdGenerator {
 	 * Prints the usage info and the available CLI options
 	 */
 	public void printUsage() {
-		System.out.println(options.getHelp(false));
+		System.out.println(options.getFormattedOptionsHelp(false));
 	}
 
 	/**
 	 * Prints a very verbose help page with more detailed info
 	 */
 	public void printHelp() {
-		System.out.println(options.getHelp(true));
+		System.out.println(options.getFormattedOptionsHelp(true));
 	}
 
 }

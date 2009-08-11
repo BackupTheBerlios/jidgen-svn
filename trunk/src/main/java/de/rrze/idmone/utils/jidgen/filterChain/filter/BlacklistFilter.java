@@ -36,9 +36,11 @@ import de.rrze.idmone.utils.jidgen.i18n.Messages;
 import de.rrze.idmone.utils.jidgen.io.FileAccessor;
 
 /**
- * This class is used for filtering IDs from a blacklist. If the proposed id is
- * contained within the blacklist, <em>null</em> is returned to indicate the
- * password is not suitable. Otherwise the password itself is returned.
+ * This class is used for filtering IDs from a blacklist.<br/>
+ * If the proposed id is contained within the blacklist <em>null</em> is
+ * returned to indicate the password is not suitable. Otherwise the password
+ * itself is returned. <br/>
+ * <i>Intended for use within the FilterChain class.</i>
  * 
  * @author unrza249
  * @author unrz205
@@ -86,7 +88,7 @@ public class BlacklistFilter extends AbstractFilter implements IFilter {
 
 		if (this.blFileAccessor == null)
 			connect();
-		
+
 		// Iterate over the list and check whether it contains the word
 		for (Iterator<String> iter = bl.iterator(); iter.hasNext();) {
 			String blackword = iter.next();
@@ -111,12 +113,12 @@ public class BlacklistFilter extends AbstractFilter implements IFilter {
 	}
 
 	/**
-	 * "Connects" to the blacklist file 
+	 * "Connects" to the blacklist file
 	 */
 	private void connect() {
 		this.blFileAccessor = new FileAccessor(this.getProp("filename"));
 	}
-	
+
 	/**
 	 * Returns a reference of the blacklist used by this filter.
 	 * 
@@ -152,7 +154,9 @@ public class BlacklistFilter extends AbstractFilter implements IFilter {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.rrze.idmone.utils.jidgen.filterChain.filter.IFilter#autosetID()
 	 */
 	public void autosetID() {

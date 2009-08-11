@@ -164,8 +164,8 @@ public abstract class AbstractFilter implements IFilter {
 	 * de.rrze.idmone.utils.jidgen.filter.IFilter#setDescription(java.lang.String
 	 * )
 	 */
-	public void setDescription(String new_description) {
-		this.description = new_description;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	/*
@@ -173,8 +173,8 @@ public abstract class AbstractFilter implements IFilter {
 	 * 
 	 * @see de.rrze.idmone.utils.jidgen.filter.IFilter#setID(java.lang.String)
 	 */
-	public void setID(String new_id) {
-		this.id = new_id;
+	public void setID(String id) {
+		this.id = id;
 	}
 
 	/*

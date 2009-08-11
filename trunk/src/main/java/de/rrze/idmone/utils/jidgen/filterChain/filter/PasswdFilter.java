@@ -35,7 +35,8 @@ import de.rrze.idmone.utils.jidgen.i18n.Messages;
 import de.rrze.idmone.utils.jidgen.io.FileAccessor;
 
 /**
- * A filter for IDs that are already in use within the system's passwd file.
+ * A filter for IDs that are already in use within the system's passwd file.<br/>
+ * <i>Intended for use within the FilterChain class.</i>
  * 
  * @author unrza249
  */

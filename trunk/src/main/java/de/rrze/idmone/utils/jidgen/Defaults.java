@@ -27,6 +27,11 @@ package de.rrze.idmone.utils.jidgen;
 public class Defaults {
 	
 	/**
+	 * Character seperating multiple values within one CLI option.
+	 */
+	public static final char CLI_VALUE_SEPERATOR = ',';
+	
+	/**
 	 * Default terminal width in characters
 	 */
 	public static final int TERM_WIDTH = 80;

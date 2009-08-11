@@ -31,9 +31,8 @@ import de.rrze.idmone.utils.jidgen.i18n.Messages;
 import de.rrze.idmone.utils.jidgen.io.LdapAccessor;
 
 /**
- * This a basic filter template class that implements most of the common filter
- * functions. All real filter implementations should extend this class to avoid
- * duplicate code.
+ * This class filters IDs against a configurable LDAP directory server via JNDI.<br/>
+ * <i>Intended for use within the FilterChain class.</i>
  * 
  * @author unrza249
  * 
@@ -57,7 +56,7 @@ public class LdapFilter extends AbstractFilter {
 	public LdapFilter() {
 		logger.info(Messages.getString(this.getClass().getSimpleName()
 				+ ".INIT_MESSAGE"));
-		
+
 		this.loadDefaults();
 	}
 
@@ -78,6 +77,7 @@ public class LdapFilter extends AbstractFilter {
 	 * </ul>
 	 */
 	private void loadDefaults() {
+		// TODO This should be located in the Defaults class
 		this.setDefaultProp("host", "localhost");
 		this.setDefaultProp("port", "389");
 		this.setDefaultProp("namingContext", "dc=example,dc=com");
@@ -148,7 +148,9 @@ public class LdapFilter extends AbstractFilter {
 		this.ldapAccessor.connect();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.rrze.idmone.utils.jidgen.filterChain.filter.IFilter#autosetID()
 	 */
 	public void autosetID() {

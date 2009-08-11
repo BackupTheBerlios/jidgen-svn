@@ -35,9 +35,10 @@ import de.rrze.idmone.utils.jidgen.Defaults;
 import de.rrze.idmone.utils.jidgen.i18n.Messages;
 
 /**
- * A filter that calls the given shell command with the id or subsequently with
- * all ids, if there are more than one, to be tested and filters the id on exit
- * code 0 (success). Any exit code other than 0 will not filter the id.
+ * A filter that calls the given shell command with the ID and filters the id on
+ * exit code 0 (success). Any exit code other than 0 will <b>not</b> filter the
+ * id.<br/>
+ * <i>Intended for use within the FilterChain class.</i>
  * 
  * @author unrza249
  */
@@ -48,6 +49,7 @@ public class ShellCmdFilter extends AbstractFilter implements IFilter {
 	private static final Log logger = LogFactory.getLog(ShellCmdFilter.class);
 
 	// TODO this class does not have a ShellAccessor, yet
+	// TODO write ShellAccessor class
 
 	/**
 	 * Default construct.

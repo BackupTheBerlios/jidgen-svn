@@ -75,6 +75,11 @@ public class IdGenOptions extends Options {
 
 	/**
 	 * List of dummy options that are displayed but not processed by the parser.
+	 * This is useful if one option should be added as a representative of
+	 * multiple other options.<br/>
+	 * E.g. options <i>-La</i> ... <i>-Lz</i> are added but not displayed
+	 * (invisible). Instead one dummy option <i>-L[a-z]</i> is added to
+	 * represent the others in the help page.
 	 */
 	private HashMap<String, IdGenOption> dummyOptions;
 
@@ -255,27 +260,6 @@ public class IdGenOptions extends Options {
 	}
 
 	/**
-	 * builds a formatted help string for the IdGenerator
-	 * 
-	 * @return the formatted help string, ready for output
-	 */
-	public String getHelp(boolean longHelp) {
-		IdGenHelpFormatter formatter = new IdGenHelpFormatter();
-		formatter.setWidth(this.termWidth);
-		return formatter.getHelpString(this, longHelp);
-	}
-
-	/**
-	 * returns all stored options
-	 * 
-	 * @return a collection of all stored options
-	 */
-	@SuppressWarnings("unchecked")
-	public Collection<IdGenOption> getOptions() {
-		return (Collection<IdGenOption>) super.getOptions();
-	}
-
-	/**
 	 * Fill the internal variable data by parsing a given array of command line
 	 * options.
 	 * 
@@ -285,20 +269,12 @@ public class IdGenOptions extends Options {
 	 * @throws ParseException
 	 */
 	public void parse(String[] args) throws ParseException {
-		/*
-		 * Compile a list of all stored option objects to be processed excluding
-		 * all dummy options
-		 */
-		Collection<IdGenOption> options = new HashSet<IdGenOption>();
-		options.addAll(this.getOptions());
-		options.removeAll(this.dummyOptions.values());
-		Iterator<IdGenOption> iter = options.iterator();
-
 		// init the parser
 		BasicParser parser = new BasicParser();
 		CommandLine commandLine = parser.parse(this, args);
 
-		// iterate over all possible options
+		// iterate over all command line options
+		Iterator<IdGenOption> iter = this.getOptions().iterator();
 		while (iter.hasNext()) {
 
 			IdGenOption currentOption = iter.next();
@@ -307,13 +283,12 @@ public class IdGenOptions extends Options {
 
 			if (commandLine.hasOption(currentOption.getShortOpt())) {
 				// option was specified
-				String value = commandLine.getOptionValue(currentOption
+				String[] values = commandLine.getOptionValues(currentOption
 						.getShortOpt());
-				if (value != null) {
-					// option has a specified value
-					this.addOptionValue(currentOption.getShortOpt(), value);
-					logger.debug(currentOption.getShortOpt() + " = " + "\""
-							+ value + "\"");
+				if (values != null) {
+					this.setValues(currentOption.getShortOpt(), values);
+					logger.debug(currentOption.getShortOpt() + " = "
+							+ this.getValues(currentOption.getShortOpt()));
 				} else if (currentOption.hasArg()) {
 					/*
 					 * Option does NOT have a value but should have one -->
@@ -324,7 +299,7 @@ public class IdGenOptions extends Options {
 									+ " "
 									+ Messages
 											.getString("IdGenOptions.MISSING_ARGUMENT"));
-					System.out.println(this.getHelp(false));
+					System.out.println(this.getFormattedOptionsHelp(false));
 					System.exit(-1);
 				} else {
 					/*
@@ -333,7 +308,7 @@ public class IdGenOptions extends Options {
 					 * with an empty string in the data array to mark that the
 					 * option was specified
 					 */
-					this.addOptionSwitch(currentOption.getShortOpt());
+					this.addSwitch(currentOption.getShortOpt());
 				}
 			} else {
 				// option was NOT specified, so use default if available
@@ -342,8 +317,8 @@ public class IdGenOptions extends Options {
 					logger.info(currentOption.getShortOpt() + " "
 							+ Messages.getString("IdGenOptions.USING_DEFAULT")
 							+ " " + currentOption.getDefaultValue());
-					this.addOptionValue(currentOption.getShortOpt(),
-							currentOption.getDefaultValue());
+					this.addValue(currentOption.getShortOpt(), currentOption
+							.getDefaultValue());
 				}
 			}
 		}
@@ -359,7 +334,7 @@ public class IdGenOptions extends Options {
 	 * @param value
 	 *            the value to add to the argument list of the specified option
 	 */
-	public void addOptionValue(String shortOpt, String value) {
+	public void addValue(String shortOpt, String value) {
 		if (this.data.containsKey(shortOpt)) {
 			List<String> l = this.data.get(shortOpt);
 			l.add(value);
@@ -371,6 +346,17 @@ public class IdGenOptions extends Options {
 	}
 
 	/**
+	 * This adds an entry without any values to the recognized options. This
+	 * marks the presence of an option without an argument --> switch.
+	 * 
+	 * @param shortOpt
+	 *            the short name of the switch
+	 */
+	public void addSwitch(String shortOpt) {
+		this.data.put(shortOpt, null);
+	}
+
+	/**
 	 * This adds an entry with a value to the recognized options. If the entry
 	 * already exists the value is <b>overwritten</b> with the specified value.
 	 * 
@@ -379,34 +365,74 @@ public class IdGenOptions extends Options {
 	 * @param value
 	 *            the value to set for the specified option
 	 */
-	public void setOptionValue(String shortOpt, String value) {
+	public void setValue(String shortOpt, String value) {
 		List<String> l = new ArrayList<String>();
 		l.add(value);
 		this.data.put(shortOpt, l);
 	}
 
 	/**
-	 * This adds an entry without any values to the recognized options. This
-	 * marks the presence of an option without an argument --> switch.
+	 * This adds an entry with a value list to the recognized options. If the
+	 * entry already exists the value is <b>overwritten</b> with the specified
+	 * value list.
 	 * 
 	 * @param shortOpt
-	 *            the short name of the switch
+	 *            the short name of the option
+	 * @param valueList
+	 *            a list of values to be set for the specified option
 	 */
-	public void addOptionSwitch(String shortOpt) {
-		this.data.put(shortOpt, null);
+	public void setValues(String shortOpt, List<String> valueList) {
+		this.data.put(shortOpt, valueList);
 	}
 
 	/**
-	 * Returns the value of the requested option, if possible
+	 * This adds an entry with a value list to the recognized options. If the
+	 * entry already exists the value is <b>overwritten</b> with the specified
+	 * value list.
+	 * 
+	 * @param shortOpt
+	 *            the short name of the option
+	 * @param valueArray
+	 *            an array of values to be set for the specified option
+	 */
+	public void setValues(String shortOpt, String[] valueArray) {
+		ArrayList<String> valueList = new ArrayList<String>();
+		for (int i = 0; i < valueArray.length; i++) {
+			valueList.add(valueArray[i]);
+		}
+		this.setValues(shortOpt, valueList);
+	}
+
+	/**
+	 * Returns the value of the requested option.<br/>
+	 * If the requested option has no value or the option is not present
+	 * <i>null</i> is returned.<br/>
+	 * If the option has multiple values only the first value is returned. Use
+	 * getOptionValues(shortOpt) to get a list of all available values.
 	 * 
 	 * @param shortOpt
 	 *            the option for which the value is requested
-	 * @return the requested option's value
+	 * @return the first value (if multiple available) of the requested option
+	 *         or null if no value is available
 	 */
-	public String getOptionValue(String shortOpt) {
-		if (this.hasData()) {
+	public String getValue(String shortOpt) {
+		return this.getValues(shortOpt).get(0);
+	}
+
+	/**
+	 * Returns the value list of the requested option.<br/>
+	 * If the requested option has no value or the option is not present
+	 * <i>null</i> is returned.<br/>
+	 * 
+	 * @param shortOpt
+	 *            the option for which the value is requested
+	 * @return the value list of the requested option or null if no value is
+	 *         available
+	 */
+	public List<String> getValues(String shortOpt) {
+		if (this.data != null) {
 			if (this.data.containsKey(shortOpt)) {
-				return this.data.get(shortOpt).get(0); // FIXME
+				return this.data.get(shortOpt);
 			} else {
 				logger.debug(Messages.getString("IdGenOptions.NO_DATA_ENTRY")
 						+ " " + shortOpt + ".\n");
@@ -428,44 +454,8 @@ public class IdGenOptions extends Options {
 	 *            short option name to check for
 	 * @return true if the option was specified, false otherwise
 	 */
-	public boolean isset(String shortOpt) {
+	public boolean isSpecified(String shortOpt) {
 		return (this.data.containsKey(shortOpt));
-	}
-
-	/**
-	 * This is a option checking function inherited from the super class.<br/>
-	 * It does not work with the added functionality of this class, so <b>do not
-	 * use it</b>.<br/>
-	 * You most likely want what the hasOptionValue() method does.
-	 */
-	public boolean hasOption(String shortOpt) {
-		return super.hasOption(shortOpt);
-	}
-
-	/**
-	 * get state of the option data array
-	 * 
-	 * @return true if the array has been initialized, false otherwise
-	 */
-	public boolean hasData() {
-		return (this.data != null);
-	}
-
-	/**
-	 * returns a string representation of the stored options, e.g. the help
-	 * string
-	 * 
-	 * @return the (long) help string
-	 */
-	public String toString() {
-		return this.getHelp(true);
-	}
-
-	/**
-	 * @return
-	 */
-	public int getNum() {
-		return this.data.size();
 	}
 
 	/**
@@ -475,9 +465,9 @@ public class IdGenOptions extends Options {
 	 *            argument string
 	 * @return true on success, false otherwise
 	 */
-	public boolean parseOptions(String args) {
+	public boolean parseCommandLine(String args) {
 		String[] argsArr = args.split(" ");
-		return this.parseOptions(argsArr);
+		return this.parseCommandLine(argsArr);
 	}
 
 	/**
@@ -488,9 +478,7 @@ public class IdGenOptions extends Options {
 	 *            the argument array
 	 * @return true on success, false otherwise
 	 */
-	public boolean parseOptions(String[] args) {
-		// parse the command line options and
-		// fill the data array
+	public boolean parseCommandLine(String[] args) {
 		try {
 			logger.trace("Parsing cliArgs...");
 			this.parse(args);
@@ -518,6 +506,56 @@ public class IdGenOptions extends Options {
 	 */
 	public void setTermWidth(int termWidth) {
 		this.termWidth = termWidth;
+	}
+
+	/**
+	 * Returns an IdGenOption collection of all stored options.<br/>
+	 * <i>Dummy options are not included in the returned options list.</i>
+	 * 
+	 * @return a collection of all stored options excluding dummy options
+	 */
+	@SuppressWarnings("unchecked")
+	public Collection<IdGenOption> getOptions() {
+		/*
+		 * Compile a list of all stored option objects to be processed excluding
+		 * all dummy options
+		 */
+		Collection<IdGenOption> optionsList = new HashSet<IdGenOption>();
+		optionsList.addAll((Collection<IdGenOption>) super.getOptions());
+		optionsList.removeAll(this.dummyOptions.values());
+
+		return optionsList;
+	}
+
+	/**
+	 * Return the number of option values.
+	 * 
+	 * @return number of option values
+	 */
+	public int getCount() {
+		return this.data.size();
+	}
+
+	/**
+	 * Build a formatted help string for the command line options managed
+	 * by this options object.
+	 * 
+	 * @return the formatted help string, ready for output
+	 */
+	public String getFormattedOptionsHelp(boolean longHelp) {
+		IdGenHelpFormatter formatter = new IdGenHelpFormatter();
+		formatter.setWidth(this.termWidth);
+		return formatter.getHelpString(this, longHelp);
+	}
+
+	/**
+	 * returns a string representation of the stored options, e.g. the help
+	 * string
+	 * 
+	 * @return the (long) help string
+	 */
+	public String toString() {
+		return this.getFormattedOptionsHelp(true);
 	}
 
 }
