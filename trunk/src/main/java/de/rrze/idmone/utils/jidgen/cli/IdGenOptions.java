@@ -278,8 +278,8 @@ public class IdGenOptions extends Options {
 		while (iter.hasNext()) {
 
 			IdGenOption currentOption = iter.next();
-			logger.trace("Processing option \"" + currentOption.getShortOpt()
-					+ "\"");
+			// logger.trace("Processing option \"" + currentOption.getShortOpt()
+			// + "\"");
 
 			if (commandLine.hasOption(currentOption.getShortOpt())) {
 				// option was specified
@@ -537,8 +537,8 @@ public class IdGenOptions extends Options {
 	}
 
 	/**
-	 * Build a formatted help string for the command line options managed
-	 * by this options object.
+	 * Build a formatted help string for the command line options managed by
+	 * this options object.
 	 * 
 	 * @return the formatted help string, ready for output
 	 */

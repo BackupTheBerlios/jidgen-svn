@@ -1,44 +1,79 @@
 package de.rrze.idmone.utils.jidgen;
 
 import java.applet.Applet;
+import java.awt.Button;
+import java.awt.Event;
 import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.TextField;
 import java.util.List;
 
-public class IdGenApplet extends Applet implements MouseListener {
+public class IdGenApplet extends Applet {
 
 	private static final long serialVersionUID = -3061988014342527435L;
-	private StringBuffer buffer;
+	
+	private static final String DEFAULT_CLI = "-Tf John -Tl Doe -T 2f:[f3,]:2l:[l3,]:N++";
+	
+	private String output = "";
 
 	private IdGenerator idGen;
+	private String currentCli = DEFAULT_CLI;
+
+	
+	private Button b_nextID, b_reset;
+	private TextField t_cli;
+	
 	
 	
 	public void init() {
-		addMouseListener(this);
-		buffer = new StringBuffer();
-		addItem("initializing... ");
-	
-	
-		idGen = new IdGenerator("-Tf John -Tl Doe -T 2f:2l:N4++");
-	
+		t_cli = new TextField(currentCli);
+		this.add(t_cli);
+
+		b_nextID = new Button("Next ID");
+		this.add(b_nextID);
+		
+		b_reset = new Button("Reset");
+		this.add(b_reset);
 	}
 
 	public void start() {
-		addItem("starting... ");
+		idGen = new IdGenerator(t_cli.getText());
 	}
 
 	public void stop() {
-		addItem("stopping... ");
 	}
 
 	public void destroy() {
-		addItem("preparing for unloading...");
 	}
 
-	void addItem(String newWord) {
-		System.out.println(newWord);
-		buffer.append(newWord);
+	public boolean action(Event e, Object args) {
+		if (e.target == b_nextID) {
+			if (!t_cli.getText().equals(currentCli)) {
+					idGen = new IdGenerator(t_cli.getText());
+					currentCli = t_cli.getText();
+			}
+			
+			List<String> idList = idGen.getNextIDs(1);
+			if (idList.isEmpty()) {
+				print("No alternatives left.");
+				
+			}
+			else {
+				print(idList.get(0));
+			}
+		}
+		
+		if (e.target == b_reset) {
+			currentCli = DEFAULT_CLI;
+			t_cli.setText(currentCli);
+			idGen = new IdGenerator(t_cli.getText());			
+		}
+		
+		repaint();
+		return true;
+	}
+
+	void print(String s) {
+		output = s;
 		repaint();
 	}
 
@@ -47,27 +82,7 @@ public class IdGenApplet extends Applet implements MouseListener {
 		g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 
 		// Draw the current string inside the rectangle.
-		g.drawString(buffer.toString(), 5, 15);
-	}
-
-	// The following empty methods could be removed
-	// by implementing a MouseAdapter (usually done
-	// using an inner class).
-	public void mouseEntered(MouseEvent event) {
-	}
-
-	public void mouseExited(MouseEvent event) {
-	}
-
-	public void mousePressed(MouseEvent event) {
-	}
-
-	public void mouseReleased(MouseEvent event) {
-	}
-
-	public void mouseClicked(MouseEvent event) {
-		//addItem("click!... ");
-		List<String> idList = idGen.generateIDs(1);
-		addItem("ID: " + idList.get(0));
+		g.drawString(output, 5, 100);
+		output = "";
 	}
 }

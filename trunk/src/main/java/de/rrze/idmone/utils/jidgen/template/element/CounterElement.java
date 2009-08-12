@@ -161,7 +161,7 @@ public class CounterElement
 	public String toString() {
 		
 		if (this.updateAlternatives) {
-			this.numAlternatives = this.getNumAlternatives();
+			this.numAlternatives = Math.pow(super.getData().length(),this.getLength());
 			this.updateAlternatives = false;
 			this.hasAlternatives(true);
 		}
@@ -191,15 +191,19 @@ public class CounterElement
 			pos--;
 		}
 		
-		// increment the internal counter
-		this.counter = ++this.counter % (int)this.numAlternatives;
-		//this.counter++;
 		
-		if (this.counter == this.numAlternatives) {
+		if ((this.counter + 1) == this.numAlternatives) {
 			// set to false, when we return our last alternative 
 			// This states to the outside that all alternatives of this
 			// element were returned.
 			super.hasAlternatives(false);
+		}
+		else {
+			// increment the internal counter
+			this.counter++;
+			
+			//  loop counter
+			//this.counter = ++this.counter % (int)this.numAlternatives;
 		}
 		
 		return new String(retArr);

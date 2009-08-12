@@ -24,6 +24,10 @@
 
 package de.rrze.idmone.utils.jidgen.io;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -67,16 +71,19 @@ public class JdbcAccessor {
 	 */
 	private void load() {
 		try {
-			
 			// TODO enable user defined classpath
-			Class.forName(this.driver);
+			URLClassLoader l = new URLClassLoader( new URL[] { new URL("jar:file://" + "/usr/share/jdbc-mysql/lib/jdbc-mysql.jar" + "!/") });
+			Class cl = l.loadClass("com.mysql.jdbc.Driver");
 			
 		} catch (ClassNotFoundException e) {
-			
 			logger.fatal("Unable to load the driver class: Class not found \""
 					+ this.driver + "\".");
 			System.exit(-1); // TODO error code
 			
+		}
+		catch(MalformedURLException e) {
+			logger.fatal("WAAAA");
+			System.exit(-1); // TODO error code
 		}
 	}
 

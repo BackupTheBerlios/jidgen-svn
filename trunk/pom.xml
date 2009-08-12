@@ -287,6 +287,8 @@
 
 						<addMavenDescriptor>true</addMavenDescriptor>
 					</archive>
+					
+					<copy file="jidgen.sh" tofile="target/jidgen.sh"/>
 				</configuration>
 			</plugin>
 

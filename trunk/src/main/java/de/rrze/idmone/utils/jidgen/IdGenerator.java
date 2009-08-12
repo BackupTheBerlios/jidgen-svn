@@ -88,10 +88,19 @@ public class IdGenerator {
 	private FilterChain filterChain;
 
 	/**
+	 * The template object for generating IDs according to the template string
+	 */
+	private Template template;
+
+	/**
 	 * Default constructor of the IdGenerator
 	 */
 	public IdGenerator() {
 		logger.trace("Invoked default constructor.");
+
+		// Some debugging information about the environment
+		logger.debug("java.class.path = "
+				+ System.getProperty("java.class.path"));
 
 		// create a new filter chain
 		this.filterChain = new FilterChain();
@@ -518,6 +527,28 @@ public class IdGenerator {
 	 *         or null on error
 	 */
 	public List<String> generateIDs(int num) {
+		return this.getIDs(num, true);
+	}
+
+	/**
+	 * 
+	 * @param num
+	 * @return
+	 */
+	public List<String> getNextIDs(int num) {
+		return this.getIDs(num, false);
+	}
+
+	/**
+	 * This method tries to generate the given number of ids. The method returns
+	 * an empty list if it does not manage to create any suitable id within the
+	 * <i>MAX_ATTEMPTS</i> or null if an error occurs.
+	 * 
+	 * @param num
+	 * @param resetTemplate
+	 * @return
+	 */
+	private List<String> getIDs(int num, boolean resetTemplate) {
 
 		if (this.cliArgsDirtyFlag) {
 			this.updateOptions();
@@ -540,7 +571,8 @@ public class IdGenerator {
 		ArrayList<String> validIDs = new ArrayList<String>();
 
 		// the template object, responsible for building id suggestions
-		Template template = new Template(this.options);
+		if (this.template == null || resetTemplate)
+			this.template = new Template(this.options);
 
 		// id generation loop
 		int i = 0;
@@ -551,6 +583,7 @@ public class IdGenerator {
 						+ " (" + Defaults.MAX_ATTEMPTS + ")");
 				System.exit(152);
 			}
+
 			String idCandidate = null;
 			idCandidate = template.buildString();
 			logger.trace(Messages.getString("IdGenerator.TRACE_ID_CANDIDATE")
@@ -567,6 +600,7 @@ public class IdGenerator {
 						.getString("IdGenerator.TRACE_ATTEMPT_GENERATE")
 						+ " " + idCandidate);
 			}
+
 		}
 
 		logger
