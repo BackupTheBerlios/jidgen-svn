@@ -242,7 +242,7 @@
 	<build>
 		<resources>
 			<resource>
-				<directory>src/main/config</directory>
+				<directory>src/main/resources</directory>
 				<includes>
 					<include>*</include>
 				</includes>
@@ -266,7 +266,8 @@
 					<excludes>
 						<exclude>blacklist</exclude>
 					</excludes>
-					<includes></includes>
+					<includes>
+					</includes>
 					<archive>
 						<index>true</index>
 

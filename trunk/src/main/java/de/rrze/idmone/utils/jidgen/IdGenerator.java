@@ -381,7 +381,7 @@ public class IdGenerator {
 						"shellcmd-command",
 						Messages
 								.getString("IIdGenCommandLineOptions.CL_SHELLCMD_COMMAND_DESC"),
-						IdGenOption.UNLIMITED_VALUES, "command",
+						IdGenOption.UNLIMITED_VALUES, "command(s)",
 						Defaults.CLI_VALUE_SEPERATOR);
 
 		// shellcmd filter enable
@@ -392,7 +392,7 @@ public class IdGenerator {
 		// passwd filter file
 		opts.add("Pf", "passwd-file", Messages
 				.getString("IIdGenCommandLineOptions.CL_PASSWD_FILE_DESC"),
-				IdGenOption.UNLIMITED_VALUES, "file",
+				IdGenOption.UNLIMITED_VALUES, "file(s)",
 				Defaults.CLI_VALUE_SEPERATOR);
 
 		// passwd filter enable
@@ -403,7 +403,7 @@ public class IdGenerator {
 		// blacklist filter file
 		opts.add("Bf", "blacklist-file", Messages
 				.getString("IIdGenCommandLineOptions.CL_BLACKLIST_FILE_DESC"),
-				IdGenOption.UNLIMITED_VALUES, "file",
+				IdGenOption.UNLIMITED_VALUES, "file(s)",
 				Defaults.CLI_VALUE_SEPERATOR);
 
 		// blacklist filter enable
@@ -419,7 +419,7 @@ public class IdGenerator {
 		// ldap filter configuration file
 		opts.add("Lf", "ldap-properties-file", Messages
 				.getString("IIdGenCommandLineOptions.CL_LDAP_FILE_DESC"),
-				IdGenOption.UNLIMITED_VALUES, "file",
+				IdGenOption.UNLIMITED_VALUES, "file(s)",
 				Defaults.CLI_VALUE_SEPERATOR);
 
 		// jdbc filter enable
@@ -430,7 +430,7 @@ public class IdGenerator {
 		// jdbc filter configuration file
 		opts.add("Df", "jdbc-properties-file", Messages
 				.getString("IIdGenCommandLineOptions.CL_JDBC_FILE_DESC"),
-				IdGenOption.UNLIMITED_VALUES, "file",
+				IdGenOption.UNLIMITED_VALUES, "file(s)",
 				Defaults.CLI_VALUE_SEPERATOR);
 
 		// create all "T[a-z]" options as invisible and a dummy option for them
