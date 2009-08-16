@@ -24,12 +24,12 @@
 
 package de.rrze.idmone.utils.jidgen.io;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,6 +37,8 @@ import java.sql.Statement;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import de.rrze.idmone.utils.jidgen.DriverShim;
 
 /**
  * 
@@ -71,18 +73,27 @@ public class JdbcAccessor {
 	 */
 	private void load() {
 		try {
-			// TODO enable user defined classpath
-			URLClassLoader l = new URLClassLoader( new URL[] { new URL("jar:file://" + "/usr/share/jdbc-mysql/lib/jdbc-mysql.jar" + "!/") });
-			Class cl = l.loadClass("com.mysql.jdbc.Driver");
 			
+			URLClassLoader classLoader = new URLClassLoader( new URL[] { new URL("jar:file://" + "/usr/share/jdbc-mysql/lib/jdbc-mysql.jar" + "!/") });
+	        Driver d = (Driver) classLoader.loadClass("com.mysql.jdbc.Driver").newInstance();
+	        DriverManager.registerDriver(new DriverShim(d));
+
 		} catch (ClassNotFoundException e) {
 			logger.fatal("Unable to load the driver class: Class not found \""
 					+ this.driver + "\".");
 			System.exit(-1); // TODO error code
-			
 		}
 		catch(MalformedURLException e) {
-			logger.fatal("WAAAA");
+			e.printStackTrace();
+			System.exit(-1); // TODO error code
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+			System.exit(-1); // TODO error code
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			System.exit(-1); // TODO error code
+		} catch (SQLException e) {
+			e.printStackTrace();
 			System.exit(-1); // TODO error code
 		}
 	}
