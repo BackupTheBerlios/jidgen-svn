@@ -38,7 +38,6 @@ import java.sql.Statement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.rrze.idmone.utils.jidgen.DriverShim;
 
 /**
  * This class was written for easy handling of database operations.<br/>
@@ -114,7 +113,7 @@ public class JdbcAccessor {
 							+ "!/") });
 			Driver d = (Driver) classLoader.loadClass(this.driver)
 					.newInstance();
-			DriverManager.registerDriver(new DriverShim(d));
+			DriverManager.registerDriver(new JdbcDriverShim(d));
 
 		} catch (ClassNotFoundException e) {
 			logger.fatal("Unable to load the driver class.");

@@ -1,4 +1,4 @@
-package de.rrze.idmone.utils.jidgen;
+package de.rrze.idmone.utils.jidgen.io;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -16,10 +16,10 @@ import java.util.Properties;
  * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  *
  */
-public class DriverShim implements Driver {
+public class JdbcDriverShim implements Driver {
 	private Driver driver;
 	
-	public DriverShim(Driver d) {
+	public JdbcDriverShim(Driver d) {
 		this.driver = d;
 	}
 	public boolean acceptsURL(String u) throws SQLException {
