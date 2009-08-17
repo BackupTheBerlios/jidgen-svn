@@ -35,7 +35,7 @@ import de.rrze.idmone.utils.jidgen.io.JdbcAccessor;
  * configurable JDBC driver.<br/>
  * <i>Intended for use within the FilterChain class.</i>
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  * 
  */
 public class JdbcFilter extends AbstractFilter {
@@ -61,6 +61,7 @@ public class JdbcFilter extends AbstractFilter {
 	}
 
 	private void loadDefaults() {
+		this.setDefaultProp("driverClassPath", ".");
 		this.setDefaultProp("driver", "com.mysql.jdbc.Driver");
 		// URL: jdbc:<subprotocol>:<subname>
 		this.setDefaultProp("url", "jdbc:mysql://localhost:3306/jidgen");
@@ -111,6 +112,7 @@ public class JdbcFilter extends AbstractFilter {
 		this.jdbcAccessor = new JdbcAccessor();
 
 		// configure the jdbc accessor
+		this.jdbcAccessor.setDriverClassPath(this.getProp("driverClassPath"));
 		this.jdbcAccessor.setDriver(this.getProp("driver"));
 		this.jdbcAccessor.setUrl(this.getProp("url"));
 		this.jdbcAccessor.setUser(this.getProp("user"));

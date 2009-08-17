@@ -48,7 +48,7 @@ import de.rrze.idmone.utils.jidgen.template.element.SubstringElement;
  * All parsing and conversion to element objects
  * is done here.
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  *
  */
 public class Parser {

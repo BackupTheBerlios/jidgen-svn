@@ -36,7 +36,7 @@ package de.rrze.idmone.utils.jidgen.template.element;
  * Given the data string 'abc' (a=0, b=1, c=2) and a requested length of 
  * 2 the number 2 would generate 'ac' and the number 3 therefore 'ba'.
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  *
  */
 public class CounterElement

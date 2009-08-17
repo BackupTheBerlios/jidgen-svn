@@ -42,7 +42,7 @@ import de.rrze.idmone.utils.jidgen.io.FileAccessor;
  * itself is returned. <br/>
  * <i>Intended for use within the FilterChain class.</i>
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  * @author unrz205
  */
 public class BlacklistFilter extends AbstractFilter implements IFilter {

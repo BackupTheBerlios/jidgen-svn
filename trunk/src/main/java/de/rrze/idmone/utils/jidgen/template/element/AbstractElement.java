@@ -29,7 +29,7 @@ package de.rrze.idmone.utils.jidgen.template.element;
  * to implement the IElement interface and is meant to be extended
  * by a few more sophisticated classes with added functionality.
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  *
  */
 public abstract class AbstractElement 

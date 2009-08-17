@@ -31,7 +31,7 @@ import java.util.List;
  * id filter class. Implementations of this class can be registered for usage by
  * the FilterChain class.
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  * @author unrz205
  */
 public interface IFilter {

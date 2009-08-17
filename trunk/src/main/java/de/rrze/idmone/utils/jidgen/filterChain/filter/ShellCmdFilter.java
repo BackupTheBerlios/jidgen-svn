@@ -40,7 +40,7 @@ import de.rrze.idmone.utils.jidgen.i18n.Messages;
  * id.<br/>
  * <i>Intended for use within the FilterChain class.</i>
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  */
 public class ShellCmdFilter extends AbstractFilter implements IFilter {
 	/**

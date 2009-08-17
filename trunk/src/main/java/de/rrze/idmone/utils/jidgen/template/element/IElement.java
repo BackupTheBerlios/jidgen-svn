@@ -33,7 +33,7 @@ package de.rrze.idmone.utils.jidgen.template.element;
  * want to add a new implementation of this interface you will
  * need to add an appropriate piece of code there. 
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  *
  */
 public interface IElement {

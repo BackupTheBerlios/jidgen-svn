@@ -33,7 +33,7 @@ package de.rrze.idmone.utils.jidgen.template.element;
  * good starting point if you plan to write your own element
  * implementations.</i> 
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  *
  */
 public class BasicElement

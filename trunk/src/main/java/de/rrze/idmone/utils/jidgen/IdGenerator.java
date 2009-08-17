@@ -55,7 +55,7 @@ import de.rrze.idmone.utils.jidgen.template.Template;
  * org.apache.commons.logging</a>
  * </p>
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  * @author unrz205
  */
 public class IdGenerator {

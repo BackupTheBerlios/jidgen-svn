@@ -34,7 +34,7 @@ import de.rrze.idmone.utils.jidgen.random.RandomFactory;
  * This element implementation chooses a random character
  * from the specified string.
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  *
  */
 public class RandomElement

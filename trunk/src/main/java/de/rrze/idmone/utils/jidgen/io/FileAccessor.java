@@ -43,7 +43,7 @@ import de.rrze.idmone.utils.jidgen.i18n.Messages;
  * of file I/O operations within the jidgen
  * project.
  *  
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  */
 public class FileAccessor {
 

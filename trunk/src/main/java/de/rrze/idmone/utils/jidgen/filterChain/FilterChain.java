@@ -43,7 +43,7 @@ import de.rrze.idmone.utils.jidgen.i18n.Messages;
  * implement the IFilter interface and a bunch of methods
  * to add/remove filter objects and apply the filter chain.
  *  
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  *
  */
 public class FilterChain {

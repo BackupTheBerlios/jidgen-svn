@@ -109,7 +109,7 @@ import de.rrze.idmone.utils.jidgen.template.parser.Parser;
  * !        pipeline logical NOT
  * </pre>
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  *
  */
 public class Template {

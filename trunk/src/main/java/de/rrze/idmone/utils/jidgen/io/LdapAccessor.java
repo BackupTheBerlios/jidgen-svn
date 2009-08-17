@@ -46,7 +46,7 @@ import org.apache.commons.logging.LogFactory;
  * It utilizes the JNDI - Java Naming and Directory Interface
  * to cannect to a specified LDAP directory server.
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  */
 public class LdapAccessor {
 

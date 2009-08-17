@@ -40,7 +40,7 @@ import de.rrze.idmone.utils.jidgen.template.Template;
  * 
  * @see <a href="http://commons.apache.org/cli/api-release/org/apache/commons/cli/HelpFormatter.html">http://commons.apache.org/cli/api-release/org/apache/commons/cli/HelpFormatter.html</a>
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  */
 // TODO remove dependency to apache.commons.cli because of lacking functionality
 public class IdGenHelpFormatter 

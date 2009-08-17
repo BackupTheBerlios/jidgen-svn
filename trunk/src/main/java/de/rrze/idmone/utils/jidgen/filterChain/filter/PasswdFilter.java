@@ -38,7 +38,7 @@ import de.rrze.idmone.utils.jidgen.io.FileAccessor;
  * A filter for IDs that are already in use within the system's passwd file.<br/>
  * <i>Intended for use within the FilterChain class.</i>
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  */
 public class PasswdFilter extends AbstractFilter implements IFilter {
 	/**

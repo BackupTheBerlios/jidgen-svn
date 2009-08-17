@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  * contains the localized (external) strings used by the classes.
  * 
  * @author unrz205
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  * 
  */
 public class Messages

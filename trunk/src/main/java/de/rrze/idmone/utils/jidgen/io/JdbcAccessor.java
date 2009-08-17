@@ -41,6 +41,9 @@ import org.apache.commons.logging.LogFactory;
 import de.rrze.idmone.utils.jidgen.DriverShim;
 
 /**
+ * This class was written for easy handling of database operations.<br/>
+ * The database connection is established using a user configurable JDBC driver
+ * class.
  * 
  * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  */
@@ -51,15 +54,46 @@ public class JdbcAccessor {
 	 */
 	private static final Log logger = LogFactory.getLog(JdbcAccessor.class);
 
-	Connection db;
+	/**
+	 * The database connection object
+	 */
+	private Connection db;
 
-	ResultSet lastResult = null;
+	/**
+	 * The result of the last database query
+	 */
+	private ResultSet lastResult = null;
 
-	boolean connected = false;
-	
+	/**
+	 * Flag to indicate, whether the connection to the database was already
+	 * established
+	 */
+	private boolean connected = false;
+
+	/**
+	 * The path of the external driver classes, e.g. the driver JAR file
+	 */
+	private String driverClassPath;
+
+	/**
+	 * The name of the class containing the driver to use for connecting to the
+	 * database
+	 */
 	private String driver;
+
+	/**
+	 * The JDBC URL to connect to
+	 */
 	private String url;
+
+	/**
+	 * Username for connecting to the database
+	 */
 	private String user;
+
+	/**
+	 * Password for connecting to the database
+	 */
 	private String password;
 
 	/**
@@ -69,42 +103,56 @@ public class JdbcAccessor {
 	}
 
 	/**
-	 * 
+	 * Loads the driver class, instantiates and registers it at the JDBC
+	 * DriverManager for later use.
 	 */
 	private void load() {
 		try {
-			
-			URLClassLoader classLoader = new URLClassLoader( new URL[] { new URL("jar:file://" + "/usr/share/jdbc-mysql/lib/jdbc-mysql.jar" + "!/") });
-	        Driver d = (Driver) classLoader.loadClass("com.mysql.jdbc.Driver").newInstance();
-	        DriverManager.registerDriver(new DriverShim(d));
+
+			URLClassLoader classLoader = new URLClassLoader(
+					new URL[] { new URL("jar:file://" + this.driverClassPath
+							+ "!/") });
+			Driver d = (Driver) classLoader.loadClass(this.driver)
+					.newInstance();
+			DriverManager.registerDriver(new DriverShim(d));
 
 		} catch (ClassNotFoundException e) {
-			logger.fatal("Unable to load the driver class: Class not found \""
-					+ this.driver + "\".");
+			logger.fatal("Unable to load the driver class.");
+			logger
+					.fatal("Check \"driverClassPath\" and \"driverClass\" parameters in the properties file.");
+			logger.fatal(e.toString());
 			System.exit(-1); // TODO error code
-		}
-		catch(MalformedURLException e) {
-			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			logger.fatal("Unable to parse the \"driverClassPath\" property: "
+					+ this.driverClassPath);
+			logger.fatal(e.toString());
 			System.exit(-1); // TODO error code
 		} catch (InstantiationException e) {
-			e.printStackTrace();
+			logger.fatal("Unable to instantiate the driver class: "
+					+ this.driver);
+			logger.fatal(e.toString());
 			System.exit(-1); // TODO error code
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.fatal("Driver class or constructor not accessible: "
+					+ this.driver);
+			logger.fatal(e.toString());
 			System.exit(-1); // TODO error code
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger
+					.fatal("Unable to register the driver because of a database error: "
+							+ this.driver);
+			logger.fatal(e.toString());
 			System.exit(-1); // TODO error code
 		}
 	}
 
 	/**
-	 * Establish a connection to the configured JDBC endpoint, e.g. a mysql
-	 * database
+	 * Establish a connection to the configured JDBC endpoint, e.g. a MySQL
+	 * database.
 	 */
 	public void connect() {
 		this.load();
-		
+
 		try {
 			this.db = DriverManager.getConnection(this.url, this.user,
 					this.password);
@@ -127,9 +175,13 @@ public class JdbcAccessor {
 	}
 
 	/**
+	 * Executes a query against the configured database.<br/>
+	 * If the connection to the database was not yet established, this will be
+	 * done automatically.
 	 * 
 	 * @param q
-	 * @return
+	 *            the SQL query string
+	 * @return the query result
 	 */
 	public ResultSet query(String q) {
 		if (!this.connected)
@@ -152,8 +204,9 @@ public class JdbcAccessor {
 	}
 
 	/**
+	 * Returns the number of result "rows" of the last database query.
 	 * 
-	 * @return
+	 * @return number of result "rows" of the last database query
 	 */
 	public int getNumRows() {
 		try {
@@ -228,6 +281,21 @@ public class JdbcAccessor {
 	 */
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	/**
+	 * @return the driverClassPath
+	 */
+	public String getDriverClassPath() {
+		return driverClassPath;
+	}
+
+	/**
+	 * @param driverClassPath
+	 *            the driverClassPath to set
+	 */
+	public void setDriverClassPath(String driverClassPath) {
+		this.driverClassPath = driverClassPath;
 	}
 
 }

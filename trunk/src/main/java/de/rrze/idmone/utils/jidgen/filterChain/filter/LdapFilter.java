@@ -34,7 +34,7 @@ import de.rrze.idmone.utils.jidgen.io.LdapAccessor;
  * This class filters IDs against a configurable LDAP directory server via JNDI.<br/>
  * <i>Intended for use within the FilterChain class.</i>
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  * 
  */
 public class LdapFilter extends AbstractFilter {

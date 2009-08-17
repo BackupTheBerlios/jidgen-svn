@@ -42,7 +42,7 @@ import de.rrze.idmone.utils.jidgen.i18n.Messages;
  * functions. All real filter implementations should extend this class to avoid
  * duplicate code.
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  * 
  */
 public abstract class AbstractFilter implements IFilter {

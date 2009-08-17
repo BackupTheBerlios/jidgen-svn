@@ -32,7 +32,7 @@ package de.rrze.idmone.utils.jidgen.template.element;
  * are directly supplied inside the template string without
  * the use of variables.
  * 
- * @author unrza249
+ * @author Florian Löffler <florian.loeffler@rrze.uni-erlangen.de>
  *
  */
 public class StaticElement
