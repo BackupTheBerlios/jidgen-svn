@@ -98,10 +98,6 @@ public class IdGenerator {
 	public IdGenerator() {
 		logger.trace("Invoked default constructor.");
 
-		// Some debugging information about the environment
-		logger.debug("java.class.path = "
-				+ System.getProperty("java.class.path"));
-
 		// create a new filter chain
 		this.filterChain = new FilterChain();
 
