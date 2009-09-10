@@ -53,7 +53,7 @@ generation and suggestion.
 
 2. Requirements
 ---------------
-Jidgen was developed and tested using
+Jidgen was developed and tested under LINUX using
 
 	Eclipse
 	Java(TM) SE Runtime Environment (build 1.6.0_07-b06)
