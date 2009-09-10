@@ -1,0 +1,105 @@
+
+jidgen
+------
+
+
+0. Quick usage
+--------------
+Jidgen is hosted and documented at Berlios (http://jidgen.berlios.de/).
+
+You can get the latest jidgen release from the download page at Berlios 
+(http://jidgen.berlios.de/download.html) or the latest development version
+directly from the jidgen subversion repository 
+(https://svn.berlios.de/svnroot/repos/jidgen/trunk/).
+
+One way to start jidgen from command line is directly by using something like
+
+	java -jar jidgen-1.0.0.jar -hh
+
+But jidgen also comes with a 
+
+	jidgen.sh 
+
+bash wrapper script that automatically sets up your classpath and starts the 
+id generator from the command line. This is the preferred way to start jidgen.
+
+To get help using jidgen use the -h command line option to get an overview and
+the -hh command line option to get an extensive introduction in jidgen's
+features including a quick example of how to use them.
+
+
+
+
+1. Introduction
+---------------
+Jidgen is a Java-based id generator that can be used as either a command line 
+program or a library. The idea is to make automated generation of user ids as 
+easy as possible by introducing a simple, straightforward template language 
+to describe the structure of the desired ids.
+
+Jidgen uses 100% Java and is thus platform independent.
+
+Jidgen supports collision filters to ensure the generated id is unique in your
+environment. Additionally, blacklists are available to make sure all ids are 
+socially acceptable.
+
+As a command line program it can easily be accessed by scripts or directly by 
+the user.
+As an embedded library it can easily be employed in the process of automated id 
+generation and suggestion. 
+
+
+
+
+2. Requirements
+---------------
+Jidgen was developed and tested using
+
+	Eclipse
+	Java(TM) SE Runtime Environment (build 1.6.0_07-b06)
+
+and makes use of the following libraries
+
+	commons-cli-1.1.jar
+	commons-logging-1.1.1.jar 
+	
+
+
+3. Features
+-----------
+Jidgen's main purpose is to provide unique ids that match a defined building
+guideline.
+
+To reach that goal jidgen features
+	- a template language to describe the structure of the desired ids
+	- blacklist filtering to make sure all ids are socially acceptable
+	- collision filters against various id-holding-entities
+	
+Currently supported id-holding-entities supported by collsion filter are
+	- a linux passwd file
+	- LDAP directory servers via JNDI (Default config: ldapFilter.properties)
+	- generic databases via JDBC (Default config: jdbcFilter.properties)
+	- generic filtering via user configurable shell command
+	
+Filtering via shell command is a backdoor to make it possible to setup more
+complicated filter scenarios via an external tool. The configured command will
+be called with each ID candidate as the first parameter. Based on the exit code
+(0=filter, 1=accept) the ID candidate will be accepted or filtered.
+
+All filters can be added multiple times. Passwd and shell command filters each
+take only one filename as an argument. Those are provided directly on the 
+command line.
+LDAP and JDBC filters are more complicated and have to be set up via external 
+configuration files. By specifiying and providing multiple configuration files 
+for one filter type this filter can be added multiple times with different 
+configurations.
+
+Jidgen also includes a Java applet for direct website integration.
+
+
+4. Notes
+--------
+Note that due to security restrictions within the applet context it is currently
+not  possible nor planned to access external databases for collision detection.
+The included Java applet is primarily meant for playing with jidgen's template 
+capabilities.
