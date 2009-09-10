@@ -99,7 +99,12 @@ Jidgen also includes a Java applet for direct website integration.
 
 4. Notes
 --------
-Note that due to security restrictions within the applet context it is currently
+For flexibilty reasons jidgen is able to load JDBC database driver classes
+dynamically in runtime. The appropriate driver JAR has to be configured in the
+jdbcFilter.properties file.
+
+Due to security restrictions within the applet context it is currently
 not  possible nor planned to access external databases for collision detection.
 The included Java applet is primarily meant for playing with jidgen's template 
 capabilities.
+
