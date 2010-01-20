@@ -174,7 +174,7 @@
 		<site>
 			<id>jidgen::at::berlios.de</id>
 			<url>
-				scpexe://shell.berlios.de/home/groups/jidgen/htdocs/
+				sftp://shell.berlios.de/home/groups/jidgen/htdocs/
 			</url>
 		</site>
 	</distributionManagement>
@@ -315,9 +315,14 @@
 			</plugin>
 
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>2.0-beta-7</version>
-				<configuration></configuration>
+				<version>2.1</version>
+				<configuration>
+					<chmod>true</chmod>
+					<chmodMode>gu+rw</chmodMode>
+					<chmodOptions>-Rf</chmodOptions>
+				</configuration>
 			</plugin>
 
 		</plugins>
